@@ -5,309 +5,877 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>えいご たんごクイズ｜英検5級</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'BIZ UDPGothic', 'Hiragino Maru Gothic Pro', sans-serif;
-    min-height: 100vh;
-    background: linear-gradient(160deg, #60C8F5 0%, #B8F0D8 100%);
-    display: flex; align-items: center; justify-content: center;
-    padding: 16px;
-  }
-  .card {
-    background: #FFFDF4; border-radius: 28px;
-    padding: 28px 24px; max-width: 500px; width: 100%;
-    box-shadow: 0 8px 40px rgba(26,46,82,0.13);
-  }
-  .btn {
-    width: 100%; border: none; border-radius: 18px;
-    padding: 15px; font-size: 18px; font-weight: 900;
-    cursor: pointer; margin-bottom: 10px; display: block;
-    font-family: inherit;
-  }
-  .btn-yellow { background: linear-gradient(135deg,#FFD93D,#FF9F1C); color: #1A2E52; box-shadow: 0 4px 16px rgba(255,180,0,0.4); }
-  .btn-green  { background: linear-gradient(135deg,#4CAF82,#2E9E6A); color: #fff;     box-shadow: 0 4px 16px rgba(76,175,130,0.4); }
-  .btn-ghost  { background: transparent; color: #8AABCC; border: 2px solid #C8DCF0; font-size: 15px; }
-  .progress-bar-bg { background: #DDE8F5; border-radius: 8px; height: 10px; overflow: hidden; margin-bottom: 20px; }
-  .progress-bar    { height: 100%; border-radius: 8px; background: linear-gradient(90deg,#60C8F5,#4CAF82); transition: width 0.4s; }
-  .word-card {
-    background: linear-gradient(135deg,#1A2E52,#2E4A82);
-    border-radius: 20px; padding: 24px 20px; text-align: center;
-    margin-bottom: 20px; cursor: pointer; transition: all 0.15s;
-  }
-  .word-card:hover { transform: scale(1.01); }
-  .word-card.speaking { box-shadow: 0 0 0 4px #FFD93D, 0 8px 24px rgba(26,46,82,0.3); transform: scale(0.99); }
-  .word-label { font-size: 11px; color: #8AADD0; letter-spacing: 2px; margin-bottom: 4px; }
-  .word-text  { font-size: 46px; font-weight: 900; color: #fff; letter-spacing: 2px; }
-  .wave { display:flex; justify-content:center; gap:4px; height:24px; align-items:center; margin-top:8px; }
-  .wave span { width:4px; background:#FFD93D; border-radius:2px; animation: wave 0.8s ease-in-out infinite; }
-  .wave span:nth-child(2) { animation-delay:.1s; }
-  .wave span:nth-child(3) { animation-delay:.2s; }
-  .wave span:nth-child(4) { animation-delay:.3s; }
-  .wave span:nth-child(5) { animation-delay:.4s; }
-  @keyframes wave { 0%,100%{height:4px} 50%{height:20px} }
-  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .opt-btn {
-    border-radius: 16px; padding: 14px 8px; font-size: 16px;
-    font-weight: 700; cursor: pointer; transition: all 0.15s;
-    border: 2px solid #D0E4F5; background: #fff; color: #1A2E52;
-    font-family: inherit;
-  }
-  .opt-btn.correct { background:#E8FFF4; border-color:#4CAF82; color:#1A5A3A; }
-  .opt-btn.wrong   { background:#FFF0F0; border-color:#FF6B6B; color:#7A1A1A; }
-  .opt-btn:disabled { cursor: default; }
-  .feedback { text-align:center; font-size:20px; font-weight:900; margin-bottom:12px; }
-  .feedback.correct { color:#4CAF82; }
-  .feedback.wrong   { color:#FF6B6B; }
-  .answer-list { background:#E8F7FF; border-radius:16px; padding:14px; margin-bottom:20px; max-height:220px; overflow-y:auto; }
-  .answer-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #C8DCF0; font-size:13px; }
-  .answer-en  { font-weight:700; color:#1A2E52; min-width:90px; cursor:pointer; text-decoration:underline dotted; }
-  .answer-ja  { color:#5A7A9F; flex:1; text-align:center; }
-  .tag { background:#60C8F5; color:#1A2E52; border-radius:12px; padding:4px 12px; font-size:12px; font-weight:700; }
-  .badge-count { background:#E8FFF4; border-radius:16px; padding:14px; margin-bottom:16px; text-align:center; }
-  .toggle-row { background:#E8F7FF; border-radius:14px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }
-  .toggle { width:52px; height:28px; border-radius:14px; background:#B0C4D8; position:relative; cursor:pointer; transition:background 0.2s; border:none; }
-  .toggle.on { background:#4CAF82; }
-  .toggle::after { content:''; width:22px; height:22px; background:#fff; border-radius:50%; position:absolute; top:3px; left:3px; transition:left 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
-  .toggle.on::after { left:27px; }
-  #screen-title, #screen-quiz, #screen-result { display:none; }
-  .hidden { display:none !important; }
-  .info-box { background:#E8F7FF; border-radius:16px; padding:16px; margin-bottom:16px; }
-  .info-row { font-size:14px; color:#3A5A7A; margin-bottom:6px; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-height:100vh;background:linear-gradient(160deg,#60C8F5 0%,#B8F0D8 100%);display:flex;align-items:center;justify-content:center;padding:16px;}
+.card{background:#FFFDF4;border-radius:28px;padding:24px 20px;max-width:500px;width:100%;box-shadow:0 8px 40px rgba(26,46,82,0.13);}
+.btn{width:100%;border:none;border-radius:18px;padding:14px;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:10px;display:block;font-family:inherit;transition:transform 0.1s;}
+.btn:active{transform:scale(0.97);}
+.btn-yellow{background:linear-gradient(135deg,#FFD93D,#FF9F1C);color:#1A2E52;box-shadow:0 4px 16px rgba(255,180,0,0.4);}
+.btn-green{background:linear-gradient(135deg,#4CAF82,#2E9E6A);color:#fff;box-shadow:0 4px 16px rgba(76,175,130,0.4);}
+.btn-blue{background:linear-gradient(135deg,#60C8F5,#2E8FCC);color:#fff;box-shadow:0 4px 16px rgba(96,200,245,0.4);}
+.btn-purple{background:linear-gradient(135deg,#B06EF5,#7C3AED);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,0.4);}
+.btn-orange{background:linear-gradient(135deg,#FF9F1C,#E05A00);color:#fff;box-shadow:0 4px 16px rgba(255,159,28,0.4);}
+.btn-coral{background:linear-gradient(135deg,#FF6B6B,#CC3333);color:#fff;box-shadow:0 4px 16px rgba(255,107,107,0.4);}
+.btn-ghost{background:transparent;color:#8AABCC;border:2px solid #C8DCF0;font-size:14px;}
+.progress-bar-bg{background:#DDE8F5;border-radius:8px;height:10px;overflow:hidden;margin-bottom:16px;}
+.progress-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,#60C8F5,#4CAF82);transition:width 0.4s;}
+/* 単語クイズカード */
+.word-card{background:linear-gradient(135deg,#1A2E52,#2E4A82);border-radius:20px;padding:18px;text-align:center;margin-bottom:14px;cursor:pointer;transition:all 0.15s;}
+.word-card:hover{transform:scale(1.01);}
+.word-card.speaking{box-shadow:0 0 0 4px #FFD93D,0 8px 24px rgba(26,46,82,0.3);transform:scale(0.99);}
+.word-emoji{font-size:48px;margin-bottom:2px;display:block;}
+.word-label{font-size:11px;color:#8AADD0;letter-spacing:2px;margin-bottom:3px;}
+.word-text{font-size:38px;font-weight:900;color:#fff;letter-spacing:3px;margin-bottom:4px;}
+.spell-box{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;margin-top:2px;}
+.spell-letter{background:rgba(255,255,255,0.15);color:#fff;border-radius:8px;width:28px;height:32px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
+.wave{display:flex;justify-content:center;gap:4px;height:20px;align-items:center;margin-top:4px;}
+.wave span{width:4px;background:#FFD93D;border-radius:2px;animation:wave 0.8s ease-in-out infinite;}
+.wave span:nth-child(2){animation-delay:.1s;}.wave span:nth-child(3){animation-delay:.2s;}.wave span:nth-child(4){animation-delay:.3s;}.wave span:nth-child(5){animation-delay:.4s;}
+@keyframes wave{0%,100%{height:4px}50%{height:18px}}
+/* 会話文カード */
+.conv-card{background:linear-gradient(135deg,#2D1B69,#4A2A8A);border-radius:20px;padding:16px;margin-bottom:14px;}
+.conv-situation{background:rgba(255,255,255,0.15);border-radius:10px;padding:6px 12px;font-size:12px;color:#D0C0FF;margin-bottom:12px;display:inline-block;}
+.conv-line{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;}
+.conv-speaker{background:rgba(255,255,255,0.2);color:#fff;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:900;min-width:28px;text-align:center;margin-top:2px;}
+.conv-text{color:#fff;font-size:15px;font-weight:700;line-height:1.4;flex:1;}
+.conv-blank{background:#FFD93D;color:#1A2E52;border-radius:6px;padding:2px 10px;font-size:15px;font-weight:900;}
+.conv-translate-btn{background:rgba(255,255,255,0.15);color:#D0C0FF;border:none;border-radius:10px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;margin-top:6px;width:100%;}
+.conv-translation{background:rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;font-size:12px;color:#C8D8FF;margin-top:6px;line-height:1.6;display:none;}
+/* 選択肢 */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.conv-options{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px;}
+.opt-btn{border-radius:16px;padding:13px 8px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.15s;border:2px solid #D0E4F5;background:#fff;color:#1A2E52;font-family:inherit;}
+.conv-opt-btn{border-radius:14px;padding:12px 14px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;border:2px solid #D8C8FF;background:#F8F4FF;color:#2D1B69;font-family:inherit;text-align:left;}
+.opt-btn.correct,.conv-opt-btn.correct{background:#E8FFF4;border-color:#4CAF82;color:#1A5A3A;}
+.opt-btn.wrong,.conv-opt-btn.wrong{background:#FFF0F0;border-color:#FF6B6B;color:#7A1A1A;}
+.opt-btn:disabled,.conv-opt-btn:disabled{cursor:default;}
+.feedback{text-align:center;font-size:19px;font-weight:900;margin-bottom:10px;min-height:38px;}
+.feedback.correct{color:#4CAF82;}.feedback.wrong{color:#FF6B6B;}
+.answer-list{background:#E8F7FF;border-radius:16px;padding:12px;margin-bottom:16px;max-height:200px;overflow-y:auto;}
+.answer-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #C8DCF0;font-size:13px;}
+.answer-en{font-weight:700;color:#1A2E52;min-width:90px;cursor:pointer;text-decoration:underline dotted;}
+.answer-ja{color:#5A7A9F;flex:1;text-align:center;font-size:12px;}
+.tag{background:#60C8F5;color:#1A2E52;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;}
+.tag-conv{background:#B06EF5;color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;}
+.toggle-row{background:#E8F7FF;border-radius:14px;padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.toggle{width:52px;height:28px;border-radius:14px;background:#B0C4D8;position:relative;cursor:pointer;transition:background 0.2s;border:none;}
+.toggle.on{background:#4CAF82;}
+.toggle::after{content:'';width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle.on::after{left:27px;}
+.hidden{display:none!important;}
+#screen-title,#screen-mode,#screen-category,#screen-quiz,#screen-conv,#screen-result,#screen-conv-result,#screen-stats,#screen-flash{display:none;}
+#stamp-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;}
+.stamp{position:absolute;font-size:40px;animation:stampFly 1.2s ease-out forwards;pointer-events:none;}
+@keyframes stampFly{0%{transform:translateY(0) scale(0.5);opacity:1;}60%{transform:translateY(-120px) scale(1.3);opacity:1;}100%{transform:translateY(-200px) scale(1);opacity:0;}}
+/* モード選択 */
+.mode-card{border-radius:20px;padding:16px;margin-bottom:10px;cursor:pointer;transition:transform 0.15s;border:none;width:100%;font-family:inherit;text-align:left;display:flex;align-items:center;gap:14px;}
+.mode-card:active{transform:scale(0.97);}
+.mode-icon{font-size:36px;flex-shrink:0;}
+.mode-info h3{font-size:16px;font-weight:900;margin-bottom:2px;}
+.mode-info p{font-size:12px;opacity:0.85;}
+/* カテゴリ */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.cat-btn{border-radius:14px;padding:11px 8px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid #D0E4F5;background:#fff;color:#1A2E52;font-family:inherit;text-align:center;transition:all 0.15s;}
+.cat-btn:hover{border-color:#60C8F5;background:#E8F7FF;}
+.cat-btn.selected{border-color:#4CAF82;background:#E8FFF4;color:#1A5A3A;}
+.cat-btn .cat-emoji{font-size:18px;display:block;margin-bottom:2px;}
+.cat-btn .cat-count{font-size:10px;color:#8AABCC;}
+/* フラッシュ */
+.flash-card{background:linear-gradient(135deg,#1A2E52,#2E4A82);border-radius:24px;padding:24px 20px;text-align:center;margin-bottom:14px;cursor:pointer;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.3s;}
+.flash-card.flipped{background:linear-gradient(135deg,#1A5A3A,#2E8F5A);}
+.flash-hint{font-size:11px;color:#8AADD0;letter-spacing:2px;margin-bottom:6px;}
+.flash-main{font-size:40px;font-weight:900;color:#fff;margin-bottom:4px;}
+.flash-ja{font-size:30px;font-weight:900;color:#fff;margin-bottom:4px;}
+.flash-nav{display:flex;gap:10px;margin-bottom:12px;}
+.flash-nav button{flex:1;border:none;border-radius:14px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.flash-know{background:linear-gradient(135deg,#4CAF82,#2E9E6A);color:#fff;}
+.flash-unsure{background:linear-gradient(135deg,#FF6B6B,#CC3333);color:#fff;}
+.flash-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.flash-stat{background:#E8F7FF;border-radius:14px;padding:12px;text-align:center;}
+.flash-stat-num{font-size:26px;font-weight:900;color:#1A2E52;}
+.flash-stat-label{font-size:12px;color:#5A7A9F;margin-top:2px;}
+.weak-word{display:inline-block;background:#FFF0F0;border:1px solid #FF6B6B;border-radius:10px;padding:3px 10px;font-size:12px;font-weight:700;color:#7A1A1A;margin:3px;cursor:pointer;}
+/* 分析 */
+.stats-section{margin-bottom:16px;}
+.stats-title{font-size:14px;font-weight:900;color:#1A2E52;margin-bottom:8px;}
+.stat-card{background:#E8F7FF;border-radius:14px;padding:12px;margin-bottom:10px;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:13px;}
+.stat-label{color:#5A7A9F;font-weight:700;}
+.stat-val{color:#1A2E52;font-weight:900;font-size:15px;}
+.cat-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.cat-name{font-size:12px;color:#1A2E52;font-weight:700;min-width:90px;}
+.cat-bar-bg{flex:1;background:#DDE8F5;border-radius:6px;height:12px;overflow:hidden;}
+.cat-bar{height:100%;border-radius:6px;transition:width 0.5s;}
+.cat-pct{font-size:12px;font-weight:900;min-width:36px;text-align:right;}
+.history-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #C8DCF0;font-size:12px;color:#5A7A9F;}
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:48px;margin-top:6px;}
+.mini-bar{flex:1;border-radius:4px 4px 0 0;min-width:8px;}
 </style>
 </head>
 <body>
+<div id="stamp-container"></div>
 <div class="card">
 
-  <!-- タイトル画面 -->
-  <div id="screen-title">
-    <div style="text-align:center; margin-bottom:16px;">
-      <div style="font-size:64px;">🌈</div>
-      <h1 style="font-size:26px;font-weight:900;color:#1A2E52;margin:8px 0 4px;">えいご たんごクイズ</h1>
-      <p style="font-size:13px;color:#5A7A9F;margin:0 0 16px;">英検5級レベル</p>
-    </div>
-    <div class="toggle-row">
-      <span style="font-size:14px;font-weight:700;color:#1A2E52;">🔊 もんだいを自動で読む</span>
-      <button class="toggle on" id="toggle-auto" onclick="toggleAuto()"></button>
-    </div>
-    <div class="info-box">
-      <p style="font-weight:700;color:#1A2E52;font-size:14px;margin-bottom:10px;">📋 あそびかた</p>
-      <p class="info-row">① えいごが読まれる → いみを4つから えらぼう</p>
-      <p class="info-row">② えいごカードをタップすると もう一度きける</p>
-      <p class="info-row" style="margin-bottom:0;">③ 10もんチャレンジ！何点とれるかな？</p>
-    </div>
-    <p style="font-size:13px;color:#1A5A3A;font-weight:700;text-align:center;margin-bottom:16px;">✅ <span id="word-count"></span>語 準備完了！</p>
-    <button class="btn btn-yellow" onclick="startQuiz()">🚀 クイズをはじめる！</button>
+<!-- タイトル -->
+<div id="screen-title">
+  <div style="text-align:center;margin-bottom:14px;">
+    <div style="font-size:50px;">🌈</div>
+    <h1 style="font-size:22px;font-weight:900;color:#1A2E52;margin:6px 0 2px;">えいご たんごクイズ</h1>
+    <p style="font-size:11px;color:#5A7A9F;margin:0 0 12px;">英検5級レベル・<span id="word-count"></span>語・会話<span id="conv-count"></span>問・読解<span id="reading-count"></span>問</p>
   </div>
-
-  <!-- クイズ画面 -->
-  <div id="screen-quiz">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <span class="tag" id="quiz-category"></span>
-      <span style="font-size:14px;color:#5A7A9F;font-weight:700;" id="quiz-progress"></span>
-    </div>
-    <div class="progress-bar-bg"><div class="progress-bar" id="quiz-bar"></div></div>
-    <div class="word-card" id="word-card" onclick="speakCurrent()">
-      <p class="word-label" id="word-label">👆 TAP TO LISTEN</p>
-      <p class="word-text" id="word-text"></p>
-      <div class="wave hidden" id="wave">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <p id="speaker-icon" style="margin-top:8px;font-size:20px;">🔊</p>
-    </div>
-    <div class="feedback hidden" id="feedback"></div>
-    <div class="options-grid" id="options"></div>
-    <button class="btn btn-green hidden" id="next-btn" onclick="nextQuestion()">つぎへ →</button>
+  <div class="toggle-row">
+    <span style="font-size:13px;font-weight:700;color:#1A2E52;">🔊 もんだいを自動で読む</span>
+    <button class="toggle on" id="toggle-auto" onclick="toggleAuto()"></button>
   </div>
-
-  <!-- 結果画面 -->
-  <div id="screen-result">
-    <div style="text-align:center;">
-      <div style="font-size:60px;" id="result-emoji"></div>
-      <h2 style="font-size:22px;font-weight:900;margin:8px 0 4px;" id="result-label"></h2>
-      <div style="font-size:64px;font-weight:900;color:#1A2E52;line-height:1;margin:8px 0 4px;" id="result-score"></div>
-      <p style="font-size:22px;font-weight:700;margin:4px 0 20px;" id="result-pct"></p>
-      <div class="answer-list">
-        <p style="font-weight:700;color:#1A2E52;font-size:13px;margin-bottom:8px;">📋 こたえあわせ（英語をタップすると読み上げ）</p>
-        <div id="answer-rows"></div>
-      </div>
-      <button class="btn btn-yellow" onclick="startQuiz()">🔄 もういちど！</button>
-      <button class="btn btn-ghost" onclick="showTitle()">🏠 トップにもどる</button>
-      <p style="font-size:11px;color:#AABCCC;margin-top:8px;" id="result-total"></p>
+  <div id="mini-stats" class="hidden" style="background:#E8FFF4;border-radius:14px;padding:10px 16px;margin-bottom:12px;">
+    <div style="display:flex;justify-content:space-around;text-align:center;">
+      <div><div style="font-size:19px;font-weight:900;color:#1A2E52;" id="ms-plays">0</div><div style="font-size:10px;color:#5A7A9F;">かいすう</div></div>
+      <div><div style="font-size:19px;font-weight:900;color:#4CAF82;" id="ms-avg">0%</div><div style="font-size:10px;color:#5A7A9F;">へいきん</div></div>
+      <div><div style="font-size:19px;font-weight:900;color:#FFD93D;" id="ms-best">0</div><div style="font-size:10px;color:#5A7A9F;">さいこう</div></div>
     </div>
   </div>
-
+  <button class="btn btn-yellow" onclick="showMode()">🚀 クイズをはじめる！</button>
+  <button class="btn btn-purple" onclick="showFlashTitle()">🃏 フラッシュカード</button>
+  <button class="btn btn-blue" onclick="showStats()">📊 きろく・ぶんせき</button>
 </div>
 
+<!-- モード選択 -->
+<div id="screen-mode">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <button onclick="showTitle()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
+    <h2 style="font-size:17px;font-weight:900;color:#1A2E52;">モードをえらぼう</h2>
+  </div>
+  <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin-bottom:8px;">📝 たんごクイズ</p>
+  <button class="mode-card" style="background:linear-gradient(135deg,#FFD93D,#FF9F1C);" onclick="startQuiz('all')">
+    <span class="mode-icon">🌍</span>
+    <div class="mode-info"><h3 style="color:#1A2E52;">ぜんはんいモード</h3><p style="color:#3A2A00;"><span id="mode-word-count"></span>語からランダム10問</p></div>
+  </button>
+  <button class="mode-card" style="background:linear-gradient(135deg,#4CAF82,#2E9E6A);" onclick="showCategory()">
+    <span class="mode-icon">📚</span>
+    <div class="mode-info"><h3 style="color:#fff;">カテゴリべつモード</h3><p style="color:#C8F0DC;">にがてな分野だけ集中れんしゅう</p></div>
+  </button>
+  <button class="mode-card" style="background:linear-gradient(135deg,#FF6B6B,#CC3333);" onclick="startQuiz('weak')">
+    <span class="mode-icon">😓</span>
+    <div class="mode-info"><h3 style="color:#fff;">にがてモード</h3><p style="color:#FFD0D0;">まちがえた単語を集中れんしゅう</p></div>
+  </button>
+  <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin:8px 0;">💬 かいわ文クイズ（大問2対策）</p>
+  <button class="mode-card" style="background:linear-gradient(135deg,#B06EF5,#7C3AED);" onclick="startConvQuiz('all')">
+    <span class="mode-icon">💬</span>
+    <div class="mode-info"><h3 style="color:#fff;">ぜんはんい会話文</h3><p style="color:#E0D0FF;"><span id="mode-conv-count"></span>問からランダム8問</p></div>
+  </button>
+  <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin:8px 0;">📖 よみとりクイズ（大問3対策）</p>
+  <button class="mode-card" style="background:linear-gradient(135deg,#4CAF82,#1A8A5A);" onclick="startReadingQuiz('all')">
+    <span class="mode-icon">📖</span>
+    <div class="mode-info"><h3 style="color:#fff;">よみとりクイズ</h3><p style="color:#C8F0DC;"><span id="mode-reading-count"></span>問からランダム5問</p></div>
+  </button>
+  <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin:8px 0;">💬 かいわ文クイズ（大問2対策）</p>
+  <button class="mode-card" style="background:linear-gradient(135deg,#FF9F1C,#E05A00);" onclick="showConvCategory()">
+    <span class="mode-icon">🎭</span>
+    <div class="mode-info"><h3 style="color:#fff;">シチュエーションべつ</h3><p style="color:#FFE0C0;">テーマをえらんで練習</p></div>
+  </button>
+</div>
+
+<!-- カテゴリ選択（単語） -->
+<div id="screen-category">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <button onclick="showMode()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
+    <h2 style="font-size:16px;font-weight:900;color:#1A2E52;">カテゴリをえらぼう</h2>
+  </div>
+  <p style="font-size:12px;color:#5A7A9F;margin-bottom:8px;">複数えらべます</p>
+  <div class="cat-grid" id="cat-grid"></div>
+  <button class="btn btn-green" id="cat-start-btn" onclick="startCategoryQuiz()" style="opacity:0.4;pointer-events:none;">えらんだカテゴリでスタート →</button>
+  <button class="btn btn-ghost" onclick="selectAllCats()">すべてのカテゴリ</button>
+</div>
+
+<!-- 会話カテゴリ選択 -->
+<div id="screen-conv-category">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <button onclick="showMode()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
+    <h2 style="font-size:16px;font-weight:900;color:#1A2E52;">シチュエーションをえらぼう</h2>
+  </div>
+  <div id="conv-cat-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;"></div>
+  <button class="btn btn-purple" id="conv-cat-start-btn" onclick="startConvCategoryQuiz()" style="opacity:0.4;pointer-events:none;">えらんだテーマでスタート →</button>
+  <button class="btn btn-ghost" onclick="showMode()">もどる</button>
+</div>
+
+<!-- 単語クイズ -->
+<div id="screen-quiz">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span class="tag" id="quiz-category"></span>
+    <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="quiz-progress"></span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="quiz-bar"></div></div>
+  <div class="word-card" id="word-card" onclick="speakCurrent()">
+    <span class="word-emoji" id="word-emoji"></span>
+    <p class="word-label" id="word-label">👆 TAP TO LISTEN</p>
+    <p class="word-text" id="word-text"></p>
+    <div class="spell-box" id="spell-box"></div>
+    <div class="wave hidden" id="wave"><span></span><span></span><span></span><span></span><span></span></div>
+    <p id="speaker-icon" style="margin-top:4px;font-size:16px;">🔊</p>
+  </div>
+  <div class="feedback hidden" id="feedback"></div>
+  <div class="options-grid" id="options"></div>
+  <button class="btn btn-green hidden" id="next-btn" onclick="nextQuestion()">つぎへ →</button>
+</div>
+
+<!-- 会話文クイズ -->
+<div id="screen-conv">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span class="tag-conv" id="conv-category-tag"></span>
+    <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="conv-progress"></span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="conv-bar"></div></div>
+  <div class="conv-card" id="conv-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span class="conv-situation" id="conv-situation" style="margin-bottom:0;"></span>
+      <button onclick="speakConversation(convQuestions[convCurrent])" id="conv-speak-btn"
+        style="background:rgba(255,255,255,0.2);color:#fff;border:none;border-radius:10px;padding:5px 12px;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;">
+        🔊 もう一度きく
+      </button>
+    </div>
+    <div id="conv-lines"></div>
+    <button class="conv-translate-btn" onclick="toggleTranslation()">🇯🇵 日本語やくを見る</button>
+    <div class="conv-translation" id="conv-translation"></div>
+  </div>
+  <p style="font-size:13px;font-weight:700;color:#1A2E52;margin-bottom:8px;">❓ ( )にはいるものはどれですか？</p>
+  <div class="conv-options" id="conv-options"></div>
+  <div class="feedback hidden" id="conv-feedback"></div>
+  <button class="btn btn-purple hidden" id="conv-next-btn" onclick="nextConvQuestion()">つぎへ →</button>
+</div>
+
+<!-- 単語クイズ結果 -->
+<div id="screen-result">
+  <div style="text-align:center;">
+    <div style="font-size:50px;" id="result-emoji"></div>
+    <h2 style="font-size:20px;font-weight:900;margin:6px 0 2px;" id="result-label"></h2>
+    <div style="font-size:54px;font-weight:900;color:#1A2E52;line-height:1;margin:6px 0 2px;" id="result-score"></div>
+    <p style="font-size:18px;font-weight:700;margin:2px 0 12px;" id="result-pct"></p>
+    <div class="answer-list">
+      <p style="font-weight:700;color:#1A2E52;font-size:12px;margin-bottom:6px;">📋 こたえあわせ（英語タップで読み上げ）</p>
+      <div id="answer-rows"></div>
+    </div>
+    <button class="btn btn-yellow" onclick="retryQuiz()">🔄 もういちど！</button>
+    <button class="btn btn-green" onclick="showMode()">📚 モードをかえる</button>
+    <button class="btn btn-blue" onclick="showStats()">📊 きろく・ぶんせき</button>
+    <button class="btn btn-ghost" onclick="showTitle()">🏠 トップ</button>
+  </div>
+</div>
+
+<!-- 会話文クイズ結果 -->
+<div id="screen-conv-result">
+  <div style="text-align:center;">
+    <div style="font-size:50px;" id="conv-result-emoji"></div>
+    <h2 style="font-size:20px;font-weight:900;margin:6px 0 2px;" id="conv-result-label"></h2>
+    <div style="font-size:54px;font-weight:900;color:#1A2E52;line-height:1;margin:6px 0 2px;" id="conv-result-score"></div>
+    <p style="font-size:18px;font-weight:700;margin:2px 0 12px;" id="conv-result-pct"></p>
+    <div class="answer-list">
+      <p style="font-weight:700;color:#1A2E52;font-size:12px;margin-bottom:6px;">📋 こたえあわせ</p>
+      <div id="conv-answer-rows"></div>
+    </div>
+    <button class="btn btn-purple" onclick="retryConvQuiz()">🔄 もういちど！</button>
+    <button class="btn btn-green" onclick="showMode()">📚 モードをかえる</button>
+    <button class="btn btn-blue" onclick="showStats()">📊 きろく・ぶんせき</button>
+    <button class="btn btn-ghost" onclick="showTitle()">🏠 トップ</button>
+  </div>
+</div>
+
+<!-- フラッシュカード設定 -->
+<div id="screen-flash">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <button onclick="showTitle()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
+    <h2 style="font-size:17px;font-weight:900;color:#1A2E52;">🃏 フラッシュカード</h2>
+  </div>
+  <div class="toggle-row">
+    <span style="font-size:13px;font-weight:700;color:#1A2E52;" id="flash-dir-label">英語 → 日本語</span>
+    <button onclick="toggleFlashDir()" style="background:#60C8F5;color:#1A2E52;border:none;border-radius:10px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">切替</button>
+  </div>
+  <div style="margin-bottom:12px;">
+    <p style="font-size:12px;color:#5A7A9F;margin-bottom:6px;">カテゴリ絞り込み</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;" id="flash-cat-filter"></div>
+  </div>
+  <button class="btn btn-purple" onclick="startFlash()">🃏 スタート！</button>
+</div>
+
+<!-- フラッシュカード練習 -->
+<div id="screen-flash-play" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <button onclick="showFlashTitle()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
+    <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="flash-progress"></span>
+    <span style="font-size:13px;" id="flash-mode-tag"></span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="flash-bar"></div></div>
+  <div class="flash-card" id="flash-card" onclick="flipCard()">
+    <div id="flash-front">
+      <p class="flash-hint" id="flash-hint-front"></p>
+      <p class="flash-main" id="flash-main"></p>
+      <div class="spell-box" id="flash-spell" style="justify-content:center;margin-top:6px;"></div>
+      <p style="font-size:14px;color:#8AADD0;margin-top:8px;">👆 タップして答えを見る</p>
+    </div>
+    <div id="flash-back" class="hidden">
+      <p class="flash-hint">日本語のいみ</p>
+      <p class="flash-ja" id="flash-ja"></p>
+      <p style="font-size:26px;margin-top:4px;" id="flash-emoji-back"></p>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:13px;color:#5A7A9F;margin-bottom:10px;" id="flash-sub">カードをタップして答えを見てね</p>
+  <div class="flash-nav hidden" id="flash-nav">
+    <button class="flash-know" onclick="flashAnswer(true)">✅ わかった！</button>
+    <button class="flash-unsure" onclick="flashAnswer(false)">❌ まだかな…</button>
+  </div>
+  <button class="btn btn-ghost" style="margin-top:4px;" onclick="showFlashTitle()">やめる</button>
+</div>
+
+<!-- フラッシュカード結果 -->
+<div id="screen-flash-result" style="display:none;">
+  <div style="text-align:center;margin-bottom:14px;">
+    <div style="font-size:50px;" id="fr-emoji"></div>
+    <h2 style="font-size:19px;font-weight:900;color:#1A2E52;margin:6px 0 3px;" id="fr-label"></h2>
+  </div>
+  <div class="flash-result-grid">
+    <div class="flash-stat"><div class="flash-stat-num" style="color:#4CAF82;" id="fr-know"></div><div class="flash-stat-label">わかった！</div></div>
+    <div class="flash-stat"><div class="flash-stat-num" style="color:#FF6B6B;" id="fr-unsure"></div><div class="flash-stat-label">まだかな…</div></div>
+  </div>
+  <div id="fr-unsure-list" style="margin-bottom:14px;"></div>
+  <button class="btn btn-purple" onclick="retryUnsure()">🔁 まだかなをもう一度</button>
+  <button class="btn btn-yellow" onclick="startFlash()">🔄 最初からやりなおす</button>
+  <button class="btn btn-ghost" onclick="showTitle()">🏠 トップ</button>
+</div>
+
+<!-- 分析 -->
+<div id="screen-stats">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <h2 style="font-size:16px;font-weight:900;color:#1A2E52;">📊 きろく・ぶんせき</h2>
+    <button onclick="showTitle()" style="background:none;border:none;font-size:22px;cursor:pointer;">✕</button>
+  </div>
+  <div class="stats-section">
+    <p class="stats-title">🏅 そうごうせいせき</p>
+    <div class="stat-card">
+      <div class="stat-row"><span class="stat-label">プレイ回数</span><span class="stat-val" id="st-plays">-</span></div>
+      <div class="stat-row"><span class="stat-label">合計問題数</span><span class="stat-val" id="st-total">-</span></div>
+      <div class="stat-row"><span class="stat-label">平均正答率</span><span class="stat-val" id="st-avg">-</span></div>
+      <div class="stat-row"><span class="stat-label">最高スコア</span><span class="stat-val" id="st-best">-</span></div>
+      <div class="stat-row" style="margin-bottom:0;"><span class="stat-label">連続正解記録</span><span class="stat-val" id="st-streak">-</span></div>
+    </div>
+  </div>
+  <div class="stats-section">
+    <p class="stats-title">📈 スコアのうつりかわり（直近10回）</p>
+    <div class="stat-card"><div class="mini-chart" id="score-chart"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;"><span style="font-size:10px;color:#8AABCC;">むかし</span><span style="font-size:10px;color:#8AABCC;">さいきん</span></div>
+    </div>
+  </div>
+  <div class="stats-section">
+    <p class="stats-title">📚 カテゴリべつせいかい率</p>
+    <div class="stat-card" id="cat-stats"></div>
+  </div>
+  <div class="stats-section">
+    <p class="stats-title">😓 にがて単語トップ10</p>
+    <div class="stat-card"><div id="weak-words"></div></div>
+  </div>
+  <div class="stats-section">
+    <p class="stats-title">🕐 プレイりれき</p>
+    <div class="stat-card" style="max-height:150px;overflow-y:auto;"><div id="history-list"></div></div>
+  </div>
+  <button class="btn btn-yellow" onclick="showMode()">🚀 クイズをはじめる！</button>
+  <button onclick="clearHistory()" style="width:100%;background:none;border:none;color:#FF6B6B;font-size:12px;cursor:pointer;padding:6px;font-family:inherit;">🗑 きろくをけす</button>
+</div>
+
+<!-- 読解クイズ画面 -->
+<div id="screen-reading" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="background:#4CAF82;color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;" id="reading-category-tag"></span>
+    <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="reading-progress"></span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="reading-bar"></div></div>
+
+  <!-- 英文カード -->
+  <div style="background:linear-gradient(135deg,#1A4A2E,#2E6A4A);border-radius:20px;padding:16px;margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span style="background:rgba(255,255,255,0.2);color:#fff;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700;" id="reading-title"></span>
+      <button onclick="speakPassage()" style="background:rgba(255,255,255,0.2);color:#fff;border:none;border-radius:10px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;">🔊 よむ</button>
+    </div>
+    <p id="reading-passage" style="color:#fff;font-size:14px;line-height:1.8;font-weight:600;margin-bottom:10px;"></p>
+    <button onclick="toggleReadingTranslation()" style="background:rgba(255,255,255,0.15);color:#C8F0DC;border:none;border-radius:10px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;width:100%;">🇯🇵 日本語やくを見る</button>
+    <div id="reading-translation" style="background:rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;font-size:12px;color:#B8E8CC;margin-top:6px;line-height:1.6;display:none;"></div>
+  </div>
+
+  <!-- 質問 -->
+  <p style="font-size:14px;font-weight:700;color:#1A2E52;margin-bottom:10px;" id="reading-question"></p>
+  <div class="conv-options" id="reading-options"></div>
+  <div class="feedback hidden" id="reading-feedback"></div>
+  <button class="btn btn-green hidden" id="reading-next-btn" onclick="nextReadingQuestion()">つぎへ →</button>
+</div>
+
+<!-- 読解クイズ結果画面 -->
+<div id="screen-reading-result" style="display:none;">
+  <div style="text-align:center;">
+    <div style="font-size:50px;" id="reading-result-emoji"></div>
+    <h2 style="font-size:20px;font-weight:900;margin:6px 0 2px;" id="reading-result-label"></h2>
+    <div style="font-size:54px;font-weight:900;color:#1A2E52;line-height:1;margin:6px 0 2px;" id="reading-result-score"></div>
+    <p style="font-size:18px;font-weight:700;margin:2px 0 12px;" id="reading-result-pct"></p>
+    <div class="answer-list">
+      <p style="font-weight:700;color:#1A2E52;font-size:12px;margin-bottom:6px;">📋 こたえあわせ</p>
+      <div id="reading-answer-rows"></div>
+    </div>
+    <button class="btn btn-green" onclick="startReadingQuiz('all')">🔄 もういちど！</button>
+    <button class="btn btn-yellow" onclick="showMode()">📚 モードをかえる</button>
+    <button class="btn btn-blue" onclick="showStats()">📊 きろく・ぶんせき</button>
+    <button class="btn btn-ghost" onclick="showTitle()">🏠 トップ</button>
+  </div>
+</div>
+
+</div><!-- .card -->
+
 <script>
-const WORDS = [{"en": "mother", "ja": "おかあさん", "category": "家族・人", "options": ["おかあさん", "おとうさん", "おねえさん", "おばあさん"]}, {"en": "father", "ja": "おとうさん", "category": "家族・人", "options": ["おとうさん", "おにいさん", "おじいさん", "おじさん"]}, {"en": "sister", "ja": "おねえさん・いもうと", "category": "家族・人", "options": ["おねえさん・いもうと", "おにいさん・おとうと", "おばさん", "むすめ"]}, {"en": "brother", "ja": "おにいさん・おとうと", "category": "家族・人", "options": ["おにいさん・おとうと", "おねえさん・いもうと", "むすこ", "いとこ"]}, {"en": "friend", "ja": "ともだち", "category": "家族・人", "options": ["ともだち", "せんせい", "いしゃ", "きゃく"]}, {"en": "teacher", "ja": "せんせい", "category": "家族・人", "options": ["せんせい", "がくせい", "いしゃ", "かんごし"]}, {"en": "student", "ja": "せいと・がくせい", "category": "家族・人", "options": ["せいと・がくせい", "せんせい", "こども", "おとな"]}, {"en": "baby", "ja": "あかちゃん", "category": "家族・人", "options": ["あかちゃん", "こども", "おとな", "おじいさん"]}, {"en": "child", "ja": "こども", "category": "家族・人", "options": ["こども", "おとな", "あかちゃん", "わかもの"]}, {"en": "boy", "ja": "おとこのこ", "category": "家族・人", "options": ["おとこのこ", "おんなのこ", "おとこのひと", "おんなのひと"]}, {"en": "girl", "ja": "おんなのこ", "category": "家族・人", "options": ["おんなのこ", "おとこのこ", "おんなのひと", "おとこのひと"]}, {"en": "man", "ja": "おとこのひと", "category": "家族・人", "options": ["おとこのひと", "おんなのひと", "おとこのこ", "おじいさん"]}, {"en": "woman", "ja": "おんなのひと", "category": "家族・人", "options": ["おんなのひと", "おとこのひと", "おんなのこ", "おばあさん"]}, {"en": "doctor", "ja": "いしゃ", "category": "家族・人", "options": ["いしゃ", "かんごし", "きょうし", "けいさつかん"]}, {"en": "nurse", "ja": "かんごし", "category": "家族・人", "options": ["かんごし", "いしゃ", "やくざいし", "じゅうい"]}, {"en": "police", "ja": "けいさつかん", "category": "家族・人", "options": ["けいさつかん", "しょうぼうし", "へいし", "うんてんし"]}, {"en": "cook", "ja": "コック・りょうりにん", "category": "家族・人", "options": ["コック・りょうりにん", "ウェイター", "かじや", "のうか"]}, {"en": "farmer", "ja": "のうか・のうふ", "category": "家族・人", "options": ["のうか・のうふ", "りょうし", "もりもり", "こうじょうろうどうしゃ"]}, {"en": "singer", "ja": "かしゅ", "category": "家族・人", "options": ["かしゅ", "げいにん", "はいゆう", "ダンサー"]}, {"en": "player", "ja": "せんしゅ・プレーヤー", "category": "家族・人", "options": ["せんしゅ・プレーヤー", "コーチ", "しんぱん", "かんきゃく"]}, {"en": "dog", "ja": "いぬ", "category": "動物", "options": ["いぬ", "ねこ", "うさぎ", "とり"]}, {"en": "cat", "ja": "ねこ", "category": "動物", "options": ["ねこ", "いぬ", "ねずみ", "うし"]}, {"en": "bird", "ja": "とり", "category": "動物", "options": ["とり", "さかな", "むし", "カエル"]}, {"en": "fish", "ja": "さかな", "category": "動物", "options": ["さかな", "カメ", "うさぎ", "くま"]}, {"en": "horse", "ja": "うま", "category": "動物", "options": ["うま", "うし", "ぶた", "ひつじ"]}, {"en": "rabbit", "ja": "うさぎ", "category": "動物", "options": ["うさぎ", "ねずみ", "りす", "キツネ"]}, {"en": "cow", "ja": "うし", "category": "動物", "options": ["うし", "うま", "やぎ", "ひつじ"]}, {"en": "pig", "ja": "ぶた", "category": "動物", "options": ["ぶた", "うし", "ひつじ", "うま"]}, {"en": "sheep", "ja": "ひつじ", "category": "動物", "options": ["ひつじ", "やぎ", "うし", "ぶた"]}, {"en": "bear", "ja": "くま", "category": "動物", "options": ["くま", "おおかみ", "きつね", "たぬき"]}, {"en": "lion", "ja": "ライオン", "category": "動物", "options": ["ライオン", "トラ", "ヒョウ", "チーター"]}, {"en": "tiger", "ja": "トラ", "category": "動物", "options": ["トラ", "ライオン", "ヒョウ", "オオカミ"]}, {"en": "monkey", "ja": "さる", "category": "動物", "options": ["さる", "ゴリラ", "チンパンジー", "パンダ"]}, {"en": "elephant", "ja": "ぞう", "category": "動物", "options": ["ぞう", "キリン", "サイ", "カバ"]}, {"en": "giraffe", "ja": "キリン", "category": "動物", "options": ["キリン", "ぞう", "サイ", "カバ"]}, {"en": "snake", "ja": "へび", "category": "動物", "options": ["へび", "とかげ", "カメ", "カエル"]}, {"en": "frog", "ja": "カエル", "category": "動物", "options": ["カエル", "へび", "とかげ", "カメ"]}, {"en": "duck", "ja": "アヒル・かも", "category": "動物", "options": ["アヒル・かも", "にわとり", "はと", "からす"]}, {"en": "chicken", "ja": "にわとり", "category": "動物", "options": ["にわとり", "アヒル", "はと", "つばめ"]}, {"en": "insect", "ja": "むし・こんちゅう", "category": "動物", "options": ["むし・こんちゅう", "さかな", "とり", "カエル"]}, {"en": "butterfly", "ja": "ちょうちょ", "category": "動物", "options": ["ちょうちょ", "とんぼ", "カブトムシ", "バッタ"]}, {"en": "bee", "ja": "ハチ", "category": "動物", "options": ["ハチ", "アリ", "ちょうちょ", "カブトムシ"]}, {"en": "ant", "ja": "アリ", "category": "動物", "options": ["アリ", "ハチ", "ゴキブリ", "バッタ"]}, {"en": "bread", "ja": "パン", "category": "食べ物・飲み物", "options": ["パン", "ごはん", "めん", "スープ"]}, {"en": "milk", "ja": "ぎゅうにゅう", "category": "食べ物・飲み物", "options": ["ぎゅうにゅう", "みず", "ジュース", "おちゃ"]}, {"en": "cake", "ja": "ケーキ", "category": "食べ物・飲み物", "options": ["ケーキ", "クッキー", "アイス", "チョコ"]}, {"en": "apple", "ja": "りんご", "category": "食べ物・飲み物", "options": ["りんご", "バナナ", "みかん", "いちご"]}, {"en": "rice", "ja": "ごはん", "category": "食べ物・飲み物", "options": ["ごはん", "パン", "めん", "スープ"]}, {"en": "water", "ja": "みず", "category": "食べ物・飲み物", "options": ["みず", "ぎゅうにゅう", "ジュース", "コーヒー"]}, {"en": "egg", "ja": "たまご", "category": "食べ物・飲み物", "options": ["たまご", "にく", "さかな", "やさい"]}, {"en": "meat", "ja": "にく", "category": "食べ物・飲み物", "options": ["にく", "さかな", "やさい", "たまご"]}, {"en": "vegetable", "ja": "やさい", "category": "食べ物・飲み物", "options": ["やさい", "くだもの", "にく", "さかな"]}, {"en": "fruit", "ja": "くだもの・フルーツ", "category": "食べ物・飲み物", "options": ["くだもの・フルーツ", "やさい", "かしゃく", "のみもの"]}, {"en": "juice", "ja": "ジュース", "category": "食べ物・飲み物", "options": ["ジュース", "みず", "おちゃ", "コーヒー"]}, {"en": "tea", "ja": "おちゃ", "category": "食べ物・飲み物", "options": ["おちゃ", "コーヒー", "ジュース", "みず"]}, {"en": "coffee", "ja": "コーヒー", "category": "食べ物・飲み物", "options": ["コーヒー", "おちゃ", "ジュース", "みず"]}, {"en": "soup", "ja": "スープ", "category": "食べ物・飲み物", "options": ["スープ", "シチュー", "カレー", "みそしる"]}, {"en": "salad", "ja": "サラダ", "category": "食べ物・飲み物", "options": ["サラダ", "スープ", "カレー", "シチュー"]}, {"en": "pizza", "ja": "ピザ", "category": "食べ物・飲み物", "options": ["ピザ", "ハンバーガー", "ホットドッグ", "サンドイッチ"]}, {"en": "hamburger", "ja": "ハンバーガー", "category": "食べ物・飲み物", "options": ["ハンバーガー", "ピザ", "ホットドッグ", "サンドイッチ"]}, {"en": "sandwich", "ja": "サンドイッチ", "category": "食べ物・飲み物", "options": ["サンドイッチ", "ハンバーガー", "ピザ", "ホットドッグ"]}, {"en": "cookie", "ja": "クッキー", "category": "食べ物・飲み物", "options": ["クッキー", "ケーキ", "アイス", "チョコ"]}, {"en": "ice cream", "ja": "アイスクリーム", "category": "食べ物・飲み物", "options": ["アイスクリーム", "ケーキ", "クッキー", "チョコ"]}, {"en": "banana", "ja": "バナナ", "category": "食べ物・飲み物", "options": ["バナナ", "りんご", "みかん", "ぶどう"]}, {"en": "orange", "ja": "オレンジ", "category": "食べ物・飲み物", "options": ["オレンジ", "りんご", "バナナ", "レモン"]}, {"en": "strawberry", "ja": "いちご", "category": "食べ物・飲み物", "options": ["いちご", "りんご", "ぶどう", "もも"]}, {"en": "tomato", "ja": "トマト", "category": "食べ物・飲み物", "options": ["トマト", "にんじん", "たまねぎ", "きゅうり"]}, {"en": "potato", "ja": "じゃがいも", "category": "食べ物・飲み物", "options": ["じゃがいも", "さつまいも", "にんじん", "だいこん"]}, {"en": "carrot", "ja": "にんじん", "category": "食べ物・飲み物", "options": ["にんじん", "だいこん", "かぶ", "ごぼう"]}, {"en": "corn", "ja": "とうもろこし", "category": "食べ物・飲み物", "options": ["とうもろこし", "にんじん", "かぼちゃ", "なす"]}, {"en": "cheese", "ja": "チーズ", "category": "食べ物・飲み物", "options": ["チーズ", "バター", "マヨネーズ", "ヨーグルト"]}, {"en": "butter", "ja": "バター", "category": "食べ物・飲み物", "options": ["バター", "チーズ", "マーガリン", "ヨーグルト"]}, {"en": "book", "ja": "ほん", "category": "学校・文房具", "options": ["ほん", "ノート", "えんぴつ", "けしごむ"]}, {"en": "pen", "ja": "ペン", "category": "学校・文房具", "options": ["ペン", "えんぴつ", "ものさし", "はさみ"]}, {"en": "pencil", "ja": "えんぴつ", "category": "学校・文房具", "options": ["えんぴつ", "ペン", "クレヨン", "マーカー"]}, {"en": "eraser", "ja": "けしごむ", "category": "学校・文房具", "options": ["けしごむ", "のり", "テープ", "ホチキス"]}, {"en": "desk", "ja": "つくえ", "category": "学校・文房具", "options": ["つくえ", "いす", "こくばん", "かばん"]}, {"en": "chair", "ja": "いす", "category": "学校・文房具", "options": ["いす", "つくえ", "ソファ", "ベッド"]}, {"en": "bag", "ja": "かばん", "category": "学校・文房具", "options": ["かばん", "くつ", "ぼうし", "ふで"]}, {"en": "school", "ja": "がっこう", "category": "学校・文房具", "options": ["がっこう", "いえ", "こうえん", "びょういん"]}, {"en": "class", "ja": "クラス・じゅぎょう", "category": "学校・文房具", "options": ["クラス・じゅぎょう", "クラブ", "テスト", "しゅくだい"]}, {"en": "test", "ja": "テスト", "category": "学校・文房具", "options": ["テスト", "しゅくだい", "クラス", "じゅぎょう"]}, {"en": "homework", "ja": "しゅくだい", "category": "学校・文房具", "options": ["しゅくだい", "テスト", "べんきょう", "れんしゅう"]}, {"en": "notebook", "ja": "ノート", "category": "学校・文房具", "options": ["ノート", "ほん", "てちょう", "アルバム"]}, {"en": "ruler", "ja": "ものさし・じょうぎ", "category": "学校・文房具", "options": ["ものさし・じょうぎ", "コンパス", "はさみ", "のり"]}, {"en": "scissors", "ja": "はさみ", "category": "学校・文房具", "options": ["はさみ", "ものさし", "のり", "カッター"]}, {"en": "glue", "ja": "のり", "category": "学校・文房具", "options": ["のり", "テープ", "はさみ", "ホチキス"]}, {"en": "blackboard", "ja": "こくばん", "category": "学校・文房具", "options": ["こくばん", "ホワイトボード", "スクリーン", "かいじ"]}, {"en": "chalk", "ja": "チョーク", "category": "学校・文房具", "options": ["チョーク", "マーカー", "えんぴつ", "クレヨン"]}, {"en": "library", "ja": "としょかん", "category": "学校・文房具", "options": ["としょかん", "きょうしつ", "たいいくかん", "ほけんしつ"]}, {"en": "gym", "ja": "たいいくかん・ジム", "category": "学校・文房具", "options": ["たいいくかん・ジム", "としょかん", "きょうしつ", "ほけんしつ"]}, {"en": "red", "ja": "あか", "category": "色・形", "options": ["あか", "あお", "きいろ", "みどり"]}, {"en": "blue", "ja": "あお", "category": "色・形", "options": ["あお", "むらさき", "みどり", "しろ"]}, {"en": "green", "ja": "みどり", "category": "色・形", "options": ["みどり", "あお", "きいろ", "ちゃいろ"]}, {"en": "white", "ja": "しろ", "category": "色・形", "options": ["しろ", "くろ", "はいいろ", "ピンク"]}, {"en": "black", "ja": "くろ", "category": "色・形", "options": ["くろ", "しろ", "こん", "グレー"]}, {"en": "yellow", "ja": "きいろ", "category": "色・形", "options": ["きいろ", "オレンジ", "きんいろ", "ベージュ"]}, {"en": "pink", "ja": "ピンク", "category": "色・形", "options": ["ピンク", "むらさき", "あか", "オレンジ"]}, {"en": "purple", "ja": "むらさき", "category": "色・形", "options": ["むらさき", "ピンク", "あお", "こん"]}, {"en": "brown", "ja": "ちゃいろ", "category": "色・形", "options": ["ちゃいろ", "みどり", "きいろ", "くろ"]}, {"en": "circle", "ja": "まる・えん", "category": "色・形", "options": ["まる・えん", "さんかく", "しかく", "ほし"]}, {"en": "square", "ja": "しかく", "category": "色・形", "options": ["しかく", "まる", "さんかく", "ながしかく"]}, {"en": "triangle", "ja": "さんかく", "category": "色・形", "options": ["さんかく", "しかく", "まる", "ほし"]}, {"en": "star", "ja": "ほし・スター", "category": "色・形", "options": ["ほし・スター", "まる", "ハート", "つき"]}, {"en": "heart", "ja": "ハート", "category": "色・形", "options": ["ハート", "ほし", "まる", "ダイヤ"]}, {"en": "sun", "ja": "たいよう", "category": "自然・天気", "options": ["たいよう", "つき", "ほし", "くも"]}, {"en": "moon", "ja": "つき", "category": "自然・天気", "options": ["つき", "たいよう", "ほし", "くも"]}, {"en": "rain", "ja": "あめ", "category": "自然・天気", "options": ["あめ", "ゆき", "かぜ", "くもり"]}, {"en": "snow", "ja": "ゆき", "category": "自然・天気", "options": ["ゆき", "あめ", "こおり", "あられ"]}, {"en": "wind", "ja": "かぜ", "category": "自然・天気", "options": ["かぜ", "あめ", "ゆき", "くも"]}, {"en": "cloud", "ja": "くも", "category": "自然・天気", "options": ["くも", "たいよう", "かぜ", "にじ"]}, {"en": "rainbow", "ja": "にじ", "category": "自然・天気", "options": ["にじ", "くも", "かぜ", "たいよう"]}, {"en": "flower", "ja": "はな", "category": "自然・天気", "options": ["はな", "き", "くさ", "はっぱ"]}, {"en": "tree", "ja": "き", "category": "自然・天気", "options": ["き", "くさ", "はな", "やま"]}, {"en": "grass", "ja": "くさ", "category": "自然・天気", "options": ["くさ", "き", "はな", "はっぱ"]}, {"en": "sea", "ja": "うみ", "category": "自然・天気", "options": ["うみ", "かわ", "みずうみ", "いけ"]}, {"en": "river", "ja": "かわ", "category": "自然・天気", "options": ["かわ", "うみ", "みずうみ", "いけ"]}, {"en": "mountain", "ja": "やま", "category": "自然・天気", "options": ["やま", "おか", "たに", "もり"]}, {"en": "forest", "ja": "もり・はやし", "category": "自然・天気", "options": ["もり・はやし", "やま", "たに", "こうえん"]}, {"en": "lake", "ja": "みずうみ", "category": "自然・天気", "options": ["みずうみ", "かわ", "いけ", "うみ"]}, {"en": "sky", "ja": "そら", "category": "自然・天気", "options": ["そら", "うみ", "やま", "かわ"]}, {"en": "earth", "ja": "ちきゅう・つち", "category": "自然・天気", "options": ["ちきゅう・つち", "そら", "うみ", "かわ"]}, {"en": "rock", "ja": "いわ・いし", "category": "自然・天気", "options": ["いわ・いし", "すな", "つち", "どろ"]}, {"en": "run", "ja": "はしる", "category": "動詞・動作", "options": ["はしる", "あるく", "とぶ", "およぐ"]}, {"en": "walk", "ja": "あるく", "category": "動詞・動作", "options": ["あるく", "はしる", "とぶ", "およぐ"]}, {"en": "eat", "ja": "たべる", "category": "動詞・動作", "options": ["たべる", "のむ", "つくる", "かう"]}, {"en": "drink", "ja": "のむ", "category": "動詞・動作", "options": ["のむ", "たべる", "もつ", "おく"]}, {"en": "sleep", "ja": "ねる", "category": "動詞・動作", "options": ["ねる", "おきる", "やすむ", "あるく"]}, {"en": "wake", "ja": "おきる", "category": "動詞・動作", "options": ["おきる", "ねる", "やすむ", "すわる"]}, {"en": "play", "ja": "あそぶ", "category": "動詞・動作", "options": ["あそぶ", "はたらく", "べんきょうする", "よむ"]}, {"en": "study", "ja": "べんきょうする", "category": "動詞・動作", "options": ["べんきょうする", "あそぶ", "はたらく", "よむ"]}, {"en": "read", "ja": "よむ", "category": "動詞・動作", "options": ["よむ", "かく", "みる", "きく"]}, {"en": "write", "ja": "かく", "category": "動詞・動作", "options": ["かく", "よむ", "えがく", "けす"]}, {"en": "listen", "ja": "きく", "category": "動詞・動作", "options": ["きく", "みる", "よむ", "かんがえる"]}, {"en": "watch", "ja": "みる・みまもる", "category": "動詞・動作", "options": ["みる・みまもる", "きく", "よむ", "かんがえる"]}, {"en": "speak", "ja": "はなす", "category": "動詞・動作", "options": ["はなす", "きく", "よむ", "かく"]}, {"en": "say", "ja": "いう", "category": "動詞・動作", "options": ["いう", "はなす", "こたえる", "たずねる"]}, {"en": "ask", "ja": "たずねる・きく", "category": "動詞・動作", "options": ["たずねる・きく", "こたえる", "いう", "はなす"]}, {"en": "answer", "ja": "こたえる", "category": "動詞・動作", "options": ["こたえる", "たずねる", "いう", "はなす"]}, {"en": "come", "ja": "くる", "category": "動詞・動作", "options": ["くる", "いく", "もどる", "でかける"]}, {"en": "go", "ja": "いく", "category": "動詞・動作", "options": ["いく", "くる", "もどる", "でかける"]}, {"en": "stop", "ja": "とまる", "category": "動詞・動作", "options": ["とまる", "うごく", "はしる", "あるく"]}, {"en": "start", "ja": "はじまる・はじめる", "category": "動詞・動作", "options": ["はじまる・はじめる", "おわる", "とまる", "やすむ"]}, {"en": "finish", "ja": "おわる・おえる", "category": "動詞・動作", "options": ["おわる・おえる", "はじまる", "とまる", "やすむ"]}, {"en": "open", "ja": "あける", "category": "動詞・動作", "options": ["あける", "しめる", "おす", "ひく"]}, {"en": "close", "ja": "しめる", "category": "動詞・動作", "options": ["しめる", "あける", "おす", "ひく"]}, {"en": "give", "ja": "あげる", "category": "動詞・動作", "options": ["あげる", "もらう", "かす", "かりる"]}, {"en": "take", "ja": "とる", "category": "動詞・動作", "options": ["とる", "もつ", "おく", "わたす"]}, {"en": "make", "ja": "つくる", "category": "動詞・動作", "options": ["つくる", "こわす", "なおす", "かえる"]}, {"en": "use", "ja": "つかう", "category": "動詞・動作", "options": ["つかう", "もつ", "おく", "しまう"]}, {"en": "like", "ja": "すき", "category": "動詞・動作", "options": ["すき", "きらい", "ほしい", "いやだ"]}, {"en": "love", "ja": "あいする・だいすき", "category": "動詞・動作", "options": ["あいする・だいすき", "すき", "きらい", "ほしい"]}, {"en": "want", "ja": "ほしい・ほしがる", "category": "動詞・動作", "options": ["ほしい・ほしがる", "いらない", "すき", "きらい"]}, {"en": "know", "ja": "しっている", "category": "動詞・動作", "options": ["しっている", "わからない", "おぼえている", "わすれた"]}, {"en": "think", "ja": "おもう・かんがえる", "category": "動詞・動作", "options": ["おもう・かんがえる", "しる", "わかる", "きめる"]}, {"en": "see", "ja": "みえる・みる", "category": "動詞・動作", "options": ["みえる・みる", "きこえる", "かんじる", "においがする"]}, {"en": "hear", "ja": "きこえる", "category": "動詞・動作", "options": ["きこえる", "みえる", "かんじる", "においがする"]}, {"en": "sing", "ja": "うたう", "category": "動詞・動作", "options": ["うたう", "ふく", "ひく", "たたく"]}, {"en": "dance", "ja": "おどる", "category": "動詞・動作", "options": ["おどる", "うたう", "とぶ", "はしる"]}, {"en": "swim", "ja": "およぐ", "category": "動詞・動作", "options": ["およぐ", "とぶ", "はしる", "あるく"]}, {"en": "jump", "ja": "とぶ・ジャンプする", "category": "動詞・動作", "options": ["とぶ・ジャンプする", "はしる", "あるく", "はねる"]}, {"en": "climb", "ja": "のぼる", "category": "動詞・動作", "options": ["のぼる", "おりる", "あるく", "はしる"]}, {"en": "sit", "ja": "すわる", "category": "動詞・動作", "options": ["すわる", "たつ", "ねる", "あるく"]}, {"en": "stand", "ja": "たつ", "category": "動詞・動作", "options": ["たつ", "すわる", "ねる", "しゃがむ"]}, {"en": "buy", "ja": "かう", "category": "動詞・動作", "options": ["かう", "うる", "もらう", "かりる"]}, {"en": "sell", "ja": "うる", "category": "動詞・動作", "options": ["うる", "かう", "もらう", "かす"]}, {"en": "help", "ja": "たすける・てつだう", "category": "動詞・動作", "options": ["たすける・てつだう", "じゃまする", "みる", "まつ"]}, {"en": "wait", "ja": "まつ", "category": "動詞・動作", "options": ["まつ", "いそぐ", "すすむ", "もどる"]}, {"en": "carry", "ja": "はこぶ", "category": "動詞・動作", "options": ["はこぶ", "もつ", "おく", "わたす"]}, {"en": "put", "ja": "おく", "category": "動詞・動作", "options": ["おく", "もつ", "とる", "わたす"]}, {"en": "park", "ja": "こうえん", "category": "場所・建物", "options": ["こうえん", "びょういん", "がっこう", "えき"]}, {"en": "store", "ja": "おみせ", "category": "場所・建物", "options": ["おみせ", "ぎんこう", "としょかん", "ゆうびんきょく"]}, {"en": "home", "ja": "いえ・うち", "category": "場所・建物", "options": ["いえ・うち", "ホテル", "がっこう", "びょういん"]}, {"en": "hospital", "ja": "びょういん", "category": "場所・建物", "options": ["びょういん", "としょかん", "がっこう", "こうばん"]}, {"en": "station", "ja": "えき", "category": "場所・建物", "options": ["えき", "バスてい", "くうこう", "みなと"]}, {"en": "airport", "ja": "くうこう", "category": "場所・建物", "options": ["くうこう", "えき", "みなと", "バスてい"]}, {"en": "hotel", "ja": "ホテル", "category": "場所・建物", "options": ["ホテル", "りょかん", "アパート", "マンション"]}, {"en": "restaurant", "ja": "レストラン", "category": "場所・建物", "options": ["レストラン", "カフェ", "バー", "しょくどう"]}, {"en": "supermarket", "ja": "スーパー", "category": "場所・建物", "options": ["スーパー", "コンビニ", "デパート", "やおや"]}, {"en": "bank", "ja": "ぎんこう", "category": "場所・建物", "options": ["ぎんこう", "ゆうびんきょく", "としょかん", "やくしょ"]}, {"en": "post office", "ja": "ゆうびんきょく", "category": "場所・建物", "options": ["ゆうびんきょく", "ぎんこう", "やくしょ", "としょかん"]}, {"en": "museum", "ja": "はくぶつかん", "category": "場所・建物", "options": ["はくぶつかん", "びじゅつかん", "どうぶつえん", "すいぞくかん"]}, {"en": "zoo", "ja": "どうぶつえん", "category": "場所・建物", "options": ["どうぶつえん", "はくぶつかん", "びじゅつかん", "すいぞくかん"]}, {"en": "church", "ja": "きょうかい", "category": "場所・建物", "options": ["きょうかい", "おてら", "じんじゃ", "モスク"]}, {"en": "temple", "ja": "おてら", "category": "場所・建物", "options": ["おてら", "きょうかい", "じんじゃ", "かいどう"]}, {"en": "bridge", "ja": "はし", "category": "場所・建物", "options": ["はし", "どうろ", "トンネル", "ダム"]}, {"en": "road", "ja": "どうろ・みち", "category": "場所・建物", "options": ["どうろ・みち", "こうそくどうろ", "てつどう", "こみち"]}, {"en": "city", "ja": "まち・し", "category": "場所・建物", "options": ["まち・し", "むら", "くに", "しゅと"]}, {"en": "town", "ja": "まち・ちょう", "category": "場所・建物", "options": ["まち・ちょう", "し", "むら", "くに"]}, {"en": "country", "ja": "くに", "category": "場所・建物", "options": ["くに", "まち", "し", "むら"]}, {"en": "morning", "ja": "あさ", "category": "時間・曜日", "options": ["あさ", "ひる", "ゆうがた", "よる"]}, {"en": "noon", "ja": "ひる・しょうご", "category": "時間・曜日", "options": ["ひる・しょうご", "あさ", "ゆうがた", "よる"]}, {"en": "evening", "ja": "ゆうがた", "category": "時間・曜日", "options": ["ゆうがた", "あさ", "ひる", "よる"]}, {"en": "night", "ja": "よる", "category": "時間・曜日", "options": ["よる", "ひる", "ゆうがた", "あさ"]}, {"en": "today", "ja": "きょう", "category": "時間・曜日", "options": ["きょう", "きのう", "あした", "あさって"]}, {"en": "yesterday", "ja": "きのう", "category": "時間・曜日", "options": ["きのう", "きょう", "あした", "おととい"]}, {"en": "tomorrow", "ja": "あした", "category": "時間・曜日", "options": ["あした", "きょう", "きのう", "あさって"]}, {"en": "week", "ja": "しゅう", "category": "時間・曜日", "options": ["しゅう", "にち", "つき", "ねん"]}, {"en": "month", "ja": "つき・がつ", "category": "時間・曜日", "options": ["つき・がつ", "しゅう", "にち", "ねん"]}, {"en": "year", "ja": "ねん・とし", "category": "時間・曜日", "options": ["ねん・とし", "つき", "しゅう", "にち"]}, {"en": "Monday", "ja": "げつようび", "category": "時間・曜日", "options": ["げつようび", "かようび", "すいようび", "もくようび"]}, {"en": "Tuesday", "ja": "かようび", "category": "時間・曜日", "options": ["かようび", "げつようび", "すいようび", "きんようび"]}, {"en": "Wednesday", "ja": "すいようび", "category": "時間・曜日", "options": ["すいようび", "かようび", "もくようび", "きんようび"]}, {"en": "Thursday", "ja": "もくようび", "category": "時間・曜日", "options": ["もくようび", "すいようび", "きんようび", "どようび"]}, {"en": "Friday", "ja": "きんようび", "category": "時間・曜日", "options": ["きんようび", "もくようび", "どようび", "にちようび"]}, {"en": "Saturday", "ja": "どようび", "category": "時間・曜日", "options": ["どようび", "きんようび", "にちようび", "げつようび"]}, {"en": "Sunday", "ja": "にちようび", "category": "時間・曜日", "options": ["にちようび", "どようび", "げつようび", "かようび"]}, {"en": "spring", "ja": "はる", "category": "時間・曜日", "options": ["はる", "なつ", "あき", "ふゆ"]}, {"en": "summer", "ja": "なつ", "category": "時間・曜日", "options": ["なつ", "はる", "あき", "ふゆ"]}, {"en": "autumn", "ja": "あき", "category": "時間・曜日", "options": ["あき", "はる", "なつ", "ふゆ"]}, {"en": "winter", "ja": "ふゆ", "category": "時間・曜日", "options": ["ふゆ", "はる", "なつ", "あき"]}, {"en": "head", "ja": "あたま", "category": "体・健康", "options": ["あたま", "かお", "くび", "かた"]}, {"en": "face", "ja": "かお", "category": "体・健康", "options": ["かお", "あたま", "くび", "むね"]}, {"en": "eye", "ja": "め", "category": "体・健康", "options": ["め", "はな", "くち", "みみ"]}, {"en": "nose", "ja": "はな", "category": "体・健康", "options": ["はな", "め", "くち", "みみ"]}, {"en": "mouth", "ja": "くち", "category": "体・健康", "options": ["くち", "め", "はな", "みみ"]}, {"en": "ear", "ja": "みみ", "category": "体・健康", "options": ["みみ", "め", "はな", "くち"]}, {"en": "hand", "ja": "て", "category": "体・健康", "options": ["て", "あし", "うで", "ゆび"]}, {"en": "foot", "ja": "あし・あしのうら", "category": "体・健康", "options": ["あし・あしのうら", "て", "ひざ", "つめ"]}, {"en": "arm", "ja": "うで", "category": "体・健康", "options": ["うで", "あし", "て", "かた"]}, {"en": "leg", "ja": "あし・あしのつけね", "category": "体・健康", "options": ["あし・あしのつけね", "うで", "て", "かた"]}, {"en": "tooth", "ja": "は", "category": "体・健康", "options": ["は", "した", "くちびる", "のど"]}, {"en": "hair", "ja": "かみのけ", "category": "体・健康", "options": ["かみのけ", "まゆげ", "まつげ", "ひげ"]}, {"en": "sick", "ja": "びょうき", "category": "体・健康", "options": ["びょうき", "けんこう", "げんき", "つかれ"]}, {"en": "cold", "ja": "かぜ・さむい", "category": "体・健康", "options": ["かぜ・さむい", "びょうき", "ねつ", "せき"]}, {"en": "fever", "ja": "ねつ", "category": "体・健康", "options": ["ねつ", "かぜ", "せき", "はきけ"]}, {"en": "medicine", "ja": "くすり", "category": "体・健康", "options": ["くすり", "びょうき", "ちりょう", "しんさつ"]}, {"en": "shirt", "ja": "シャツ", "category": "服・持ち物", "options": ["シャツ", "ズボン", "スカート", "ジャケット"]}, {"en": "pants", "ja": "ズボン", "category": "服・持ち物", "options": ["ズボン", "シャツ", "スカート", "コート"]}, {"en": "skirt", "ja": "スカート", "category": "服・持ち物", "options": ["スカート", "ズボン", "シャツ", "ワンピース"]}, {"en": "dress", "ja": "ドレス・ワンピース", "category": "服・持ち物", "options": ["ドレス・ワンピース", "スカート", "シャツ", "ジャケット"]}, {"en": "jacket", "ja": "ジャケット", "category": "服・持ち物", "options": ["ジャケット", "コート", "シャツ", "セーター"]}, {"en": "coat", "ja": "コート", "category": "服・持ち物", "options": ["コート", "ジャケット", "セーター", "マフラー"]}, {"en": "shoes", "ja": "くつ", "category": "服・持ち物", "options": ["くつ", "くつした", "サンダル", "ブーツ"]}, {"en": "hat", "ja": "ぼうし", "category": "服・持ち物", "options": ["ぼうし", "スカーフ", "てぶくろ", "マフラー"]}, {"en": "glasses", "ja": "めがね", "category": "服・持ち物", "options": ["めがね", "コンタクト", "サングラス", "めのまえ"]}, {"en": "umbrella", "ja": "かさ", "category": "服・持ち物", "options": ["かさ", "レインコート", "ながぐつ", "カッパ"]}, {"en": "wallet", "ja": "さいふ", "category": "服・持ち物", "options": ["さいふ", "かばん", "てさげ", "リュック"]}, {"en": "happy", "ja": "しあわせ・うれしい", "category": "形容詞・状態", "options": ["しあわせ・うれしい", "かなしい", "おこっている", "さみしい"]}, {"en": "sad", "ja": "かなしい", "category": "形容詞・状態", "options": ["かなしい", "うれしい", "おこっている", "たのしい"]}, {"en": "angry", "ja": "おこっている", "category": "形容詞・状態", "options": ["おこっている", "うれしい", "かなしい", "おどろいた"]}, {"en": "surprised", "ja": "おどろいた", "category": "形容詞・状態", "options": ["おどろいた", "こわい", "たのしい", "かなしい"]}, {"en": "scared", "ja": "こわい", "category": "形容詞・状態", "options": ["こわい", "おどろいた", "かなしい", "さみしい"]}, {"en": "tired", "ja": "つかれた", "category": "形容詞・状態", "options": ["つかれた", "げんき", "ねむい", "くたくた"]}, {"en": "hungry", "ja": "おなかがすいた", "category": "形容詞・状態", "options": ["おなかがすいた", "のどがかわいた", "おなかいっぱい", "げんき"]}, {"en": "thirsty", "ja": "のどがかわいた", "category": "形容詞・状態", "options": ["のどがかわいた", "おなかがすいた", "おなかいっぱい", "つかれた"]}, {"en": "big", "ja": "おおきい", "category": "形容詞・状態", "options": ["おおきい", "ちいさい", "ながい", "みじかい"]}, {"en": "small", "ja": "ちいさい", "category": "形容詞・状態", "options": ["ちいさい", "おおきい", "ながい", "みじかい"]}, {"en": "long", "ja": "ながい", "category": "形容詞・状態", "options": ["ながい", "みじかい", "おおきい", "ちいさい"]}, {"en": "short", "ja": "みじかい・ひくい", "category": "形容詞・状態", "options": ["みじかい・ひくい", "ながい", "たかい", "おおきい"]}, {"en": "tall", "ja": "たかい・せがたかい", "category": "形容詞・状態", "options": ["たかい・せがたかい", "ひくい", "おおきい", "ちいさい"]}, {"en": "fast", "ja": "はやい", "category": "形容詞・状態", "options": ["はやい", "おそい", "つよい", "よわい"]}, {"en": "slow", "ja": "おそい", "category": "形容詞・状態", "options": ["おそい", "はやい", "つよい", "よわい"]}, {"en": "hot", "ja": "あつい", "category": "形容詞・状態", "options": ["あつい", "さむい", "あたたかい", "すずしい"]}, {"en": "warm", "ja": "あたたかい", "category": "形容詞・状態", "options": ["あたたかい", "さむい", "あつい", "すずしい"]}, {"en": "cool", "ja": "すずしい", "category": "形容詞・状態", "options": ["すずしい", "あたたかい", "あつい", "さむい"]}, {"en": "good", "ja": "よい", "category": "形容詞・状態", "options": ["よい", "わるい", "すばらしい", "ふつう"]}, {"en": "bad", "ja": "わるい", "category": "形容詞・状態", "options": ["わるい", "よい", "ひどい", "ふつう"]}, {"en": "new", "ja": "あたらしい", "category": "形容詞・状態", "options": ["あたらしい", "ふるい", "きれい", "きたない"]}, {"en": "old", "ja": "ふるい", "category": "形容詞・状態", "options": ["ふるい", "あたらしい", "きれい", "きたない"]}, {"en": "clean", "ja": "きれい", "category": "形容詞・状態", "options": ["きれい", "きたない", "あたらしい", "ふるい"]}, {"en": "dirty", "ja": "きたない", "category": "形容詞・状態", "options": ["きたない", "きれい", "あたらしい", "ふるい"]}, {"en": "easy", "ja": "かんたん", "category": "形容詞・状態", "options": ["かんたん", "むずかしい", "ふつう", "むり"]}, {"en": "difficult", "ja": "むずかしい", "category": "形容詞・状態", "options": ["むずかしい", "かんたん", "ふつう", "むり"]}, {"en": "strong", "ja": "つよい", "category": "形容詞・状態", "options": ["つよい", "よわい", "はやい", "おそい"]}, {"en": "weak", "ja": "よわい", "category": "形容詞・状態", "options": ["よわい", "つよい", "はやい", "おそい"]}, {"en": "right", "ja": "ただしい・みぎ", "category": "形容詞・状態", "options": ["ただしい・みぎ", "まちがい・ひだり", "まっすぐ", "うえ"]}, {"en": "wrong", "ja": "まちがい", "category": "形容詞・状態", "options": ["まちがい", "ただしい", "ふつう", "むり"]}, {"en": "free", "ja": "じゆう・むりょう", "category": "形容詞・状態", "options": ["じゆう・むりょう", "いそがしい", "ゆうりょう", "たかい"]}, {"en": "busy", "ja": "いそがしい", "category": "形容詞・状態", "options": ["いそがしい", "ひま", "じゆう", "たいくつ"]}, {"en": "car", "ja": "くるま", "category": "乗り物", "options": ["くるま", "バス", "でんしゃ", "ひこうき"]}, {"en": "bus", "ja": "バス", "category": "乗り物", "options": ["バス", "くるま", "でんしゃ", "タクシー"]}, {"en": "train", "ja": "でんしゃ", "category": "乗り物", "options": ["でんしゃ", "バス", "くるま", "ちかてつ"]}, {"en": "airplane", "ja": "ひこうき", "category": "乗り物", "options": ["ひこうき", "ヘリコプター", "ロケット", "グライダー"]}, {"en": "bicycle", "ja": "じてんしゃ", "category": "乗り物", "options": ["じてんしゃ", "バイク", "くるま", "バス"]}, {"en": "ship", "ja": "ふね", "category": "乗り物", "options": ["ふね", "ボート", "ヨット", "せんすいかん"]}, {"en": "taxi", "ja": "タクシー", "category": "乗り物", "options": ["タクシー", "バス", "くるま", "でんしゃ"]}, {"en": "truck", "ja": "トラック", "category": "乗り物", "options": ["トラック", "くるま", "バス", "バン"]}, {"en": "room", "ja": "へや", "category": "家・部屋", "options": ["へや", "うち", "たてもの", "ろうか"]}, {"en": "kitchen", "ja": "だいどころ", "category": "家・部屋", "options": ["だいどころ", "しんしつ", "リビング", "トイレ"]}, {"en": "bedroom", "ja": "しんしつ", "category": "家・部屋", "options": ["しんしつ", "だいどころ", "リビング", "バスルーム"]}, {"en": "bathroom", "ja": "バスルーム・おふろ", "category": "家・部屋", "options": ["バスルーム・おふろ", "トイレ", "しんしつ", "だいどころ"]}, {"en": "door", "ja": "ドア", "category": "家・部屋", "options": ["ドア", "まど", "かべ", "てんじょう"]}, {"en": "window", "ja": "まど", "category": "家・部屋", "options": ["まど", "ドア", "かべ", "ゆか"]}, {"en": "bed", "ja": "ベッド", "category": "家・部屋", "options": ["ベッド", "ソファ", "いす", "つくえ"]}, {"en": "table", "ja": "テーブル", "category": "家・部屋", "options": ["テーブル", "つくえ", "いす", "ソファ"]}, {"en": "sofa", "ja": "ソファ", "category": "家・部屋", "options": ["ソファ", "いす", "ベッド", "テーブル"]}, {"en": "lamp", "ja": "ランプ・でんき", "category": "家・部屋", "options": ["ランプ・でんき", "でんきゅう", "スイッチ", "コンセント"]}, {"en": "TV", "ja": "テレビ", "category": "家・部屋", "options": ["テレビ", "ラジオ", "パソコン", "スマホ"]}, {"en": "phone", "ja": "でんわ", "category": "家・部屋", "options": ["でんわ", "スマホ", "タブレット", "パソコン"]}, {"en": "computer", "ja": "パソコン", "category": "家・部屋", "options": ["パソコン", "タブレット", "スマホ", "テレビ"]}, {"en": "ball", "ja": "ボール", "category": "スポーツ・遊び", "options": ["ボール", "バット", "ラケット", "ネット"]}, {"en": "game", "ja": "ゲーム", "category": "スポーツ・遊び", "options": ["ゲーム", "スポーツ", "えいが", "おんがく"]}, {"en": "sport", "ja": "スポーツ", "category": "スポーツ・遊び", "options": ["スポーツ", "ゲーム", "たいそう", "うんどう"]}, {"en": "soccer", "ja": "サッカー", "category": "スポーツ・遊び", "options": ["サッカー", "やきゅう", "バスケット", "テニス"]}, {"en": "baseball", "ja": "やきゅう", "category": "スポーツ・遊び", "options": ["やきゅう", "サッカー", "バスケット", "テニス"]}, {"en": "tennis", "ja": "テニス", "category": "スポーツ・遊び", "options": ["テニス", "バドミントン", "サッカー", "やきゅう"]}, {"en": "music", "ja": "おんがく", "category": "スポーツ・遊び", "options": ["おんがく", "えいが", "ほん", "アート"]}, {"en": "movie", "ja": "えいが", "category": "スポーツ・遊び", "options": ["えいが", "おんがく", "テレビ", "ゲーム"]}, {"en": "song", "ja": "うた", "category": "スポーツ・遊び", "options": ["うた", "おんがく", "えんそう", "ダンス"]}, {"en": "piano", "ja": "ピアノ", "category": "スポーツ・遊び", "options": ["ピアノ", "ギター", "バイオリン", "ドラム"]}, {"en": "guitar", "ja": "ギター", "category": "スポーツ・遊び", "options": ["ギター", "ピアノ", "バイオリン", "ドラム"]}, {"en": "one", "ja": "いち", "category": "数・量", "options": ["いち", "に", "さん", "し"]}, {"en": "two", "ja": "に", "category": "数・量", "options": ["に", "いち", "さん", "し"]}, {"en": "three", "ja": "さん", "category": "数・量", "options": ["さん", "に", "し", "ご"]}, {"en": "four", "ja": "し・よん", "category": "数・量", "options": ["し・よん", "さん", "ご", "ろく"]}, {"en": "five", "ja": "ご", "category": "数・量", "options": ["ご", "し", "ろく", "なな"]}, {"en": "six", "ja": "ろく", "category": "数・量", "options": ["ろく", "ご", "なな", "はち"]}, {"en": "seven", "ja": "なな・しち", "category": "数・量", "options": ["なな・しち", "ろく", "はち", "く"]}, {"en": "eight", "ja": "はち", "category": "数・量", "options": ["はち", "なな", "く", "じゅう"]}, {"en": "nine", "ja": "く・きゅう", "category": "数・量", "options": ["く・きゅう", "はち", "じゅう", "じゅういち"]}, {"en": "ten", "ja": "じゅう", "category": "数・量", "options": ["じゅう", "く", "じゅういち", "じゅうに"]}, {"en": "hundred", "ja": "ひゃく", "category": "数・量", "options": ["ひゃく", "じゅう", "せん", "まん"]}, {"en": "thousand", "ja": "せん", "category": "数・量", "options": ["せん", "ひゃく", "まん", "じゅう"]}, {"en": "first", "ja": "さいしょ・いちばん", "category": "数・量", "options": ["さいしょ・いちばん", "さいご", "なかば", "まんなか"]}, {"en": "last", "ja": "さいご・おわり", "category": "数・量", "options": ["さいご・おわり", "さいしょ", "まんなか", "なかば"]}, {"en": "much", "ja": "たくさん", "category": "数・量", "options": ["たくさん", "すこし", "ちょっと", "ほとんど"]}, {"en": "many", "ja": "おおい", "category": "数・量", "options": ["おおい", "すくない", "たくさん", "すこし"]}, {"en": "few", "ja": "すくない・ほとんどない", "category": "数・量", "options": ["すくない・ほとんどない", "おおい", "たくさん", "すこし"]}, {"en": "some", "ja": "いくつか・すこし", "category": "数・量", "options": ["いくつか・すこし", "たくさん", "すべて", "ない"]}, {"en": "all", "ja": "すべて・みんな", "category": "数・量", "options": ["すべて・みんな", "すこし", "いくつか", "ない"]}, {"en": "here", "ja": "ここ", "category": "場所・方向", "options": ["ここ", "そこ", "あそこ", "どこ"]}, {"en": "there", "ja": "そこ・あそこ", "category": "場所・方向", "options": ["そこ・あそこ", "ここ", "どこ", "むこう"]}, {"en": "up", "ja": "うえ", "category": "場所・方向", "options": ["うえ", "した", "みぎ", "ひだり"]}, {"en": "down", "ja": "した", "category": "場所・方向", "options": ["した", "うえ", "みぎ", "ひだり"]}, {"en": "left", "ja": "ひだり", "category": "場所・方向", "options": ["ひだり", "みぎ", "うえ", "した"]}, {"en": "front", "ja": "まえ", "category": "場所・方向", "options": ["まえ", "うしろ", "よこ", "となり"]}, {"en": "back", "ja": "うしろ", "category": "場所・方向", "options": ["うしろ", "まえ", "よこ", "となり"]}, {"en": "inside", "ja": "なか", "category": "場所・方向", "options": ["なか", "そと", "うえ", "した"]}, {"en": "outside", "ja": "そと", "category": "場所・方向", "options": ["そと", "なか", "うえ", "した"]}, {"en": "near", "ja": "ちかい", "category": "場所・方向", "options": ["ちかい", "とおい", "となり", "むこう"]}, {"en": "far", "ja": "とおい", "category": "場所・方向", "options": ["とおい", "ちかい", "むこう", "はなれた"]}, {"en": "hello", "ja": "こんにちは", "category": "あいさつ・表現", "options": ["こんにちは", "さようなら", "おはよう", "こんばんは"]}, {"en": "goodbye", "ja": "さようなら", "category": "あいさつ・表現", "options": ["さようなら", "こんにちは", "またね", "じゃあね"]}, {"en": "thank you", "ja": "ありがとう", "category": "あいさつ・表現", "options": ["ありがとう", "ごめんなさい", "どういたしまして", "よろしく"]}, {"en": "sorry", "ja": "ごめんなさい", "category": "あいさつ・表現", "options": ["ごめんなさい", "ありがとう", "どういたしまして", "すみません"]}, {"en": "please", "ja": "おねがいします", "category": "あいさつ・表現", "options": ["おねがいします", "ありがとう", "どうぞ", "いいえ"]}, {"en": "yes", "ja": "はい", "category": "あいさつ・表現", "options": ["はい", "いいえ", "そう", "ちがう"]}, {"en": "no", "ja": "いいえ", "category": "あいさつ・表現", "options": ["いいえ", "はい", "そう", "ちがう"]}, {"en": "OK", "ja": "わかった・いいよ", "category": "あいさつ・表現", "options": ["わかった・いいよ", "だめ", "わからない", "むり"]}, {"en": "name", "ja": "なまえ", "category": "あいさつ・表現", "options": ["なまえ", "ねんれい", "じゅうしょ", "くに"]}, {"en": "age", "ja": "ねんれい", "category": "あいさつ・表現", "options": ["ねんれい", "なまえ", "たんじょうび", "しゅみ"]}, {"en": "birthday", "ja": "たんじょうび", "category": "あいさつ・表現", "options": ["たんじょうび", "きねんび", "やすみ", "まつり"]}, {"en": "hobby", "ja": "しゅみ", "category": "あいさつ・表現", "options": ["しゅみ", "とくぎ", "しごと", "きょうみ"]}, {"en": "holiday", "ja": "きゅうじつ", "category": "あいさつ・表現", "options": ["きゅうじつ", "へいじつ", "やすみ", "まつり"]}, {"en": "party", "ja": "パーティー", "category": "あいさつ・表現", "options": ["パーティー", "まつり", "イベント", "コンサート"]}, {"en": "present", "ja": "プレゼント", "category": "あいさつ・表現", "options": ["プレゼント", "おかし", "カード", "はな"]}, {"en": "letter", "ja": "てがみ", "category": "あいさつ・表現", "options": ["てがみ", "メール", "でんわ", "メッセージ"]}, {"en": "color", "ja": "いろ", "category": "あいさつ・表現", "options": ["いろ", "かたち", "おおきさ", "ながさ"]}, {"en": "picture", "ja": "えいが・え", "category": "あいさつ・表現", "options": ["えいが・え", "しゃしん", "ずあん", "イラスト"]}, {"en": "photo", "ja": "しゃしん", "category": "あいさつ・表現", "options": ["しゃしん", "え", "ポスター", "イラスト"]}];
+const WORDS = [{"en": "mother", "ja": "おかあさん", "category": "家族・人", "options": ["おかあさん", "おとうさん", "おねえさん", "おばあさん"], "emoji": "👩"}, {"en": "father", "ja": "おとうさん", "category": "家族・人", "options": ["おとうさん", "おにいさん", "おじいさん", "おじさん"], "emoji": "👨"}, {"en": "sister", "ja": "おねえさん・いもうと", "category": "家族・人", "options": ["おねえさん・いもうと", "おにいさん・おとうと", "おばさん", "むすめ"], "emoji": "👧"}, {"en": "brother", "ja": "おにいさん・おとうと", "category": "家族・人", "options": ["おにいさん・おとうと", "おねえさん・いもうと", "むすこ", "いとこ"], "emoji": "👦"}, {"en": "friend", "ja": "ともだち", "category": "家族・人", "options": ["ともだち", "せんせい", "いしゃ", "きゃく"], "emoji": "🤝"}, {"en": "teacher", "ja": "せんせい", "category": "家族・人", "options": ["せんせい", "がくせい", "いしゃ", "かんごし"], "emoji": "👩‍🏫"}, {"en": "student", "ja": "せいと・がくせい", "category": "家族・人", "options": ["せいと・がくせい", "せんせい", "こども", "おとな"], "emoji": "🧑‍🎓"}, {"en": "baby", "ja": "あかちゃん", "category": "家族・人", "options": ["あかちゃん", "こども", "おとな", "おじいさん"], "emoji": "👶"}, {"en": "child", "ja": "こども", "category": "家族・人", "options": ["こども", "おとな", "あかちゃん", "わかもの"], "emoji": "🧒"}, {"en": "boy", "ja": "おとこのこ", "category": "家族・人", "options": ["おとこのこ", "おんなのこ", "おとこのひと", "おんなのひと"], "emoji": "👦"}, {"en": "girl", "ja": "おんなのこ", "category": "家族・人", "options": ["おんなのこ", "おとこのこ", "おんなのひと", "おとこのひと"], "emoji": "👧"}, {"en": "man", "ja": "おとこのひと", "category": "家族・人", "options": ["おとこのひと", "おんなのひと", "おとこのこ", "おじいさん"], "emoji": "👨"}, {"en": "woman", "ja": "おんなのひと", "category": "家族・人", "options": ["おんなのひと", "おとこのひと", "おんなのこ", "おばあさん"], "emoji": "👩"}, {"en": "doctor", "ja": "いしゃ", "category": "家族・人", "options": ["いしゃ", "かんごし", "きょうし", "けいさつかん"], "emoji": "👨‍⚕️"}, {"en": "nurse", "ja": "かんごし", "category": "家族・人", "options": ["かんごし", "いしゃ", "やくざいし", "じゅうい"], "emoji": "👩‍⚕️"}, {"en": "police", "ja": "けいさつかん", "category": "家族・人", "options": ["けいさつかん", "しょうぼうし", "へいし", "うんてんし"], "emoji": "👮"}, {"en": "cook", "ja": "コック・りょうりにん", "category": "家族・人", "options": ["コック・りょうりにん", "ウェイター", "かじや", "のうか"], "emoji": "👨‍🍳"}, {"en": "farmer", "ja": "のうか・のうふ", "category": "家族・人", "options": ["のうか・のうふ", "りょうし", "もりもり", "こうじょうろうどうしゃ"], "emoji": "👨‍🌾"}, {"en": "singer", "ja": "かしゅ", "category": "家族・人", "options": ["かしゅ", "げいにん", "はいゆう", "ダンサー"], "emoji": "🎤"}, {"en": "player", "ja": "せんしゅ・プレーヤー", "category": "家族・人", "options": ["せんしゅ・プレーヤー", "コーチ", "しんぱん", "かんきゃく"], "emoji": "⚽"}, {"en": "dog", "ja": "いぬ", "category": "動物", "options": ["いぬ", "ねこ", "うさぎ", "とり"], "emoji": "🐶"}, {"en": "cat", "ja": "ねこ", "category": "動物", "options": ["ねこ", "いぬ", "ねずみ", "うし"], "emoji": "🐱"}, {"en": "bird", "ja": "とり", "category": "動物", "options": ["とり", "さかな", "むし", "カエル"], "emoji": "🐦"}, {"en": "fish", "ja": "さかな", "category": "動物", "options": ["さかな", "カメ", "うさぎ", "くま"], "emoji": "🐟"}, {"en": "horse", "ja": "うま", "category": "動物", "options": ["うま", "うし", "ぶた", "ひつじ"], "emoji": "🐴"}, {"en": "rabbit", "ja": "うさぎ", "category": "動物", "options": ["うさぎ", "ねずみ", "りす", "キツネ"], "emoji": "🐰"}, {"en": "cow", "ja": "うし", "category": "動物", "options": ["うし", "うま", "やぎ", "ひつじ"], "emoji": "🐮"}, {"en": "pig", "ja": "ぶた", "category": "動物", "options": ["ぶた", "うし", "ひつじ", "うま"], "emoji": "🐷"}, {"en": "sheep", "ja": "ひつじ", "category": "動物", "options": ["ひつじ", "やぎ", "うし", "ぶた"], "emoji": "🐑"}, {"en": "bear", "ja": "くま", "category": "動物", "options": ["くま", "おおかみ", "きつね", "たぬき"], "emoji": "🐻"}, {"en": "lion", "ja": "ライオン", "category": "動物", "options": ["ライオン", "トラ", "ヒョウ", "チーター"], "emoji": "🦁"}, {"en": "tiger", "ja": "トラ", "category": "動物", "options": ["トラ", "ライオン", "ヒョウ", "オオカミ"], "emoji": "🐯"}, {"en": "monkey", "ja": "さる", "category": "動物", "options": ["さる", "ゴリラ", "チンパンジー", "パンダ"], "emoji": "🐵"}, {"en": "elephant", "ja": "ぞう", "category": "動物", "options": ["ぞう", "キリン", "サイ", "カバ"], "emoji": "🐘"}, {"en": "giraffe", "ja": "キリン", "category": "動物", "options": ["キリン", "ぞう", "サイ", "カバ"], "emoji": "🦒"}, {"en": "snake", "ja": "へび", "category": "動物", "options": ["へび", "とかげ", "カメ", "カエル"], "emoji": "🐍"}, {"en": "frog", "ja": "カエル", "category": "動物", "options": ["カエル", "へび", "とかげ", "カメ"], "emoji": "🐸"}, {"en": "duck", "ja": "アヒル・かも", "category": "動物", "options": ["アヒル・かも", "にわとり", "はと", "からす"], "emoji": "🦆"}, {"en": "chicken", "ja": "にわとり", "category": "動物", "options": ["にわとり", "アヒル", "はと", "つばめ"], "emoji": "🐔"}, {"en": "insect", "ja": "むし・こんちゅう", "category": "動物", "options": ["むし・こんちゅう", "さかな", "とり", "カエル"], "emoji": "🐛"}, {"en": "butterfly", "ja": "ちょうちょ", "category": "動物", "options": ["ちょうちょ", "とんぼ", "カブトムシ", "バッタ"], "emoji": "🦋"}, {"en": "bee", "ja": "ハチ", "category": "動物", "options": ["ハチ", "アリ", "ちょうちょ", "カブトムシ"], "emoji": "🐝"}, {"en": "ant", "ja": "アリ", "category": "動物", "options": ["アリ", "ハチ", "ゴキブリ", "バッタ"], "emoji": "🐜"}, {"en": "bread", "ja": "パン", "category": "食べ物・飲み物", "options": ["パン", "ごはん", "めん", "スープ"], "emoji": "🍞"}, {"en": "milk", "ja": "ぎゅうにゅう", "category": "食べ物・飲み物", "options": ["ぎゅうにゅう", "みず", "ジュース", "おちゃ"], "emoji": "🥛"}, {"en": "cake", "ja": "ケーキ", "category": "食べ物・飲み物", "options": ["ケーキ", "クッキー", "アイス", "チョコ"], "emoji": "🎂"}, {"en": "apple", "ja": "りんご", "category": "食べ物・飲み物", "options": ["りんご", "バナナ", "みかん", "いちご"], "emoji": "🍎"}, {"en": "rice", "ja": "ごはん", "category": "食べ物・飲み物", "options": ["ごはん", "パン", "めん", "スープ"], "emoji": "🍚"}, {"en": "water", "ja": "みず", "category": "食べ物・飲み物", "options": ["みず", "ぎゅうにゅう", "ジュース", "コーヒー"], "emoji": "💧"}, {"en": "egg", "ja": "たまご", "category": "食べ物・飲み物", "options": ["たまご", "にく", "さかな", "やさい"], "emoji": "🥚"}, {"en": "meat", "ja": "にく", "category": "食べ物・飲み物", "options": ["にく", "さかな", "やさい", "たまご"], "emoji": "🍖"}, {"en": "vegetable", "ja": "やさい", "category": "食べ物・飲み物", "options": ["やさい", "くだもの", "にく", "さかな"], "emoji": "🥦"}, {"en": "fruit", "ja": "くだもの・フルーツ", "category": "食べ物・飲み物", "options": ["くだもの・フルーツ", "やさい", "かしゃく", "のみもの"], "emoji": "🍓"}, {"en": "juice", "ja": "ジュース", "category": "食べ物・飲み物", "options": ["ジュース", "みず", "おちゃ", "コーヒー"], "emoji": "🧃"}, {"en": "tea", "ja": "おちゃ", "category": "食べ物・飲み物", "options": ["おちゃ", "コーヒー", "ジュース", "みず"], "emoji": "🍵"}, {"en": "coffee", "ja": "コーヒー", "category": "食べ物・飲み物", "options": ["コーヒー", "おちゃ", "ジュース", "みず"], "emoji": "☕"}, {"en": "soup", "ja": "スープ", "category": "食べ物・飲み物", "options": ["スープ", "シチュー", "カレー", "みそしる"], "emoji": "🍲"}, {"en": "salad", "ja": "サラダ", "category": "食べ物・飲み物", "options": ["サラダ", "スープ", "カレー", "シチュー"], "emoji": "🥗"}, {"en": "pizza", "ja": "ピザ", "category": "食べ物・飲み物", "options": ["ピザ", "ハンバーガー", "ホットドッグ", "サンドイッチ"], "emoji": "🍕"}, {"en": "hamburger", "ja": "ハンバーガー", "category": "食べ物・飲み物", "options": ["ハンバーガー", "ピザ", "ホットドッグ", "サンドイッチ"], "emoji": "🍔"}, {"en": "sandwich", "ja": "サンドイッチ", "category": "食べ物・飲み物", "options": ["サンドイッチ", "ハンバーガー", "ピザ", "ホットドッグ"], "emoji": "🥪"}, {"en": "cookie", "ja": "クッキー", "category": "食べ物・飲み物", "options": ["クッキー", "ケーキ", "アイス", "チョコ"], "emoji": "🍪"}, {"en": "ice cream", "ja": "アイスクリーム", "category": "食べ物・飲み物", "options": ["アイスクリーム", "ケーキ", "クッキー", "チョコ"], "emoji": "🍦"}, {"en": "banana", "ja": "バナナ", "category": "食べ物・飲み物", "options": ["バナナ", "りんご", "みかん", "ぶどう"], "emoji": "🍌"}, {"en": "orange", "ja": "オレンジ", "category": "食べ物・飲み物", "options": ["オレンジ", "りんご", "バナナ", "レモン"], "emoji": "🟠"}, {"en": "strawberry", "ja": "いちご", "category": "食べ物・飲み物", "options": ["いちご", "りんご", "ぶどう", "もも"], "emoji": "🍓"}, {"en": "tomato", "ja": "トマト", "category": "食べ物・飲み物", "options": ["トマト", "にんじん", "たまねぎ", "きゅうり"], "emoji": "🍅"}, {"en": "potato", "ja": "じゃがいも", "category": "食べ物・飲み物", "options": ["じゃがいも", "さつまいも", "にんじん", "だいこん"], "emoji": "🥔"}, {"en": "carrot", "ja": "にんじん", "category": "食べ物・飲み物", "options": ["にんじん", "だいこん", "かぶ", "ごぼう"], "emoji": "🥕"}, {"en": "corn", "ja": "とうもろこし", "category": "食べ物・飲み物", "options": ["とうもろこし", "にんじん", "かぼちゃ", "なす"], "emoji": "🌽"}, {"en": "cheese", "ja": "チーズ", "category": "食べ物・飲み物", "options": ["チーズ", "バター", "マヨネーズ", "ヨーグルト"], "emoji": "🧀"}, {"en": "butter", "ja": "バター", "category": "食べ物・飲み物", "options": ["バター", "チーズ", "マーガリン", "ヨーグルト"], "emoji": "🧈"}, {"en": "book", "ja": "ほん", "category": "学校・文房具", "options": ["ほん", "ノート", "えんぴつ", "けしごむ"], "emoji": "📚"}, {"en": "pen", "ja": "ペン", "category": "学校・文房具", "options": ["ペン", "えんぴつ", "ものさし", "はさみ"], "emoji": "🖊️"}, {"en": "pencil", "ja": "えんぴつ", "category": "学校・文房具", "options": ["えんぴつ", "ペン", "クレヨン", "マーカー"], "emoji": "✏️"}, {"en": "eraser", "ja": "けしごむ", "category": "学校・文房具", "options": ["けしごむ", "のり", "テープ", "ホチキス"], "emoji": "🧹"}, {"en": "desk", "ja": "つくえ", "category": "学校・文房具", "options": ["つくえ", "いす", "こくばん", "かばん"], "emoji": "🪑"}, {"en": "chair", "ja": "いす", "category": "学校・文房具", "options": ["いす", "つくえ", "ソファ", "ベッド"], "emoji": "🪑"}, {"en": "bag", "ja": "かばん", "category": "学校・文房具", "options": ["かばん", "くつ", "ぼうし", "ふで"], "emoji": "🎒"}, {"en": "school", "ja": "がっこう", "category": "学校・文房具", "options": ["がっこう", "いえ", "こうえん", "びょういん"], "emoji": "🏫"}, {"en": "class", "ja": "クラス・じゅぎょう", "category": "学校・文房具", "options": ["クラス・じゅぎょう", "クラブ", "テスト", "しゅくだい"], "emoji": "🏫"}, {"en": "test", "ja": "テスト", "category": "学校・文房具", "options": ["テスト", "しゅくだい", "クラス", "じゅぎょう"], "emoji": "📝"}, {"en": "homework", "ja": "しゅくだい", "category": "学校・文房具", "options": ["しゅくだい", "テスト", "べんきょう", "れんしゅう"], "emoji": "📓"}, {"en": "notebook", "ja": "ノート", "category": "学校・文房具", "options": ["ノート", "ほん", "てちょう", "アルバム"], "emoji": "📓"}, {"en": "ruler", "ja": "ものさし・じょうぎ", "category": "学校・文房具", "options": ["ものさし・じょうぎ", "コンパス", "はさみ", "のり"], "emoji": "📏"}, {"en": "scissors", "ja": "はさみ", "category": "学校・文房具", "options": ["はさみ", "ものさし", "のり", "カッター"], "emoji": "✂️"}, {"en": "glue", "ja": "のり", "category": "学校・文房具", "options": ["のり", "テープ", "はさみ", "ホチキス"], "emoji": "🧴"}, {"en": "blackboard", "ja": "こくばん", "category": "学校・文房具", "options": ["こくばん", "ホワイトボード", "スクリーン", "かいじ"], "emoji": "🖊️"}, {"en": "chalk", "ja": "チョーク", "category": "学校・文房具", "options": ["チョーク", "マーカー", "えんぴつ", "クレヨン"], "emoji": "🖊️"}, {"en": "library", "ja": "としょかん", "category": "学校・文房具", "options": ["としょかん", "きょうしつ", "たいいくかん", "ほけんしつ"], "emoji": "📚"}, {"en": "gym", "ja": "たいいくかん・ジム", "category": "学校・文房具", "options": ["たいいくかん・ジム", "としょかん", "きょうしつ", "ほけんしつ"], "emoji": "🏋️"}, {"en": "red", "ja": "あか", "category": "色・形", "options": ["あか", "あお", "きいろ", "みどり"], "emoji": "🔴"}, {"en": "blue", "ja": "あお", "category": "色・形", "options": ["あお", "むらさき", "みどり", "しろ"], "emoji": "🔵"}, {"en": "green", "ja": "みどり", "category": "色・形", "options": ["みどり", "あお", "きいろ", "ちゃいろ"], "emoji": "🟢"}, {"en": "white", "ja": "しろ", "category": "色・形", "options": ["しろ", "くろ", "はいいろ", "ピンク"], "emoji": "⬜"}, {"en": "black", "ja": "くろ", "category": "色・形", "options": ["くろ", "しろ", "こん", "グレー"], "emoji": "⬛"}, {"en": "yellow", "ja": "きいろ", "category": "色・形", "options": ["きいろ", "オレンジ", "きんいろ", "ベージュ"], "emoji": "🟡"}, {"en": "pink", "ja": "ピンク", "category": "色・形", "options": ["ピンク", "むらさき", "あか", "オレンジ"], "emoji": "🌸"}, {"en": "purple", "ja": "むらさき", "category": "色・形", "options": ["むらさき", "ピンク", "あお", "こん"], "emoji": "🟣"}, {"en": "brown", "ja": "ちゃいろ", "category": "色・形", "options": ["ちゃいろ", "みどり", "きいろ", "くろ"], "emoji": "🟤"}, {"en": "circle", "ja": "まる・えん", "category": "色・形", "options": ["まる・えん", "さんかく", "しかく", "ほし"], "emoji": "⭕"}, {"en": "square", "ja": "しかく", "category": "色・形", "options": ["しかく", "まる", "さんかく", "ながしかく"], "emoji": "🟦"}, {"en": "triangle", "ja": "さんかく", "category": "色・形", "options": ["さんかく", "しかく", "まる", "ほし"], "emoji": "🔺"}, {"en": "star", "ja": "ほし・スター", "category": "色・形", "options": ["ほし・スター", "まる", "ハート", "つき"], "emoji": "⭐"}, {"en": "heart", "ja": "ハート", "category": "色・形", "options": ["ハート", "ほし", "まる", "ダイヤ"], "emoji": "❤️"}, {"en": "sun", "ja": "たいよう", "category": "自然・天気", "options": ["たいよう", "つき", "ほし", "くも"], "emoji": "☀️"}, {"en": "moon", "ja": "つき", "category": "自然・天気", "options": ["つき", "たいよう", "ほし", "くも"], "emoji": "🌙"}, {"en": "rain", "ja": "あめ", "category": "自然・天気", "options": ["あめ", "ゆき", "かぜ", "くもり"], "emoji": "🌧️"}, {"en": "snow", "ja": "ゆき", "category": "自然・天気", "options": ["ゆき", "あめ", "こおり", "あられ"], "emoji": "❄️"}, {"en": "wind", "ja": "かぜ", "category": "自然・天気", "options": ["かぜ", "あめ", "ゆき", "くも"], "emoji": "💨"}, {"en": "cloud", "ja": "くも", "category": "自然・天気", "options": ["くも", "たいよう", "かぜ", "にじ"], "emoji": "☁️"}, {"en": "rainbow", "ja": "にじ", "category": "自然・天気", "options": ["にじ", "くも", "かぜ", "たいよう"], "emoji": "🌈"}, {"en": "flower", "ja": "はな", "category": "自然・天気", "options": ["はな", "き", "くさ", "はっぱ"], "emoji": "🌸"}, {"en": "tree", "ja": "き", "category": "自然・天気", "options": ["き", "くさ", "はな", "やま"], "emoji": "🌳"}, {"en": "grass", "ja": "くさ", "category": "自然・天気", "options": ["くさ", "き", "はな", "はっぱ"], "emoji": "🌿"}, {"en": "sea", "ja": "うみ", "category": "自然・天気", "options": ["うみ", "かわ", "みずうみ", "いけ"], "emoji": "🌊"}, {"en": "river", "ja": "かわ", "category": "自然・天気", "options": ["かわ", "うみ", "みずうみ", "いけ"], "emoji": "🏞️"}, {"en": "mountain", "ja": "やま", "category": "自然・天気", "options": ["やま", "おか", "たに", "もり"], "emoji": "⛰️"}, {"en": "forest", "ja": "もり・はやし", "category": "自然・天気", "options": ["もり・はやし", "やま", "たに", "こうえん"], "emoji": "🌲"}, {"en": "lake", "ja": "みずうみ", "category": "自然・天気", "options": ["みずうみ", "かわ", "いけ", "うみ"], "emoji": "🏞️"}, {"en": "sky", "ja": "そら", "category": "自然・天気", "options": ["そら", "うみ", "やま", "かわ"], "emoji": "🌤️"}, {"en": "earth", "ja": "ちきゅう・つち", "category": "自然・天気", "options": ["ちきゅう・つち", "そら", "うみ", "かわ"], "emoji": "🌍"}, {"en": "rock", "ja": "いわ・いし", "category": "自然・天気", "options": ["いわ・いし", "すな", "つち", "どろ"], "emoji": "🪨"}, {"en": "run", "ja": "はしる", "category": "動詞・動作", "options": ["はしる", "あるく", "とぶ", "およぐ"], "emoji": "🏃"}, {"en": "walk", "ja": "あるく", "category": "動詞・動作", "options": ["あるく", "はしる", "とぶ", "およぐ"], "emoji": "🚶"}, {"en": "eat", "ja": "たべる", "category": "動詞・動作", "options": ["たべる", "のむ", "つくる", "かう"], "emoji": "🍽️"}, {"en": "drink", "ja": "のむ", "category": "動詞・動作", "options": ["のむ", "たべる", "もつ", "おく"], "emoji": "🥤"}, {"en": "sleep", "ja": "ねる", "category": "動詞・動作", "options": ["ねる", "おきる", "やすむ", "あるく"], "emoji": "😴"}, {"en": "wake", "ja": "おきる", "category": "動詞・動作", "options": ["おきる", "ねる", "やすむ", "すわる"], "emoji": "⏰"}, {"en": "play", "ja": "あそぶ", "category": "動詞・動作", "options": ["あそぶ", "はたらく", "べんきょうする", "よむ"], "emoji": "🎮"}, {"en": "study", "ja": "べんきょうする", "category": "動詞・動作", "options": ["べんきょうする", "あそぶ", "はたらく", "よむ"], "emoji": "📖"}, {"en": "read", "ja": "よむ", "category": "動詞・動作", "options": ["よむ", "かく", "みる", "きく"], "emoji": "📖"}, {"en": "write", "ja": "かく", "category": "動詞・動作", "options": ["かく", "よむ", "えがく", "けす"], "emoji": "✍️"}, {"en": "listen", "ja": "きく", "category": "動詞・動作", "options": ["きく", "みる", "よむ", "かんがえる"], "emoji": "👂"}, {"en": "watch", "ja": "みる・みまもる", "category": "動詞・動作", "options": ["みる・みまもる", "きく", "よむ", "かんがえる"], "emoji": "⌚"}, {"en": "speak", "ja": "はなす", "category": "動詞・動作", "options": ["はなす", "きく", "よむ", "かく"], "emoji": "💬"}, {"en": "say", "ja": "いう", "category": "動詞・動作", "options": ["いう", "はなす", "こたえる", "たずねる"], "emoji": "💬"}, {"en": "ask", "ja": "たずねる・きく", "category": "動詞・動作", "options": ["たずねる・きく", "こたえる", "いう", "はなす"], "emoji": "🙋"}, {"en": "answer", "ja": "こたえる", "category": "動詞・動作", "options": ["こたえる", "たずねる", "いう", "はなす"], "emoji": "✅"}, {"en": "come", "ja": "くる", "category": "動詞・動作", "options": ["くる", "いく", "もどる", "でかける"], "emoji": "🚶"}, {"en": "go", "ja": "いく", "category": "動詞・動作", "options": ["いく", "くる", "もどる", "でかける"], "emoji": "🏃"}, {"en": "stop", "ja": "とまる", "category": "動詞・動作", "options": ["とまる", "うごく", "はしる", "あるく"], "emoji": "🛑"}, {"en": "start", "ja": "はじまる・はじめる", "category": "動詞・動作", "options": ["はじまる・はじめる", "おわる", "とまる", "やすむ"], "emoji": "🚀"}, {"en": "finish", "ja": "おわる・おえる", "category": "動詞・動作", "options": ["おわる・おえる", "はじまる", "とまる", "やすむ"], "emoji": "🏁"}, {"en": "open", "ja": "あける", "category": "動詞・動作", "options": ["あける", "しめる", "おす", "ひく"], "emoji": "🚪"}, {"en": "close", "ja": "しめる", "category": "動詞・動作", "options": ["しめる", "あける", "おす", "ひく"], "emoji": "🚪"}, {"en": "give", "ja": "あげる", "category": "動詞・動作", "options": ["あげる", "もらう", "かす", "かりる"], "emoji": "🎁"}, {"en": "take", "ja": "とる", "category": "動詞・動作", "options": ["とる", "もつ", "おく", "わたす"], "emoji": "✋"}, {"en": "make", "ja": "つくる", "category": "動詞・動作", "options": ["つくる", "こわす", "なおす", "かえる"], "emoji": "🔨"}, {"en": "use", "ja": "つかう", "category": "動詞・動作", "options": ["つかう", "もつ", "おく", "しまう"], "emoji": "🔧"}, {"en": "like", "ja": "すき", "category": "動詞・動作", "options": ["すき", "きらい", "ほしい", "いやだ"], "emoji": "👍"}, {"en": "love", "ja": "あいする・だいすき", "category": "動詞・動作", "options": ["あいする・だいすき", "すき", "きらい", "ほしい"], "emoji": "❤️"}, {"en": "want", "ja": "ほしい・ほしがる", "category": "動詞・動作", "options": ["ほしい・ほしがる", "いらない", "すき", "きらい"], "emoji": "🙋"}, {"en": "know", "ja": "しっている", "category": "動詞・動作", "options": ["しっている", "わからない", "おぼえている", "わすれた"], "emoji": "💡"}, {"en": "think", "ja": "おもう・かんがえる", "category": "動詞・動作", "options": ["おもう・かんがえる", "しる", "わかる", "きめる"], "emoji": "🤔"}, {"en": "see", "ja": "みえる・みる", "category": "動詞・動作", "options": ["みえる・みる", "きこえる", "かんじる", "においがする"], "emoji": "👁️"}, {"en": "hear", "ja": "きこえる", "category": "動詞・動作", "options": ["きこえる", "みえる", "かんじる", "においがする"], "emoji": "👂"}, {"en": "sing", "ja": "うたう", "category": "動詞・動作", "options": ["うたう", "ふく", "ひく", "たたく"], "emoji": "🎵"}, {"en": "dance", "ja": "おどる", "category": "動詞・動作", "options": ["おどる", "うたう", "とぶ", "はしる"], "emoji": "💃"}, {"en": "swim", "ja": "およぐ", "category": "動詞・動作", "options": ["およぐ", "とぶ", "はしる", "あるく"], "emoji": "🏊"}, {"en": "jump", "ja": "とぶ・ジャンプする", "category": "動詞・動作", "options": ["とぶ・ジャンプする", "はしる", "あるく", "はねる"], "emoji": "🦘"}, {"en": "climb", "ja": "のぼる", "category": "動詞・動作", "options": ["のぼる", "おりる", "あるく", "はしる"], "emoji": "🧗"}, {"en": "sit", "ja": "すわる", "category": "動詞・動作", "options": ["すわる", "たつ", "ねる", "あるく"], "emoji": "🪑"}, {"en": "stand", "ja": "たつ", "category": "動詞・動作", "options": ["たつ", "すわる", "ねる", "しゃがむ"], "emoji": "🧍"}, {"en": "buy", "ja": "かう", "category": "動詞・動作", "options": ["かう", "うる", "もらう", "かりる"], "emoji": "🛒"}, {"en": "sell", "ja": "うる", "category": "動詞・動作", "options": ["うる", "かう", "もらう", "かす"], "emoji": "🏪"}, {"en": "help", "ja": "たすける・てつだう", "category": "動詞・動作", "options": ["たすける・てつだう", "じゃまする", "みる", "まつ"], "emoji": "🤝"}, {"en": "wait", "ja": "まつ", "category": "動詞・動作", "options": ["まつ", "いそぐ", "すすむ", "もどる"], "emoji": "⏳"}, {"en": "carry", "ja": "はこぶ", "category": "動詞・動作", "options": ["はこぶ", "もつ", "おく", "わたす"], "emoji": "📦"}, {"en": "put", "ja": "おく", "category": "動詞・動作", "options": ["おく", "もつ", "とる", "わたす"], "emoji": "📦"}, {"en": "park", "ja": "こうえん", "category": "場所・建物", "options": ["こうえん", "びょういん", "がっこう", "えき"], "emoji": "🌳"}, {"en": "store", "ja": "おみせ", "category": "場所・建物", "options": ["おみせ", "ぎんこう", "としょかん", "ゆうびんきょく"], "emoji": "🏪"}, {"en": "home", "ja": "いえ・うち", "category": "場所・建物", "options": ["いえ・うち", "ホテル", "がっこう", "びょういん"], "emoji": "🏠"}, {"en": "hospital", "ja": "びょういん", "category": "場所・建物", "options": ["びょういん", "としょかん", "がっこう", "こうばん"], "emoji": "🏥"}, {"en": "station", "ja": "えき", "category": "場所・建物", "options": ["えき", "バスてい", "くうこう", "みなと"], "emoji": "🚉"}, {"en": "airport", "ja": "くうこう", "category": "場所・建物", "options": ["くうこう", "えき", "みなと", "バスてい"], "emoji": "✈️"}, {"en": "hotel", "ja": "ホテル", "category": "場所・建物", "options": ["ホテル", "りょかん", "アパート", "マンション"], "emoji": "🏨"}, {"en": "restaurant", "ja": "レストラン", "category": "場所・建物", "options": ["レストラン", "カフェ", "バー", "しょくどう"], "emoji": "🍽️"}, {"en": "supermarket", "ja": "スーパー", "category": "場所・建物", "options": ["スーパー", "コンビニ", "デパート", "やおや"], "emoji": "🛒"}, {"en": "bank", "ja": "ぎんこう", "category": "場所・建物", "options": ["ぎんこう", "ゆうびんきょく", "としょかん", "やくしょ"], "emoji": "🏦"}, {"en": "post office", "ja": "ゆうびんきょく", "category": "場所・建物", "options": ["ゆうびんきょく", "ぎんこう", "やくしょ", "としょかん"], "emoji": "📮"}, {"en": "museum", "ja": "はくぶつかん", "category": "場所・建物", "options": ["はくぶつかん", "びじゅつかん", "どうぶつえん", "すいぞくかん"], "emoji": "🏛️"}, {"en": "zoo", "ja": "どうぶつえん", "category": "場所・建物", "options": ["どうぶつえん", "はくぶつかん", "びじゅつかん", "すいぞくかん"], "emoji": "🦁"}, {"en": "church", "ja": "きょうかい", "category": "場所・建物", "options": ["きょうかい", "おてら", "じんじゃ", "モスク"], "emoji": "⛪"}, {"en": "temple", "ja": "おてら", "category": "場所・建物", "options": ["おてら", "きょうかい", "じんじゃ", "かいどう"], "emoji": "⛩️"}, {"en": "bridge", "ja": "はし", "category": "場所・建物", "options": ["はし", "どうろ", "トンネル", "ダム"], "emoji": "🌉"}, {"en": "road", "ja": "どうろ・みち", "category": "場所・建物", "options": ["どうろ・みち", "こうそくどうろ", "てつどう", "こみち"], "emoji": "🛣️"}, {"en": "city", "ja": "まち・し", "category": "場所・建物", "options": ["まち・し", "むら", "くに", "しゅと"], "emoji": "🏙️"}, {"en": "town", "ja": "まち・ちょう", "category": "場所・建物", "options": ["まち・ちょう", "し", "むら", "くに"], "emoji": "🏘️"}, {"en": "country", "ja": "くに", "category": "場所・建物", "options": ["くに", "まち", "し", "むら"], "emoji": "🗺️"}, {"en": "morning", "ja": "あさ", "category": "時間・曜日", "options": ["あさ", "ひる", "ゆうがた", "よる"], "emoji": "🌅"}, {"en": "noon", "ja": "ひる・しょうご", "category": "時間・曜日", "options": ["ひる・しょうご", "あさ", "ゆうがた", "よる"], "emoji": "☀️"}, {"en": "evening", "ja": "ゆうがた", "category": "時間・曜日", "options": ["ゆうがた", "あさ", "ひる", "よる"], "emoji": "🌆"}, {"en": "night", "ja": "よる", "category": "時間・曜日", "options": ["よる", "ひる", "ゆうがた", "あさ"], "emoji": "🌙"}, {"en": "today", "ja": "きょう", "category": "時間・曜日", "options": ["きょう", "きのう", "あした", "あさって"], "emoji": "📅"}, {"en": "yesterday", "ja": "きのう", "category": "時間・曜日", "options": ["きのう", "きょう", "あした", "おととい"], "emoji": "📅"}, {"en": "tomorrow", "ja": "あした", "category": "時間・曜日", "options": ["あした", "きょう", "きのう", "あさって"], "emoji": "📅"}, {"en": "week", "ja": "しゅう", "category": "時間・曜日", "options": ["しゅう", "にち", "つき", "ねん"], "emoji": "📅"}, {"en": "month", "ja": "つき・がつ", "category": "時間・曜日", "options": ["つき・がつ", "しゅう", "にち", "ねん"], "emoji": "📅"}, {"en": "year", "ja": "ねん・とし", "category": "時間・曜日", "options": ["ねん・とし", "つき", "しゅう", "にち"], "emoji": "🗓️"}, {"en": "Monday", "ja": "げつようび", "category": "時間・曜日", "options": ["げつようび", "かようび", "すいようび", "もくようび"], "emoji": "📅"}, {"en": "Tuesday", "ja": "かようび", "category": "時間・曜日", "options": ["かようび", "げつようび", "すいようび", "きんようび"], "emoji": "📅"}, {"en": "Wednesday", "ja": "すいようび", "category": "時間・曜日", "options": ["すいようび", "かようび", "もくようび", "きんようび"], "emoji": "📅"}, {"en": "Thursday", "ja": "もくようび", "category": "時間・曜日", "options": ["もくようび", "すいようび", "きんようび", "どようび"], "emoji": "📅"}, {"en": "Friday", "ja": "きんようび", "category": "時間・曜日", "options": ["きんようび", "もくようび", "どようび", "にちようび"], "emoji": "🎉"}, {"en": "Saturday", "ja": "どようび", "category": "時間・曜日", "options": ["どようび", "きんようび", "にちようび", "げつようび"], "emoji": "🎊"}, {"en": "Sunday", "ja": "にちようび", "category": "時間・曜日", "options": ["にちようび", "どようび", "げつようび", "かようび"], "emoji": "☀️"}, {"en": "spring", "ja": "はる", "category": "時間・曜日", "options": ["はる", "なつ", "あき", "ふゆ"], "emoji": "🌸"}, {"en": "summer", "ja": "なつ", "category": "時間・曜日", "options": ["なつ", "はる", "あき", "ふゆ"], "emoji": "🌻"}, {"en": "autumn", "ja": "あき", "category": "時間・曜日", "options": ["あき", "はる", "なつ", "ふゆ"], "emoji": "🍂"}, {"en": "winter", "ja": "ふゆ", "category": "時間・曜日", "options": ["ふゆ", "はる", "なつ", "あき"], "emoji": "❄️"}, {"en": "head", "ja": "あたま", "category": "体・健康", "options": ["あたま", "かお", "くび", "かた"], "emoji": "🗣️"}, {"en": "face", "ja": "かお", "category": "体・健康", "options": ["かお", "あたま", "くび", "むね"], "emoji": "😊"}, {"en": "eye", "ja": "め", "category": "体・健康", "options": ["め", "はな", "くち", "みみ"], "emoji": "👁️"}, {"en": "nose", "ja": "はな", "category": "体・健康", "options": ["はな", "め", "くち", "みみ"], "emoji": "👃"}, {"en": "mouth", "ja": "くち", "category": "体・健康", "options": ["くち", "め", "はな", "みみ"], "emoji": "👄"}, {"en": "ear", "ja": "みみ", "category": "体・健康", "options": ["みみ", "め", "はな", "くち"], "emoji": "👂"}, {"en": "hand", "ja": "て", "category": "体・健康", "options": ["て", "あし", "うで", "ゆび"], "emoji": "✋"}, {"en": "foot", "ja": "あし・あしのうら", "category": "体・健康", "options": ["あし・あしのうら", "て", "ひざ", "つめ"], "emoji": "🦶"}, {"en": "arm", "ja": "うで", "category": "体・健康", "options": ["うで", "あし", "て", "かた"], "emoji": "💪"}, {"en": "leg", "ja": "あし・あしのつけね", "category": "体・健康", "options": ["あし・あしのつけね", "うで", "て", "かた"], "emoji": "🦵"}, {"en": "tooth", "ja": "は", "category": "体・健康", "options": ["は", "した", "くちびる", "のど"], "emoji": "🦷"}, {"en": "hair", "ja": "かみのけ", "category": "体・健康", "options": ["かみのけ", "まゆげ", "まつげ", "ひげ"], "emoji": "💇"}, {"en": "sick", "ja": "びょうき", "category": "体・健康", "options": ["びょうき", "けんこう", "げんき", "つかれ"], "emoji": "🤒"}, {"en": "cold", "ja": "かぜ・さむい", "category": "体・健康", "options": ["かぜ・さむい", "びょうき", "ねつ", "せき"], "emoji": "🤧"}, {"en": "fever", "ja": "ねつ", "category": "体・健康", "options": ["ねつ", "かぜ", "せき", "はきけ"], "emoji": "🌡️"}, {"en": "medicine", "ja": "くすり", "category": "体・健康", "options": ["くすり", "びょうき", "ちりょう", "しんさつ"], "emoji": "💊"}, {"en": "shirt", "ja": "シャツ", "category": "服・持ち物", "options": ["シャツ", "ズボン", "スカート", "ジャケット"], "emoji": "👕"}, {"en": "pants", "ja": "ズボン", "category": "服・持ち物", "options": ["ズボン", "シャツ", "スカート", "コート"], "emoji": "👖"}, {"en": "skirt", "ja": "スカート", "category": "服・持ち物", "options": ["スカート", "ズボン", "シャツ", "ワンピース"], "emoji": "👗"}, {"en": "dress", "ja": "ドレス・ワンピース", "category": "服・持ち物", "options": ["ドレス・ワンピース", "スカート", "シャツ", "ジャケット"], "emoji": "👗"}, {"en": "jacket", "ja": "ジャケット", "category": "服・持ち物", "options": ["ジャケット", "コート", "シャツ", "セーター"], "emoji": "🧥"}, {"en": "coat", "ja": "コート", "category": "服・持ち物", "options": ["コート", "ジャケット", "セーター", "マフラー"], "emoji": "🧥"}, {"en": "shoes", "ja": "くつ", "category": "服・持ち物", "options": ["くつ", "くつした", "サンダル", "ブーツ"], "emoji": "👟"}, {"en": "hat", "ja": "ぼうし", "category": "服・持ち物", "options": ["ぼうし", "スカーフ", "てぶくろ", "マフラー"], "emoji": "🎩"}, {"en": "glasses", "ja": "めがね", "category": "服・持ち物", "options": ["めがね", "コンタクト", "サングラス", "めのまえ"], "emoji": "👓"}, {"en": "umbrella", "ja": "かさ", "category": "服・持ち物", "options": ["かさ", "レインコート", "ながぐつ", "カッパ"], "emoji": "☂️"}, {"en": "wallet", "ja": "さいふ", "category": "服・持ち物", "options": ["さいふ", "かばん", "てさげ", "リュック"], "emoji": "👛"}, {"en": "happy", "ja": "しあわせ・うれしい", "category": "形容詞・状態", "options": ["しあわせ・うれしい", "かなしい", "おこっている", "さみしい"], "emoji": "😊"}, {"en": "sad", "ja": "かなしい", "category": "形容詞・状態", "options": ["かなしい", "うれしい", "おこっている", "たのしい"], "emoji": "😢"}, {"en": "angry", "ja": "おこっている", "category": "形容詞・状態", "options": ["おこっている", "うれしい", "かなしい", "おどろいた"], "emoji": "😠"}, {"en": "surprised", "ja": "おどろいた", "category": "形容詞・状態", "options": ["おどろいた", "こわい", "たのしい", "かなしい"], "emoji": "😲"}, {"en": "scared", "ja": "こわい", "category": "形容詞・状態", "options": ["こわい", "おどろいた", "かなしい", "さみしい"], "emoji": "😨"}, {"en": "tired", "ja": "つかれた", "category": "形容詞・状態", "options": ["つかれた", "げんき", "ねむい", "くたくた"], "emoji": "😩"}, {"en": "hungry", "ja": "おなかがすいた", "category": "形容詞・状態", "options": ["おなかがすいた", "のどがかわいた", "おなかいっぱい", "げんき"], "emoji": "🍽️"}, {"en": "thirsty", "ja": "のどがかわいた", "category": "形容詞・状態", "options": ["のどがかわいた", "おなかがすいた", "おなかいっぱい", "つかれた"], "emoji": "💧"}, {"en": "big", "ja": "おおきい", "category": "形容詞・状態", "options": ["おおきい", "ちいさい", "ながい", "みじかい"], "emoji": "🐘"}, {"en": "small", "ja": "ちいさい", "category": "形容詞・状態", "options": ["ちいさい", "おおきい", "ながい", "みじかい"], "emoji": "🐭"}, {"en": "long", "ja": "ながい", "category": "形容詞・状態", "options": ["ながい", "みじかい", "おおきい", "ちいさい"], "emoji": "📏"}, {"en": "short", "ja": "みじかい・ひくい", "category": "形容詞・状態", "options": ["みじかい・ひくい", "ながい", "たかい", "おおきい"], "emoji": "📏"}, {"en": "tall", "ja": "たかい・せがたかい", "category": "形容詞・状態", "options": ["たかい・せがたかい", "ひくい", "おおきい", "ちいさい"], "emoji": "🦒"}, {"en": "fast", "ja": "はやい", "category": "形容詞・状態", "options": ["はやい", "おそい", "つよい", "よわい"], "emoji": "🏃"}, {"en": "slow", "ja": "おそい", "category": "形容詞・状態", "options": ["おそい", "はやい", "つよい", "よわい"], "emoji": "🐢"}, {"en": "hot", "ja": "あつい", "category": "形容詞・状態", "options": ["あつい", "さむい", "あたたかい", "すずしい"], "emoji": "🔥"}, {"en": "warm", "ja": "あたたかい", "category": "形容詞・状態", "options": ["あたたかい", "さむい", "あつい", "すずしい"], "emoji": "🌤️"}, {"en": "cool", "ja": "すずしい", "category": "形容詞・状態", "options": ["すずしい", "あたたかい", "あつい", "さむい"], "emoji": "🌊"}, {"en": "good", "ja": "よい", "category": "形容詞・状態", "options": ["よい", "わるい", "すばらしい", "ふつう"], "emoji": "👍"}, {"en": "bad", "ja": "わるい", "category": "形容詞・状態", "options": ["わるい", "よい", "ひどい", "ふつう"], "emoji": "👎"}, {"en": "new", "ja": "あたらしい", "category": "形容詞・状態", "options": ["あたらしい", "ふるい", "きれい", "きたない"], "emoji": "✨"}, {"en": "old", "ja": "ふるい", "category": "形容詞・状態", "options": ["ふるい", "あたらしい", "きれい", "きたない"], "emoji": "🕰️"}, {"en": "clean", "ja": "きれい", "category": "形容詞・状態", "options": ["きれい", "きたない", "あたらしい", "ふるい"], "emoji": "✨"}, {"en": "dirty", "ja": "きたない", "category": "形容詞・状態", "options": ["きたない", "きれい", "あたらしい", "ふるい"], "emoji": "🗑️"}, {"en": "easy", "ja": "かんたん", "category": "形容詞・状態", "options": ["かんたん", "むずかしい", "ふつう", "むり"], "emoji": "😊"}, {"en": "difficult", "ja": "むずかしい", "category": "形容詞・状態", "options": ["むずかしい", "かんたん", "ふつう", "むり"], "emoji": "😓"}, {"en": "strong", "ja": "つよい", "category": "形容詞・状態", "options": ["つよい", "よわい", "はやい", "おそい"], "emoji": "💪"}, {"en": "weak", "ja": "よわい", "category": "形容詞・状態", "options": ["よわい", "つよい", "はやい", "おそい"], "emoji": "😔"}, {"en": "right", "ja": "ただしい・みぎ", "category": "形容詞・状態", "options": ["ただしい・みぎ", "まちがい・ひだり", "まっすぐ", "うえ"], "emoji": "➡️"}, {"en": "wrong", "ja": "まちがい", "category": "形容詞・状態", "options": ["まちがい", "ただしい", "ふつう", "むり"], "emoji": "❌"}, {"en": "free", "ja": "じゆう・むりょう", "category": "形容詞・状態", "options": ["じゆう・むりょう", "いそがしい", "ゆうりょう", "たかい"], "emoji": "🆓"}, {"en": "busy", "ja": "いそがしい", "category": "形容詞・状態", "options": ["いそがしい", "ひま", "じゆう", "たいくつ"], "emoji": "📅"}, {"en": "car", "ja": "くるま", "category": "乗り物", "options": ["くるま", "バス", "でんしゃ", "ひこうき"], "emoji": "🚗"}, {"en": "bus", "ja": "バス", "category": "乗り物", "options": ["バス", "くるま", "でんしゃ", "タクシー"], "emoji": "🚌"}, {"en": "train", "ja": "でんしゃ", "category": "乗り物", "options": ["でんしゃ", "バス", "くるま", "ちかてつ"], "emoji": "🚃"}, {"en": "airplane", "ja": "ひこうき", "category": "乗り物", "options": ["ひこうき", "ヘリコプター", "ロケット", "グライダー"], "emoji": "✈️"}, {"en": "bicycle", "ja": "じてんしゃ", "category": "乗り物", "options": ["じてんしゃ", "バイク", "くるま", "バス"], "emoji": "🚲"}, {"en": "ship", "ja": "ふね", "category": "乗り物", "options": ["ふね", "ボート", "ヨット", "せんすいかん"], "emoji": "🚢"}, {"en": "taxi", "ja": "タクシー", "category": "乗り物", "options": ["タクシー", "バス", "くるま", "でんしゃ"], "emoji": "🚕"}, {"en": "truck", "ja": "トラック", "category": "乗り物", "options": ["トラック", "くるま", "バス", "バン"], "emoji": "🚚"}, {"en": "room", "ja": "へや", "category": "家・部屋", "options": ["へや", "うち", "たてもの", "ろうか"], "emoji": "🏠"}, {"en": "kitchen", "ja": "だいどころ", "category": "家・部屋", "options": ["だいどころ", "しんしつ", "リビング", "トイレ"], "emoji": "🍳"}, {"en": "bedroom", "ja": "しんしつ", "category": "家・部屋", "options": ["しんしつ", "だいどころ", "リビング", "バスルーム"], "emoji": "🛏️"}, {"en": "bathroom", "ja": "バスルーム・おふろ", "category": "家・部屋", "options": ["バスルーム・おふろ", "トイレ", "しんしつ", "だいどころ"], "emoji": "🛁"}, {"en": "door", "ja": "ドア", "category": "家・部屋", "options": ["ドア", "まど", "かべ", "てんじょう"], "emoji": "🚪"}, {"en": "window", "ja": "まど", "category": "家・部屋", "options": ["まど", "ドア", "かべ", "ゆか"], "emoji": "🪟"}, {"en": "bed", "ja": "ベッド", "category": "家・部屋", "options": ["ベッド", "ソファ", "いす", "つくえ"], "emoji": "🛏️"}, {"en": "table", "ja": "テーブル", "category": "家・部屋", "options": ["テーブル", "つくえ", "いす", "ソファ"], "emoji": "🪑"}, {"en": "sofa", "ja": "ソファ", "category": "家・部屋", "options": ["ソファ", "いす", "ベッド", "テーブル"], "emoji": "🛋️"}, {"en": "lamp", "ja": "ランプ・でんき", "category": "家・部屋", "options": ["ランプ・でんき", "でんきゅう", "スイッチ", "コンセント"], "emoji": "💡"}, {"en": "TV", "ja": "テレビ", "category": "家・部屋", "options": ["テレビ", "ラジオ", "パソコン", "スマホ"], "emoji": "📺"}, {"en": "phone", "ja": "でんわ", "category": "家・部屋", "options": ["でんわ", "スマホ", "タブレット", "パソコン"], "emoji": "📱"}, {"en": "computer", "ja": "パソコン", "category": "家・部屋", "options": ["パソコン", "タブレット", "スマホ", "テレビ"], "emoji": "💻"}, {"en": "ball", "ja": "ボール", "category": "スポーツ・遊び", "options": ["ボール", "バット", "ラケット", "ネット"], "emoji": "⚽"}, {"en": "game", "ja": "ゲーム", "category": "スポーツ・遊び", "options": ["ゲーム", "スポーツ", "えいが", "おんがく"], "emoji": "🎮"}, {"en": "sport", "ja": "スポーツ", "category": "スポーツ・遊び", "options": ["スポーツ", "ゲーム", "たいそう", "うんどう"], "emoji": "🏅"}, {"en": "soccer", "ja": "サッカー", "category": "スポーツ・遊び", "options": ["サッカー", "やきゅう", "バスケット", "テニス"], "emoji": "⚽"}, {"en": "baseball", "ja": "やきゅう", "category": "スポーツ・遊び", "options": ["やきゅう", "サッカー", "バスケット", "テニス"], "emoji": "⚾"}, {"en": "tennis", "ja": "テニス", "category": "スポーツ・遊び", "options": ["テニス", "バドミントン", "サッカー", "やきゅう"], "emoji": "🎾"}, {"en": "music", "ja": "おんがく", "category": "スポーツ・遊び", "options": ["おんがく", "えいが", "ほん", "アート"], "emoji": "🎵"}, {"en": "movie", "ja": "えいが", "category": "スポーツ・遊び", "options": ["えいが", "おんがく", "テレビ", "ゲーム"], "emoji": "🎬"}, {"en": "song", "ja": "うた", "category": "スポーツ・遊び", "options": ["うた", "おんがく", "えんそう", "ダンス"], "emoji": "🎵"}, {"en": "piano", "ja": "ピアノ", "category": "スポーツ・遊び", "options": ["ピアノ", "ギター", "バイオリン", "ドラム"], "emoji": "🎹"}, {"en": "guitar", "ja": "ギター", "category": "スポーツ・遊び", "options": ["ギター", "ピアノ", "バイオリン", "ドラム"], "emoji": "🎸"}, {"en": "one", "ja": "いち", "category": "数・量", "options": ["いち", "に", "さん", "し"], "emoji": "1️⃣"}, {"en": "two", "ja": "に", "category": "数・量", "options": ["に", "いち", "さん", "し"], "emoji": "2️⃣"}, {"en": "three", "ja": "さん", "category": "数・量", "options": ["さん", "に", "し", "ご"], "emoji": "3️⃣"}, {"en": "four", "ja": "し・よん", "category": "数・量", "options": ["し・よん", "さん", "ご", "ろく"], "emoji": "4️⃣"}, {"en": "five", "ja": "ご", "category": "数・量", "options": ["ご", "し", "ろく", "なな"], "emoji": "5️⃣"}, {"en": "six", "ja": "ろく", "category": "数・量", "options": ["ろく", "ご", "なな", "はち"], "emoji": "6️⃣"}, {"en": "seven", "ja": "なな・しち", "category": "数・量", "options": ["なな・しち", "ろく", "はち", "く"], "emoji": "7️⃣"}, {"en": "eight", "ja": "はち", "category": "数・量", "options": ["はち", "なな", "く", "じゅう"], "emoji": "8️⃣"}, {"en": "nine", "ja": "く・きゅう", "category": "数・量", "options": ["く・きゅう", "はち", "じゅう", "じゅういち"], "emoji": "9️⃣"}, {"en": "ten", "ja": "じゅう", "category": "数・量", "options": ["じゅう", "く", "じゅういち", "じゅうに"], "emoji": "🔟"}, {"en": "hundred", "ja": "ひゃく", "category": "数・量", "options": ["ひゃく", "じゅう", "せん", "まん"], "emoji": "💯"}, {"en": "thousand", "ja": "せん", "category": "数・量", "options": ["せん", "ひゃく", "まん", "じゅう"], "emoji": "🔢"}, {"en": "first", "ja": "さいしょ・いちばん", "category": "数・量", "options": ["さいしょ・いちばん", "さいご", "なかば", "まんなか"], "emoji": "🥇"}, {"en": "last", "ja": "さいご・おわり", "category": "数・量", "options": ["さいご・おわり", "さいしょ", "まんなか", "なかば"], "emoji": "🏁"}, {"en": "much", "ja": "たくさん", "category": "数・量", "options": ["たくさん", "すこし", "ちょっと", "ほとんど"], "emoji": "📊"}, {"en": "many", "ja": "おおい", "category": "数・量", "options": ["おおい", "すくない", "たくさん", "すこし"], "emoji": "📊"}, {"en": "few", "ja": "すくない・ほとんどない", "category": "数・量", "options": ["すくない・ほとんどない", "おおい", "たくさん", "すこし"], "emoji": "📊"}, {"en": "some", "ja": "いくつか・すこし", "category": "数・量", "options": ["いくつか・すこし", "たくさん", "すべて", "ない"], "emoji": "📊"}, {"en": "all", "ja": "すべて・みんな", "category": "数・量", "options": ["すべて・みんな", "すこし", "いくつか", "ない"], "emoji": "📊"}, {"en": "here", "ja": "ここ", "category": "場所・方向", "options": ["ここ", "そこ", "あそこ", "どこ"], "emoji": "📍"}, {"en": "there", "ja": "そこ・あそこ", "category": "場所・方向", "options": ["そこ・あそこ", "ここ", "どこ", "むこう"], "emoji": "📍"}, {"en": "up", "ja": "うえ", "category": "場所・方向", "options": ["うえ", "した", "みぎ", "ひだり"], "emoji": "⬆️"}, {"en": "down", "ja": "した", "category": "場所・方向", "options": ["した", "うえ", "みぎ", "ひだり"], "emoji": "⬇️"}, {"en": "left", "ja": "ひだり", "category": "場所・方向", "options": ["ひだり", "みぎ", "うえ", "した"], "emoji": "⬅️"}, {"en": "front", "ja": "まえ", "category": "場所・方向", "options": ["まえ", "うしろ", "よこ", "となり"], "emoji": "⬆️"}, {"en": "back", "ja": "うしろ", "category": "場所・方向", "options": ["うしろ", "まえ", "よこ", "となり"], "emoji": "⬇️"}, {"en": "inside", "ja": "なか", "category": "場所・方向", "options": ["なか", "そと", "うえ", "した"], "emoji": "📦"}, {"en": "outside", "ja": "そと", "category": "場所・方向", "options": ["そと", "なか", "うえ", "した"], "emoji": "🌳"}, {"en": "near", "ja": "ちかい", "category": "場所・方向", "options": ["ちかい", "とおい", "となり", "むこう"], "emoji": "📍"}, {"en": "far", "ja": "とおい", "category": "場所・方向", "options": ["とおい", "ちかい", "むこう", "はなれた"], "emoji": "🗺️"}, {"en": "hello", "ja": "こんにちは", "category": "あいさつ・表現", "options": ["こんにちは", "さようなら", "おはよう", "こんばんは"], "emoji": "👋"}, {"en": "goodbye", "ja": "さようなら", "category": "あいさつ・表現", "options": ["さようなら", "こんにちは", "またね", "じゃあね"], "emoji": "👋"}, {"en": "thank you", "ja": "ありがとう", "category": "あいさつ・表現", "options": ["ありがとう", "ごめんなさい", "どういたしまして", "よろしく"], "emoji": "🙏"}, {"en": "sorry", "ja": "ごめんなさい", "category": "あいさつ・表現", "options": ["ごめんなさい", "ありがとう", "どういたしまして", "すみません"], "emoji": "🙇"}, {"en": "please", "ja": "おねがいします", "category": "あいさつ・表現", "options": ["おねがいします", "ありがとう", "どうぞ", "いいえ"], "emoji": "🙏"}, {"en": "yes", "ja": "はい", "category": "あいさつ・表現", "options": ["はい", "いいえ", "そう", "ちがう"], "emoji": "✅"}, {"en": "no", "ja": "いいえ", "category": "あいさつ・表現", "options": ["いいえ", "はい", "そう", "ちがう"], "emoji": "❌"}, {"en": "OK", "ja": "わかった・いいよ", "category": "あいさつ・表現", "options": ["わかった・いいよ", "だめ", "わからない", "むり"], "emoji": "👌"}, {"en": "name", "ja": "なまえ", "category": "あいさつ・表現", "options": ["なまえ", "ねんれい", "じゅうしょ", "くに"], "emoji": "📛"}, {"en": "age", "ja": "ねんれい", "category": "あいさつ・表現", "options": ["ねんれい", "なまえ", "たんじょうび", "しゅみ"], "emoji": "🔢"}, {"en": "birthday", "ja": "たんじょうび", "category": "あいさつ・表現", "options": ["たんじょうび", "きねんび", "やすみ", "まつり"], "emoji": "🎂"}, {"en": "hobby", "ja": "しゅみ", "category": "あいさつ・表現", "options": ["しゅみ", "とくぎ", "しごと", "きょうみ"], "emoji": "🎨"}, {"en": "holiday", "ja": "きゅうじつ", "category": "あいさつ・表現", "options": ["きゅうじつ", "へいじつ", "やすみ", "まつり"], "emoji": "🎉"}, {"en": "party", "ja": "パーティー", "category": "あいさつ・表現", "options": ["パーティー", "まつり", "イベント", "コンサート"], "emoji": "🎊"}, {"en": "present", "ja": "プレゼント", "category": "あいさつ・表現", "options": ["プレゼント", "おかし", "カード", "はな"], "emoji": "🎁"}, {"en": "letter", "ja": "てがみ", "category": "あいさつ・表現", "options": ["てがみ", "メール", "でんわ", "メッセージ"], "emoji": "✉️"}, {"en": "color", "ja": "いろ", "category": "あいさつ・表現", "options": ["いろ", "かたち", "おおきさ", "ながさ"], "emoji": "🎨"}, {"en": "picture", "ja": "えいが・え", "category": "あいさつ・表現", "options": ["えいが・え", "しゃしん", "ずあん", "イラスト"], "emoji": "🖼️"}, {"en": "photo", "ja": "しゃしん", "category": "あいさつ・表現", "options": ["しゃしん", "え", "ポスター", "イラスト"], "emoji": "📷"}];
+const CONVS = [{"situation": "朝のあいさつ", "conversation": [{"speaker": "A", "text": "Good morning, Ken!"}, {"speaker": "B", "text": "Good morning, Lisa. How are you?"}, {"speaker": "A", "text": "( ) And you?"}], "question": "( )にはいるものはどれですか？", "answer": "I'm fine, thank you.", "options": ["I'm fine, thank you.", "I'm a student.", "Yes, I do.", "That's good."], "translation": "「おはよう、ケン！」「おはよう、リサ。げんき？」「げんきだよ、ありがとう。あなたは？」", "category": "あいさつ・自己紹介"}, {"situation": "はじめまして", "conversation": [{"speaker": "A", "text": "Hi! My name is Yuki. What's your name?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Nice to meet you, Tom!"}], "question": "( )にはいるものはどれですか？", "answer": "I'm Tom. Nice to meet you.", "options": ["I'm Tom. Nice to meet you.", "I'm fine, thank you.", "Yes, I like it.", "I go to school."], "translation": "「やあ！わたしはゆきです。あなたのなまえは？」「トムです。よろしく。」「はじめまして、トム！」", "category": "あいさつ・自己紹介"}, {"situation": "出身地をきく", "conversation": [{"speaker": "A", "text": "Where are you from, Emma?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Oh, that's far away!"}], "question": "( )にはいるものはどれですか？", "answer": "I'm from Australia.", "options": ["I'm from Australia.", "I'm twelve years old.", "I like soccer.", "I go by bus."], "translation": "「エマ、どこから来たの？」「オーストラリアから来たよ。」「わあ、遠いね！」", "category": "あいさつ・自己紹介"}, {"situation": "すきなものをきく", "conversation": [{"speaker": "A", "text": "Do you like music, Hana?"}, {"speaker": "B", "text": "Yes, I do. ( )"}, {"speaker": "A", "text": "Me too! I love pop music."}], "question": "( )にはいるものはどれですか？", "answer": "I like J-pop very much.", "options": ["I like J-pop very much.", "I don't have a pet.", "I go to the park.", "She is my sister."], "translation": "「ハナ、おんがくがすき？」「うん、すき。Jポップがだいすき。」「わたしも！ポップミュージックがだいすき。」", "category": "あいさつ・自己紹介"}, {"situation": "年齢をきく", "conversation": [{"speaker": "A", "text": "How old are you?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Oh, we're the same age!"}], "question": "( )にはいるものはどれですか？", "answer": "I'm eleven years old.", "options": ["I'm eleven years old.", "I'm from Japan.", "I like cats.", "I'm fine."], "translation": "「なんさい？」「11さいだよ。」「わあ、おなじだね！」", "category": "あいさつ・自己紹介"}, {"situation": "誕生日をきく", "conversation": [{"speaker": "A", "text": "When is your birthday, Mike?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Really? My birthday is in July, too!"}], "question": "( )にはいるものはどれですか？", "answer": "It's July 3rd.", "options": ["It's July 3rd.", "It's very hot.", "I'm ten years old.", "I like summer."], "translation": "「マイク、たんじょうびはいつ？」「7月3日だよ。」「ほんと？わたしも7月！」", "category": "あいさつ・自己紹介"}, {"situation": "飼っているペット", "conversation": [{"speaker": "A", "text": "Do you have any pets?"}, {"speaker": "B", "text": "Yes. ( )"}, {"speaker": "A", "text": "How cute! What's her name?"}], "question": "( )にはいるものはどれですか？", "answer": "I have a cat.", "options": ["I have a cat.", "I play soccer.", "I go to school.", "I like music."], "translation": "「ペットはいる？」「うん、ねこを飼ってるよ。」「かわいい！なまえは？」", "category": "あいさつ・自己紹介"}, {"situation": "好きな科目", "conversation": [{"speaker": "A", "text": "What's your favorite subject?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "I like P.E. too. It's fun!"}], "question": "( )にはいるものはどれですか？", "answer": "I like P.E. the best.", "options": ["I like P.E. the best.", "I go to the library.", "I have two brothers.", "I eat lunch at school."], "translation": "「すきな科目は？」「たいいくがいちばんすき。」「わたしもたいいくがすき。たのしいよね！」", "category": "学校・勉強"}, {"situation": "宿題をきく", "conversation": [{"speaker": "A", "text": "Do we have homework today?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Oh no! I forgot about it."}], "question": "( )にはいるものはどれですか？", "answer": "Yes. We have math homework.", "options": ["Yes. We have math homework.", "No, I don't like math.", "Yes, it's sunny today.", "I go home at three."], "translation": "「きょうしゅくだいある？」「うん、さんすうのしゅくだいがあるよ。」「えー！わすれてた。」", "category": "学校・勉強"}, {"situation": "時間割をきく", "conversation": [{"speaker": "A", "text": "What do you have first today?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Oh, I like English class!"}], "question": "( )にはいるものはどれですか？", "answer": "We have English first.", "options": ["We have English first.", "I go to school by bus.", "I have a pencil.", "School starts at eight."], "translation": "「きょうの1時間目は何？」「えいごだよ。」「えいごのじゅぎょうすき！」", "category": "学校・勉強"}, {"situation": "テストの結果", "conversation": [{"speaker": "A", "text": "How was your English test?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Great job! I got 70 points."}], "question": "( )にはいるものはどれですか？", "answer": "I got 90 points!", "options": ["I got 90 points!", "I went to the library.", "I have two books.", "I study every day."], "translation": "「えいごのテストどうだった？」「90点とったよ！」「すごい！わたしは70点だったよ。」", "category": "学校・勉強"}, {"situation": "給食について", "conversation": [{"speaker": "A", "text": "What do you have for lunch today?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "I love curry! It's delicious."}], "question": "( )にはいるものはどれですか？", "answer": "We have curry and rice.", "options": ["We have curry and rice.", "I study math today.", "I play with my friends.", "I go home for lunch."], "translation": "「きょうのきゅうしょく何？」「カレーライスだよ。」「カレーだいすき！おいしいよね。」", "category": "学校・勉強"}, {"situation": "図書館で", "conversation": [{"speaker": "A", "text": "Can I borrow this book?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Thank you very much!"}], "question": "( )にはいるものはどれですか？", "answer": "Sure. Please return it in two weeks.", "options": ["Sure. Please return it in two weeks.", "No, the library is closed.", "I don't like reading.", "You can buy it at the store."], "translation": "「この本かりてもいい？」「いいよ。2しゅうかんでかえしてね。」「ありがとうございます！」", "category": "学校・勉強"}, {"situation": "学校の帰り", "conversation": [{"speaker": "A", "text": "What time do you finish school today?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Let's walk home together!"}], "question": "( )にはいるものはどれですか？", "answer": "At three thirty.", "options": ["At three thirty.", "I have a math test.", "My school is big.", "I like my teacher."], "translation": "「きょう学校は何時に終わる？」「3時半だよ。」「いっしょに帰ろう！」", "category": "学校・勉強"}, {"situation": "朝ごはん", "conversation": [{"speaker": "A", "text": "What did you have for breakfast?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "I had bread and milk."}], "question": "( )にはいるものはどれですか？", "answer": "I had rice and miso soup.", "options": ["I had rice and miso soup.", "I went to the park.", "I have a big family.", "I like winter."], "translation": "「あさごはんは何たべた？」「ごはんとみそしるを食べたよ。」「わたしはパンとぎゅうにゅうだったよ。」", "category": "家族・家での会話"}, {"situation": "週末の予定", "conversation": [{"speaker": "A", "text": "What are you doing this weekend?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "That sounds fun! Can I come?"}], "question": "( )にはいるものはどれですか？", "answer": "I'm going to the park with my family.", "options": ["I'm going to the park with my family.", "I go to school on Monday.", "I don't like vegetables.", "My house is near the station."], "translation": "「しゅうまつは何するの？」「家族とこうえんに行くよ。」「たのしそう！わたしも行っていい？」", "category": "家族・家での会話"}, {"situation": "手伝いをする", "conversation": [{"speaker": "A", "text": "Mom, can I help you?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "OK! I'll wash the dishes."}], "question": "( )にはいるものはどれですか？", "answer": "Yes, please. Can you wash the dishes?", "options": ["Yes, please. Can you wash the dishes?", "No, go to bed.", "I'm reading a book.", "Dinner is at six."], "translation": "「おかあさん、てつだおうか？」「ありがとう。おさらあらってくれる？」「わかった！おさらあらうよ。」", "category": "家族・家での会話"}, {"situation": "テレビを見る", "conversation": [{"speaker": "A", "text": "Dad, what are you watching?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Can I watch with you?"}], "question": "( )にはいるものはどれですか？", "answer": "I'm watching a soccer game.", "options": ["I'm watching a soccer game.", "I'm eating dinner.", "I go to work by train.", "I have three books."], "translation": "「おとうさん、何みてるの？」「サッカーのしあいをみてるよ。」「いっしょにみてもいい？」", "category": "家族・家での会話"}, {"situation": "お風呂の順番", "conversation": [{"speaker": "A", "text": "Can I take a bath now?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "OK. I'll wait."}], "question": "( )にはいるものはどれですか？", "answer": "Please wait. I'm using it now.", "options": ["Please wait. I'm using it now.", "Yes, I like swimming.", "Dinner is ready.", "Go to bed early."], "translation": "「いまおふろはいっていい？」「まってて。いまはいってるから。」「わかった。まつよ。」", "category": "家族・家での会話"}, {"situation": "誕生日プレゼント", "conversation": [{"speaker": "A", "text": "Happy birthday, Grandma!"}, {"speaker": "B", "text": "Thank you! ( )"}, {"speaker": "A", "text": "I'm glad you like it!"}], "question": "( )にはいるものはどれですか？", "answer": "I love this present!", "options": ["I love this present!", "I'm very busy today.", "The weather is nice.", "I go to the hospital."], "translation": "「おたんじょうびおめでとう、おばあちゃん！」「ありがとう！このプレゼントだいすき！」「よろこんでくれてうれしい！」", "category": "家族・家での会話"}, {"situation": "家での勉強", "conversation": [{"speaker": "A", "text": "Are you doing your homework?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Good. Dinner will be ready soon."}], "question": "( )にはいるものはどれですか？", "answer": "Yes, I'm doing it now.", "options": ["Yes, I'm doing it now.", "No, I go to the park.", "I have a cold today.", "I like my school bag."], "translation": "「しゅくだいやってる？」「うん、いまやってるよ。」「えらい。もうすぐごはんできるよ。」", "category": "家族・家での会話"}, {"situation": "お店で", "conversation": [{"speaker": "A", "text": "May I help you?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Sure! It's over there."}], "question": "( )にはいるものはどれですか？", "answer": "Yes. I'm looking for a red T-shirt.", "options": ["Yes. I'm looking for a red T-shirt.", "No, I don't like shopping.", "I want to go home.", "I have a lot of money."], "translation": "「いらっしゃいませ。」「あかいTシャツをさがしてるんですが。」「はい！あちらにございます。」", "category": "食べ物・買い物"}, {"situation": "値段をきく", "conversation": [{"speaker": "A", "text": "How much is this bag?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "OK, I'll take it!"}], "question": "( )にはいるものはどれですか？", "answer": "It's 1,500 yen.", "options": ["It's 1,500 yen.", "It's very heavy.", "I like this color.", "The bag is old."], "translation": "「このかばんいくら？」「1500円です。」「じゃあ、これにします！」", "category": "食べ物・買い物"}, {"situation": "レストランで注文", "conversation": [{"speaker": "A", "text": "What would you like to eat?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Good choice! And to drink?"}], "question": "( )にはいるものはどれですか？", "answer": "I'd like a hamburger, please.", "options": ["I'd like a hamburger, please.", "I go to the restaurant.", "I don't like salad.", "The food is very hot."], "translation": "「何にしますか？」「ハンバーガーをください。」「いいですね！のみものは？」", "category": "食べ物・買い物"}, {"situation": "スーパーで", "conversation": [{"speaker": "A", "text": "Do you have any apples?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Great, I'll take five please."}], "question": "( )にはいるものはどれですか？", "answer": "Yes, they're fresh today.", "options": ["Yes, they're fresh today.", "No, I like oranges.", "Apples are delicious.", "I go shopping every day."], "translation": "「りんごはありますか？」「はい、きょうはしんせんです。」「じゃあ5こください。」", "category": "食べ物・買い物"}, {"situation": "好きな食べ物", "conversation": [{"speaker": "A", "text": "What's your favorite food?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Me too! I eat it every Sunday."}], "question": "( )にはいるものはどれですか？", "answer": "I love sushi the best.", "options": ["I love sushi the best.", "I go to the supermarket.", "I don't like vegetables.", "I eat lunch at twelve."], "translation": "「すきなたべものは？」「おすしがいちばんすき。」「わたしも！まいにちにちようびにたべるよ。」", "category": "食べ物・買い物"}, {"situation": "おつりをもらう", "conversation": [{"speaker": "A", "text": "Here you are. That's 500 yen."}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "You're welcome. Please come again!"}], "question": "( )にはいるものはどれですか？", "answer": "Thank you. Here's 1,000 yen.", "options": ["Thank you. Here's 1,000 yen.", "I like this shop.", "I want more food.", "Can I sit here?"], "translation": "「はい。500円です。」「ありがとう。1000円どうぞ。」「ありがとうございます。またきてね！」", "category": "食べ物・買い物"}, {"situation": "サッカーの練習", "conversation": [{"speaker": "A", "text": "Do you play any sports?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Cool! When do you practice?"}], "question": "( )にはいるものはどれですか？", "answer": "Yes, I play soccer every week.", "options": ["Yes, I play soccer every week.", "I watch TV every day.", "I have a big dog.", "I go to bed at nine."], "translation": "「スポーツはしてる？」「うん、まいしゅうサッカーしてるよ。」「かっこいい！いつれんしゅうするの？」", "category": "趣味・スポーツ"}, {"situation": "好きな音楽", "conversation": [{"speaker": "A", "text": "What kind of music do you like?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "I like rock music. Let's listen together!"}], "question": "( )にはいるものはどれですか？", "answer": "I like pop music.", "options": ["I like pop music.", "I play the piano.", "I go to concerts.", "Music is very loud."], "translation": "「どんなおんがくがすき？」「ポップミュージックがすき。」「わたしはロックがすき。いっしょにきこうよ！」", "category": "趣味・スポーツ"}, {"situation": "絵を描く", "conversation": [{"speaker": "A", "text": "What are you doing?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Wow! Can I see it?"}], "question": "( )にはいるものはどれですか？", "answer": "I'm drawing a picture of my dog.", "options": ["I'm drawing a picture of my dog.", "I'm eating lunch now.", "I'm going to school.", "I'm watching a movie."], "translation": "「何してるの？」「いぬのえをかいてるよ。」「わあ！みせて！」", "category": "趣味・スポーツ"}, {"situation": "映画について", "conversation": [{"speaker": "A", "text": "Did you see that new movie?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Really? I want to see it too!"}], "question": "( )にはいるものはどれですか？", "answer": "Yes! It was so exciting!", "options": ["Yes! It was so exciting!", "No, I don't like movies.", "I go to the cinema.", "Movies are expensive."], "translation": "「あのしんさくえいがみた？」「うん！めちゃくちゃおもしろかった！」「ほんと？わたしもみたい！」", "category": "趣味・スポーツ"}, {"situation": "今日の天気", "conversation": [{"speaker": "A", "text": "How's the weather today?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Let's go to the park then!"}], "question": "( )にはいるものはどれですか？", "answer": "It's sunny and warm.", "options": ["It's sunny and warm.", "I like rainy days.", "The wind is strong.", "I have an umbrella."], "translation": "「きょうのてんきは？」「はれてあたたかいよ。」「じゃあこうえんに行こう！」", "category": "天気・季節"}, {"situation": "傘を持つ", "conversation": [{"speaker": "A", "text": "Should I bring an umbrella today?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "OK, I'll take one just in case."}], "question": "( )にはいるものはどれですか？", "answer": "Yes. It might rain in the afternoon.", "options": ["Yes. It might rain in the afternoon.", "No, summer is very hot.", "I like sunny days.", "The sky is blue."], "translation": "「きょうかさいる？」「うん、ごごにあめがふるかも。」「わかった、いちおうもっていくよ。」", "category": "天気・季節"}, {"situation": "好きな季節", "conversation": [{"speaker": "A", "text": "What's your favorite season?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Why do you like spring?"}], "question": "( )にはいるものはどれですか？", "answer": "I like spring the best.", "options": ["I like spring the best.", "I like cold weather.", "The snow is white.", "I play outside."], "translation": "「すきなきせつは？」「はるがいちばんすき。」「なんではるがすきなの？」", "category": "天気・季節"}, {"situation": "雪遊び", "conversation": [{"speaker": "A", "text": "Look! It's snowing!"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Let's go make a snowman!"}], "question": "( )にはいるものはどれですか？", "answer": "Wow! Let's go outside!", "options": ["Wow! Let's go outside!", "I don't like cold weather.", "It's raining today.", "Summer is my favorite."], "translation": "「みて！ゆきだ！」「わあ！そとに行こうよ！」「ゆきだるまつくろう！」", "category": "天気・季節"}, {"situation": "体調をきく", "conversation": [{"speaker": "A", "text": "You look sick. Are you OK?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "You should go to the nurse's office."}], "question": "( )にはいるものはどれですか？", "answer": "I have a headache.", "options": ["I have a headache.", "I'm very hungry.", "I like this weather.", "I forgot my bag."], "translation": "「ぐあいわるそう。だいじょうぶ？」「あたまがいたいんだ。」「ほけんしつに行った方がいいよ。」", "category": "体調・病気"}, {"situation": "病院で", "conversation": [{"speaker": "A", "text": "What's wrong?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Open your mouth, please."}], "question": "( )にはいるものはどれですか？", "answer": "I have a sore throat and a fever.", "options": ["I have a sore throat and a fever.", "I am very tired today.", "I don't like medicine.", "I can't go to school."], "translation": "「どうしましたか？」「のどがいたくてねつがあります。」「くちをあけてください。」", "category": "体調・病気"}, {"situation": "かぜをひく", "conversation": [{"speaker": "A", "text": "Why didn't you come to school yesterday?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "I hope you feel better now!"}], "question": "( )にはいるものはどれですか？", "answer": "I had a cold and stayed home.", "options": ["I had a cold and stayed home.", "I went to the park.", "I played video games.", "I forgot my homework."], "translation": "「きのうなんでがっこうきなかったの？」「かぜひいておうちにいたんだ。」「もうよくなった？よかった！」", "category": "体調・病気"}, {"situation": "薬を飲む", "conversation": [{"speaker": "A", "text": "Did you take your medicine?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Good. You'll feel better soon."}], "question": "( )にはいるものはどれですか？", "answer": "Yes, I took it after breakfast.", "options": ["Yes, I took it after breakfast.", "No, I don't like milk.", "I go to the doctor.", "My head feels hot."], "translation": "「くすりのんだ？」「うん、あさごはんのあとのんだよ。」「えらい。すぐよくなるよ。」", "category": "体調・病気"}, {"situation": "放課後の予定", "conversation": [{"speaker": "A", "text": "What are you doing after school?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Can I come and watch?"}], "question": "( )にはいるものはどれですか？", "answer": "I have baseball practice.", "options": ["I have baseball practice.", "I go home by bus.", "I don't like sports.", "School is fun today."], "translation": "「ほうかごなにするの？」「やきゅうのれんしゅうがあるよ。」「みにいっていい？」", "category": "時間・予定"}, {"situation": "待ち合わせ", "conversation": [{"speaker": "A", "text": "What time shall we meet?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "OK! See you at the station then."}], "question": "( )にはいるものはどれですか？", "answer": "How about two o'clock?", "options": ["How about two o'clock?", "I go to school at eight.", "I'm very busy today.", "I like the morning."], "translation": "「なんじにあう？」「2じはどう？」「わかった！じゃあえきでね。」", "category": "時間・予定"}, {"situation": "遅刻する", "conversation": [{"speaker": "A", "text": "Why are you late?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "Be careful next time!"}], "question": "( )にはいるものはどれですか？", "answer": "I missed the bus.", "options": ["I missed the bus.", "I don't like school.", "I went to the library.", "I have a stomachache."], "translation": "「なんでおくれたの？」「バスにのりおくれちゃった。」「つぎはきをつけてね！」", "category": "時間・予定"}, {"situation": "夏休みの計画", "conversation": [{"speaker": "A", "text": "Do you have any plans for summer vacation?"}, {"speaker": "B", "text": "( )"}, {"speaker": "A", "text": "That sounds amazing! Have a great trip!"}], "question": "( )にはいるものはどれですか？", "answer": "Yes! I'm going to Okinawa with my family.", "options": ["Yes! I'm going to Okinawa with my family.", "No, I stay at home.", "I like swimming in the pool.", "Summer is very hot."], "translation": "「なつやすみはよていある？」「うん！かぞくとおきなわに行くよ。」「すごい！たのしんできてね！」", "category": "時間・予定"}];
+const READING = [{"title": "My Dog", "passage": "My name is Yuki. I have a dog. His name is Koro. He is brown and white. He likes to run in the park.", "translation": "わたしのなまえはゆきです。いぬをかっています。なまえはコロです。ちゃいろとしろです。こうえんでははしるのがすきです。", "question": "What does Koro like to do?", "answer": "Run in the park.", "options": ["Run in the park.", "Swim in the river.", "Sleep at home.", "Eat in the kitchen."], "category": "動物・ペット"}, {"title": "My Family", "passage": "I have a big family. There are five people in my family. My father, mother, two sisters and me. My father is a doctor. My mother is a teacher.", "translation": "わたしのかぞくはおおきいです。かぞくは5にんいます。おとうさん、おかあさん、おねえさんが2にん、そしてわたしです。おとうさんはいしゃです。おかあさんはせんせいです。", "question": "What does the writer's father do?", "answer": "He is a doctor.", "options": ["He is a doctor.", "He is a teacher.", "He is a cook.", "He is a student."], "category": "家族"}, {"title": "My School", "passage": "I go to Sakura Elementary School. There are 300 students in my school. I like math and P.E. My favorite teacher is Mr. Tanaka. He teaches math.", "translation": "わたしはさくらしょうがっこうにかよっています。がっこうには300にんのせいとがいます。わたしはさんすうとたいいくがすきです。すきなせんせいはたなかせんせいです。さんすうをおしえています。", "question": "What subject does Mr. Tanaka teach?", "answer": "Math.", "options": ["Math.", "P.E.", "Science.", "English."], "category": "学校"}, {"title": "My Weekend", "passage": "Last Saturday, I went to the park with my mother. We played tennis for two hours. After that, we had lunch at a restaurant. I had a hamburger. It was very delicious.", "translation": "このまえのどようび、おかあさんとこうえんにいきました。2じかんテニスをしました。そのあと、レストランでひるごはんをたべました。わたしはハンバーガーをたべました。とてもおいしかったです。", "question": "What did the writer eat for lunch?", "answer": "A hamburger.", "options": ["A hamburger.", "A sandwich.", "Pizza.", "Sushi."], "category": "日常生活"}, {"title": "My Hobby", "passage": "My name is Ken. I like music very much. I play the piano every day. I practice for one hour after school. On Sundays, I take piano lessons.", "translation": "わたしのなまえはけんです。おんがくがだいすきです。まいにちピアノをひきます。ほうかごに1じかんれんしゅうします。にちようびはピアノのレッスンをうけます。", "question": "When does Ken take piano lessons?", "answer": "On Sundays.", "options": ["On Sundays.", "After school.", "Every morning.", "On Saturdays."], "category": "趣味"}, {"title": "The Weather", "passage": "Today is sunny and warm. The sky is blue. There are no clouds. It is a good day to play outside. Tom and his friends are playing soccer in the park.", "translation": "きょうははれてあたたかいです。そらはあおいです。くもがありません。そとであそぶのにいいひです。トムとともだちはこうえんでサッカーをしています。", "question": "What are Tom and his friends doing?", "answer": "Playing soccer.", "options": ["Playing soccer.", "Playing tennis.", "Swimming.", "Running."], "category": "天気・自然"}, {"title": "My Birthday", "passage": "My birthday is March 5th. I am eleven years old now. My mother made a chocolate cake for me. I got a new bag from my father. It was a great day.", "translation": "わたしのたんじょうびは3がつ5にちです。いまは11さいです。おかあさんがチョコレートケーキをつくってくれました。おとうさんからあたらしいかばんをもらいました。すてきな1にちでした。", "question": "What did the writer get from her father?", "answer": "A new bag.", "options": ["A new bag.", "A chocolate cake.", "A new bike.", "A book."], "category": "日常生活"}, {"title": "My Town", "passage": "I live in a small town near the sea. There is a big park in my town. There is also a library and a supermarket. I like my town very much.", "translation": "わたしはうみのちかくのちいさなまちにすんでいます。まちにはおおきなこうえんがあります。としょかんとスーパーもあります。わたしはまちがだいすきです。", "question": "Where does the writer live?", "answer": "Near the sea.", "options": ["Near the sea.", "Near the mountains.", "Near a big city.", "Near a river."], "category": "場所・地域"}, {"title": "Breakfast", "passage": "Every morning, I eat breakfast with my family. My father drinks coffee. My mother eats bread. I usually eat rice and miso soup. My sister likes milk and cereal.", "translation": "まいあさ、かぞくといっしょにあさごはんをたべます。おとうさんはコーヒーをのみます。おかあさんはパンをたべます。わたしはたいていごはんとみそしるをたべます。いもうとはぎゅうにゅうとシリアルがすきです。", "question": "What does the writer usually eat for breakfast?", "answer": "Rice and miso soup.", "options": ["Rice and miso soup.", "Bread and coffee.", "Cereal and milk.", "Eggs and toast."], "category": "食べ物"}, {"title": "My Favorite Season", "passage": "My favorite season is summer. In summer, I go to the beach with my family. I swim in the sea and make sandcastles. I also eat a lot of ice cream. Summer is so much fun.", "translation": "すきなきせつはなつです。なつはかぞくとうみにいきます。うみでおよいだりすなのおしろをつくったりします。アイスクリームもたくさんたべます。なつはとてもたのしいです。", "question": "What does the writer do at the beach?", "answer": "Swims in the sea.", "options": ["Swims in the sea.", "Plays soccer.", "Reads books.", "Rides a bicycle."], "category": "季節・行事"}, {"title": "My Cat", "passage": "I have a cat named Shiro. She is white and very cute. She likes to sleep on the sofa. She eats fish every day. She is three years old.", "translation": "わたしはシロというなまえのねこをかっています。しろくてとてもかわいいです。ソファでねるのがすきです。まいにちさかなをたべます。3さいです。", "question": "How old is Shiro?", "answer": "Three years old.", "options": ["Three years old.", "Two years old.", "Five years old.", "One year old."], "category": "動物・ペット"}, {"title": "After School", "passage": "After school, I always go to the library. I read books there for one hour. Then I go home and do my homework. After dinner, I watch TV for a little while.", "translation": "ほうかごはいつもとしょかんにいきます。そこで1じかんほんをよみます。それからうちにかえってしゅくだいをします。ゆうしょくのあとはすこしテレビをみます。", "question": "What does the writer do first after school?", "answer": "Goes to the library.", "options": ["Goes to the library.", "Does homework.", "Watches TV.", "Eats dinner."], "category": "学校"}, {"title": "A Letter", "passage": "Dear Mike, How are you? I am fine. Last week, I went to Tokyo with my family. We visited many places. I bought a nice T-shirt there. I want to show it to you. See you soon! Yuki", "translation": "「マイクへ　げんきですか？わたしはげんきです。せんしゅう、かぞくとうきょうにいきました。いろいろなばしょをほうもんしました。そこでいいTシャツをかいました。みせたいです。またね！ゆき」", "question": "What did Yuki buy in Tokyo?", "answer": "A nice T-shirt.", "options": ["A nice T-shirt.", "A bag.", "A book.", "A toy."], "category": "日常生活"}, {"title": "Sports Day", "passage": "Our school has a Sports Day every October. All the students run, jump, and play games. Last year, I ran in a relay race. My team came in first place. It was very exciting.", "translation": "わたしたちのがっこうでは、まいとし10がつにうんどうかいがあります。せいとはみんなはしったり、とんだり、ゲームをしたりします。きょねん、わたしはリレーにでました。わたしのチームが1いになりました。とてもこうふんしました。", "question": "When is the school Sports Day?", "answer": "Every October.", "options": ["Every October.", "Every September.", "Every November.", "Every June."], "category": "学校"}, {"title": "Shopping", "passage": "Yesterday, I went shopping with my mother. We went to a big shopping mall. I bought a new pencil case. It is yellow and has flowers on it. I paid 800 yen for it.", "translation": "きのう、おかあさんといっしょにかいものにいきました。おおきなショッピングモールにいきました。あたらしいふでばこをかいました。きいろくてはながついています。800えんはらいました。", "question": "How much did the pencil case cost?", "answer": "800 yen.", "options": ["800 yen.", "500 yen.", "1,000 yen.", "600 yen."], "category": "買い物"}, {"title": "My Dream", "passage": "I want to be a doctor in the future. I want to help sick people. Now, I study hard every day. I am especially good at science. My father is also a doctor.", "translation": "しょうらいはいしゃになりたいです。びょうきのひとをたすけたいです。いまは、まいにちいっしょうけんめいべんきょうしています。とくにりかがとくいです。おとうさんもいしゃです。", "question": "What does the writer want to be in the future?", "answer": "A doctor.", "options": ["A doctor.", "A teacher.", "A scientist.", "A cook."], "category": "夢・将来"}, {"title": "The Library", "passage": "There is a big library near my house. It opens at nine in the morning. It closes at six in the evening. I go there every Saturday. I can borrow up to five books.", "translation": "うちのちかくにおおきなとしょかんがあります。あさ9じにあきます。ゆうがた6じにしまります。わたしはまいにちようびにいきます。5さつまでほんをかりることができます。", "question": "What time does the library open?", "answer": "At nine in the morning.", "options": ["At nine in the morning.", "At eight in the morning.", "At ten in the morning.", "At seven in the morning."], "category": "場所・地域"}, {"title": "Cooking", "passage": "My mother teaches me how to cook. Last Sunday, we made curry together. First, we cut the vegetables. Then, we cooked them with meat. It took about one hour. The curry was very good.", "translation": "おかあさんがりょうりをおしえてくれます。このまえのにちようび、いっしょにカレーをつくりました。はじめに、やさいをきりました。それから、にくといっしょにいためました。やく1じかんかかりました。カレーはとてもおいしかったです。", "question": "What did they make last Sunday?", "answer": "Curry.", "options": ["Curry.", "Soup.", "Pizza.", "Sandwiches."], "category": "食べ物"}, {"title": "My New Friend", "passage": "A new student came to our class last Monday. Her name is Emma. She is from Australia. She speaks English and Japanese. She likes reading books. We are already good friends.", "translation": "せんしゅうのげつようびに、あたらしいせいとがクラスにきました。なまえはエマです。オーストラリアからきました。えいごとにほんごをはなします。ほんをよむのがすきです。もうなかよしです。", "question": "Where is Emma from?", "answer": "Australia.", "options": ["Australia.", "England.", "America.", "Canada."], "category": "学校"}, {"title": "Winter Fun", "passage": "In winter, my family goes to the mountains. We ski there for two days. My father is a good skier. I am not very good yet, but I am practicing. Last year, I fell many times.", "translation": "ふゆに、かぞくでやまにいきます。2にちかんスキーをします。おとうさんはスキーがじょうずです。わたしはまだあまりじょうずではありませんが、れんしゅうしています。きょねんはなんどもころびました。", "question": "How many days does the family ski?", "answer": "Two days.", "options": ["Two days.", "One day.", "Three days.", "Four days."], "category": "季節・行事"}, {"title": "My Room", "passage": "My room is small but I like it. I have a desk and a bed. There are many books on my desk. On the wall, there is a poster of my favorite soccer player. I clean my room every Sunday.", "translation": "わたしのへやはちいさいですがすきです。つくえとベッドがあります。つくえのうえにほんがたくさんあります。かべにはすきなサッカーせんしゅのポスターがはってあります。まいにちようびにへやをそうじします。", "question": "What is on the wall in the writer's room?", "answer": "A poster of a soccer player.", "options": ["A poster of a soccer player.", "A calendar.", "A clock.", "A picture of the family."], "category": "日常生活"}, {"title": "School Lunch", "passage": "At my school, we have lunch together in the classroom. Today's lunch was rice, soup, fish, and salad. I like fish very much. My friend Ken doesn't like fish. He ate the salad.", "translation": "わたしのがっこうでは、きょうしつでいっしょにきゅうしょくをたべます。きょうのきゅうしょくはごはん、スープ、さかな、サラダでした。わたしはさかながだいすきです。ともだちのケンはさかながすきではありません。かれはサラダをたべました。", "question": "What did Ken eat for lunch?", "answer": "The salad.", "options": ["The salad.", "The fish.", "The rice.", "The soup."], "category": "食べ物"}, {"title": "A Trip", "passage": "Last summer, I went to Kyoto with my family. We visited many old temples. We also ate delicious food there. I took many photos. I want to go there again someday.", "translation": "きょねんのなつ、かぞくできょうとにいきました。ふるいおてらをたくさんほうもんしました。おいしいたべものもたべました。しゃしんをたくさんとりました。いつかまたいきたいです。", "question": "What did the writer do in Kyoto?", "answer": "Visited old temples.", "options": ["Visited old temples.", "Went swimming.", "Played soccer.", "Went skiing."], "category": "旅行"}, {"title": "Growing Plants", "passage": "In our class, we grow tomatoes. We planted the seeds in April. We water them every day. Now it is June and the tomatoes are getting red. We will eat them next week.", "translation": "わたしたちのクラスでは、トマトをそだてています。4がつにたねをうえました。まいにちみずをやります。いまは6がつで、トマトがあかくなってきています。らいしゅうたべます。", "question": "When did they plant the seeds?", "answer": "In April.", "options": ["In April.", "In May.", "In June.", "In March."], "category": "学校"}, {"title": "Helping at Home", "passage": "I help my mother at home every day. I wash the dishes after dinner. I also clean my room. On weekends, I help with the shopping. My mother is very happy when I help her.", "translation": "わたしはまいにちうちでおかあさんをてつだいます。ゆうしょくのあとにおさらをあらいます。じぶんのへやもそうじします。しゅうまつはかいものをてつだいます。わたしがてつだうと、おかあさんはとてもよろこびます。", "question": "What does the writer do after dinner?", "answer": "Washes the dishes.", "options": ["Washes the dishes.", "Cleans the room.", "Goes shopping.", "Cooks dinner."], "category": "日常生活"}];
 const QUIZ_COUNT = 10;
-let autoSpeak = true;
-let questions = [];
-let current = 0;
-let answers = [];
-let isSpeaking = false;
-let synth = window.speechSynthesis;
+const CONV_COUNT = 8;
+const STORAGE_KEY = 'eiken5_history';
+let autoSpeak=true, currentMode='all', currentCats=[], convCurrentMode='all', convCurrentCats=[];
+let questions=[], current=0, answers=[];
+let convQuestions=[], convCurrent=0, convAnswers=[];
+let flashWords=[], flashIndex=0, flashKnow=[], flashUnsure=[], flashFlipped=false, flashDir='en2ja', flashCatFilter=[];
+let showingTranslation=false;
+const synth=window.speechSynthesis;
+const STORAGE_KEY2='eiken5_history';
 
-// 初期化
-window.addEventListener('load', () => {
-  document.getElementById('word-count').textContent = WORDS.length;
-  showTitle();
-  if (synth) synth.getVoices(); // 音声リストを事前ロード
-  if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = () => synth.getVoices();
+// カテゴリ
+function getCategories(){ const c={}; WORDS.forEach(w=>{ if(!c[w.category])c[w.category]=0; c[w.category]++; }); return c; }
+function getConvCategories(){ const c={}; CONVS.forEach(w=>{ if(!c[w.category])c[w.category]=0; c[w.category]++; }); return c; }
+
+// localStorage
+function loadHistory(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ return []; } }
+function saveHistory(h){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(h)); }catch(e){} }
+function saveResult(ans, mode, total){
+  const h=loadHistory();
+  h.push({ date:new Date().toISOString(), score:ans.filter(a=>a.correct).length, total:total||ans.length, mode:mode,
+    details:ans.map(a=>({en:a.en||a.answer,ja:a.ja||a.answer,category:a.category,correct:a.correct})) });
+  if(h.length>100) h.shift();
+  saveHistory(h);
+}
+
+// 音声
+const AC=window.AudioContext||window.webkitAudioContext; let ac=null;
+function getAC(){ if(!ac&&AC)ac=new AC(); return ac; }
+function playTone(f,t,d,v=0.4){ const a=getAC(); if(!a)return; const o=a.createOscillator(),g=a.createGain(); o.connect(g); g.connect(a.destination); o.type=t; o.frequency.setValueAtTime(f,a.currentTime); g.gain.setValueAtTime(v,a.currentTime); g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+d); o.start(a.currentTime); o.stop(a.currentTime+d); }
+function playCorrect(){ playTone(523,'sine',0.15,0.3); setTimeout(()=>playTone(659,'sine',0.15,0.3),120); setTimeout(()=>playTone(784,'sine',0.25,0.35),240); setTimeout(()=>playTone(1047,'sine',0.3,0.4),360); }
+function playWrong(){ playTone(300,'sawtooth',0.15,0.25); setTimeout(()=>playTone(250,'sawtooth',0.25,0.3),150); }
+function playFlip(){ playTone(440,'sine',0.1,0.2); }
+
+// スタンプ
+const SOK=['🎉','✨','🌟','🎊','💯','🏆','👏','🥳','⭐','🎈'], SNG=['💪','😢','🤔','❓'];
+function launchStamps(ok){ const c=document.getElementById('stamp-container'); const n=ok?8:3,p=ok?SOK:SNG; for(let i=0;i<n;i++){ setTimeout(()=>{ const el=document.createElement('div'); el.className='stamp'; el.textContent=p[Math.floor(Math.random()*p.length)]; el.style.left=(15+Math.random()*70)+'%'; el.style.top=(40+Math.random()*40)+'%'; el.style.animationDelay=(Math.random()*0.3)+'s'; c.appendChild(el); setTimeout(()=>el.remove(),1400); },i*80); } }
+
+// 読み上げ
+window.addEventListener('load',()=>{
+  document.getElementById('word-count').textContent=WORDS.length;
+  document.getElementById('conv-count').textContent=CONVS.length;
+  document.getElementById('reading-count').textContent=READING.length;
+  document.getElementById('mode-word-count').textContent=WORDS.length;
+  document.getElementById('mode-conv-count').textContent=CONVS.length;
+  document.getElementById('mode-reading-count').textContent=READING.length;
+  updateMiniStats(); showTitle();
+  if(synth){ synth.getVoices(); synth.onvoiceschanged=()=>synth.getVoices(); }
 });
+function speak(text,cb){ if(!synth){if(cb)cb();return;} synth.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.85; const v=synth.getVoices(); const vo=v.find(x=>x.lang.startsWith('en')&&x.localService)||v.find(x=>x.lang.startsWith('en')); if(vo)u.voice=vo; u.onstart=()=>setSpeaking(true); u.onend=()=>{setSpeaking(false);if(cb)cb();}; u.onerror=()=>{setSpeaking(false);if(cb)cb();}; synth.speak(u); }
+function setSpeaking(s){ const card=document.getElementById('word-card'); if(!card)return; const wave=document.getElementById('wave'); const icon=document.getElementById('speaker-icon'); const label=document.getElementById('word-label'); if(s){card.classList.add('speaking');wave.classList.remove('hidden');icon.classList.add('hidden');label.textContent='🔊 SPEAKING...';}else{card.classList.remove('speaking');wave.classList.add('hidden');icon.classList.remove('hidden');label.textContent='👆 TAP TO LISTEN';} }
+function toggleAuto(){ autoSpeak=!autoSpeak; const t=document.getElementById('toggle-auto'); autoSpeak?t.classList.add('on'):t.classList.remove('on'); }
 
-function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+// 画面切替
+const SCREENS=['screen-title','screen-mode','screen-category','screen-conv-category','screen-quiz','screen-conv','screen-result','screen-conv-result','screen-reading','screen-reading-result','screen-stats','screen-flash','screen-flash-play','screen-flash-result'];
+function showScreen(id){ if(synth)synth.cancel(); SCREENS.forEach(s=>{ const el=document.getElementById(s); if(el)el.style.display=s===id?'block':'none'; }); }
+function showTitle(){ updateMiniStats(); showScreen('screen-title'); }
+function showMode(){ showScreen('screen-mode'); }
 
-function speak(text, cb) {
-  if (!synth) { if(cb) cb(); return; }
-  synth.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US'; u.rate = 0.85;
-  const voices = synth.getVoices();
-  const v = voices.find(x => x.lang.startsWith('en') && x.localService) || voices.find(x => x.lang.startsWith('en'));
-  if (v) u.voice = v;
-  u.onstart = () => setSpeaking(true);
-  u.onend   = () => { setSpeaking(false); if(cb) cb(); };
-  u.onerror = () => { setSpeaking(false); if(cb) cb(); };
-  synth.speak(u);
+// ===== 単語クイズ =====
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+function getWeakWords(){ const h=loadHistory(); if(!h.length)return []; const wc={}; h.forEach(r=>r.details.forEach(d=>{ if(!d.correct){wc[d.en]=(wc[d.en]||0)+1;} })); return WORDS.filter(w=>wc[w.en]>=1); }
+
+let selectedCats=new Set();
+function showCategory(){
+  showScreen('screen-category'); selectedCats=new Set();
+  const cats=getCategories(), grid=document.getElementById('cat-grid'); grid.innerHTML='';
+  const CE={'家族・人':'👨‍👩‍👧‍👦','動物':'🐶','食べ物・飲み物':'🍎','学校・文房具':'📚','色・形':'🎨','自然・天気':'🌸','動詞・動作':'🏃','場所・建物':'🏠','時間・曜日':'⏰','体・健康':'💪','服・持ち物':'👕','形容詞・状態':'😊','乗り物':'🚗','家・部屋':'🏠','スポーツ・遊び':'⚽','数・量':'🔢','場所・方向':'📍','あいさつ・表現':'👋'};
+  Object.entries(cats).forEach(([cat,count])=>{ const btn=document.createElement('button'); btn.className='cat-btn'; btn.innerHTML=`<span class="cat-emoji">${CE[cat]||'📝'}</span>${cat}<br><span class="cat-count">${count}語</span>`; btn.onclick=()=>{ if(selectedCats.has(cat)){selectedCats.delete(cat);btn.classList.remove('selected');}else{selectedCats.add(cat);btn.classList.add('selected');} updateCatBtn(); }; grid.appendChild(btn); });
+  updateCatBtn();
 }
+function updateCatBtn(){ const b=document.getElementById('cat-start-btn'); if(selectedCats.size>0){b.style.opacity='1';b.style.pointerEvents='auto';b.textContent=`${selectedCats.size}カテゴリでスタート →`;}else{b.style.opacity='0.4';b.style.pointerEvents='none';b.textContent='えらんだカテゴリでスタート →';} }
+function selectAllCats(){ document.querySelectorAll('#cat-grid .cat-btn').forEach(b=>b.classList.add('selected')); Object.keys(getCategories()).forEach(c=>selectedCats.add(c)); updateCatBtn(); }
+function startCategoryQuiz(){ currentCats=[...selectedCats]; startQuiz('category'); }
 
-function setSpeaking(s) {
-  isSpeaking = s;
-  const card = document.getElementById('word-card');
-  const wave = document.getElementById('wave');
-  const icon = document.getElementById('speaker-icon');
-  const label = document.getElementById('word-label');
-  if (s) {
-    card.classList.add('speaking');
-    wave.classList.remove('hidden');
-    icon.classList.add('hidden');
-    label.textContent = '🔊 SPEAKING...';
-  } else {
-    card.classList.remove('speaking');
-    wave.classList.add('hidden');
-    icon.classList.remove('hidden');
-    label.textContent = '👆 TAP TO LISTEN';
-  }
+function startQuiz(mode){
+  currentMode=mode||'all'; let pool=[];
+  if(currentMode==='all') pool=WORDS;
+  else if(currentMode==='category') pool=WORDS.filter(w=>currentCats.includes(w.category));
+  else if(currentMode==='weak'){ pool=getWeakWords(); if(pool.length<4){alert('まちがえた単語がまだ少ないです！'); showMode(); return;} }
+  if(pool.length<QUIZ_COUNT){ pool=[...pool,...shuffle(WORDS)]; }
+  const seen=new Set(); const picked=[];
+  for(const w of shuffle(pool)){ if(!seen.has(w.en)){seen.add(w.en);picked.push(w);} if(picked.length>=QUIZ_COUNT)break; }
+  questions=picked.map(q=>({...q,shuffled:shuffle(q.options)})); current=0; answers=[];
+  showScreen('screen-quiz'); renderQuestion();
 }
+function retryQuiz(){ startQuiz(currentMode); }
 
-function toggleAuto() {
-  autoSpeak = !autoSpeak;
-  const t = document.getElementById('toggle-auto');
-  autoSpeak ? t.classList.add('on') : t.classList.remove('on');
-}
-
-function showScreen(id) {
-  ['screen-title','screen-quiz','screen-result'].forEach(s => {
-    document.getElementById(s).style.display = s === id ? 'block' : 'none';
-  });
-}
-function showTitle() { if(synth) synth.cancel(); showScreen('screen-title'); }
-
-function startQuiz() {
-  questions = shuffle(WORDS).slice(0, QUIZ_COUNT).map(q => ({ ...q, shuffled: shuffle(q.options) }));
-  current = 0; answers = [];
-  showScreen('screen-quiz');
-  renderQuestion();
-}
-
-function renderQuestion() {
-  const q = questions[current];
-  const pct = ((current + 1) / QUIZ_COUNT) * 100;
-  document.getElementById('quiz-category').textContent = q.category;
-  document.getElementById('quiz-progress').textContent = `${current+1} / ${QUIZ_COUNT}`;
-  document.getElementById('quiz-bar').style.width = pct + '%';
-  document.getElementById('word-text').textContent = q.en;
+function renderQuestion(){
+  const q=questions[current];
+  document.getElementById('quiz-category').textContent=q.category;
+  document.getElementById('quiz-progress').textContent=`${current+1} / ${QUIZ_COUNT}`;
+  document.getElementById('quiz-bar').style.width=((current+1)/QUIZ_COUNT*100)+'%';
+  document.getElementById('word-emoji').textContent=q.emoji||'📝';
+  document.getElementById('word-text').textContent=q.en;
+  const sb=document.getElementById('spell-box'); sb.innerHTML='';
+  q.en.split('').forEach(ch=>{ const d=document.createElement('div'); d.className='spell-letter'; d.textContent=ch===' '?'·':ch; sb.appendChild(d); });
   document.getElementById('feedback').classList.add('hidden');
   document.getElementById('next-btn').classList.add('hidden');
+  const grid=document.getElementById('options'); grid.innerHTML='';
+  q.shuffled.forEach(opt=>{ const b=document.createElement('button'); b.className='opt-btn'; b.textContent=opt; b.onclick=()=>handleSelect(opt); grid.appendChild(b); });
+  setSpeaking(false);
+  if(autoSpeak) setTimeout(()=>speak(q.en),300);
+}
+function speakCurrent(){ speak(questions[current].en); }
+function handleSelect(opt){
+  const q=questions[current]; const ok=opt===q.ja;
+  answers.push({...q,chosen:opt,correct:ok});
+  document.querySelectorAll('#options .opt-btn').forEach(b=>{ b.disabled=true; if(b.textContent===q.ja)b.classList.add('correct'); else if(b.textContent===opt&&!ok)b.classList.add('wrong'); });
+  ok?playCorrect():playWrong(); launchStamps(ok);
+  const fb=document.getElementById('feedback');
+  const ok2=['🎉 せいかい！','✨ すごい！','🌟 パーフェクト！','🏆 やったね！','💯 かんぺき！'];
+  const ng=['💪 ざんねん…','🤔 むずかしかった？','😢 もうちょっと！'];
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.innerHTML=ok?ok2[Math.floor(Math.random()*ok2.length)]:`${ng[Math.floor(Math.random()*ng.length)]}<div style="font-size:13px;color:#5A7A9F;margin-top:3px;">こたえは「${q.ja}」だよ</div>`;
+  fb.classList.remove('hidden');
+  const nb=document.getElementById('next-btn'); nb.textContent=current+1>=QUIZ_COUNT?'🏁 けっかを見る':'つぎへ →'; nb.classList.remove('hidden');
+}
+function nextQuestion(){ if(synth)synth.cancel(); if(current+1>=QUIZ_COUNT){ saveResult(answers,currentMode,QUIZ_COUNT); showResult(); return; } current++; renderQuestion(); }
+function showResult(){
+  showScreen('screen-result');
+  const score=answers.filter(a=>a.correct).length; const pct=Math.round(score/QUIZ_COUNT*100);
+  const ranks=[{min:90,label:'かんぺき！',emoji:'🏆',color:'#FFD700'},{min:70,label:'よくできました！',emoji:'🌟',color:'#4CAF82'},{min:50,label:'もう少し！',emoji:'💪',color:'#60C8F5'},{min:0,label:'れんしゅうしよう',emoji:'📚',color:'#FF6B6B'}];
+  const rank=ranks.find(r=>pct>=r.min);
+  if(pct>=70)launchStamps(true);
+  document.getElementById('result-emoji').textContent=rank.emoji;
+  document.getElementById('result-label').textContent=rank.label; document.getElementById('result-label').style.color=rank.color;
+  document.getElementById('result-score').innerHTML=`${score}<span style="font-size:22px;color:#8AABCC;">/${QUIZ_COUNT}</span>`;
+  document.getElementById('result-pct').textContent=`正解率 ${pct}%`; document.getElementById('result-pct').style.color=rank.color;
+  const rows=document.getElementById('answer-rows'); rows.innerHTML='';
+  answers.forEach(a=>{ const row=document.createElement('div'); row.className='answer-row'; row.innerHTML=`<span class="answer-en" onclick="speak('${a.en.replace(/'/g,"\'")}')">🔊 ${a.en}</span><span class="answer-ja">→ ${a.ja}</span><span>${a.correct?'⭕':'❌'}</span>`; rows.appendChild(row); });
+}
 
-  // 選択肢
-  const grid = document.getElementById('options');
-  grid.innerHTML = '';
-  q.shuffled.forEach(opt => {
-    const b = document.createElement('button');
-    b.className = 'opt-btn';
-    b.textContent = opt;
-    b.onclick = () => handleSelect(opt);
+// ===== 会話文クイズ =====
+let selectedConvCats=new Set();
+function showConvCategory(){
+  showScreen('screen-conv-category'); selectedConvCats=new Set();
+  const cats=getConvCategories(), grid=document.getElementById('conv-cat-grid'); grid.innerHTML='';
+  const CE={'あいさつ・自己紹介':'👋','学校・勉強':'📚','家族・家での会話':'🏠','食べ物・買い物':'🍎','趣味・スポーツ':'⚽','天気・季節':'🌸','体調・病気':'🏥','時間・予定':'⏰'};
+  Object.entries(cats).forEach(([cat,count])=>{ const btn=document.createElement('button'); btn.className='cat-btn'; btn.innerHTML=`<span class="cat-emoji">${CE[cat]||'💬'}</span>${cat}<br><span class="cat-count">${count}問</span>`; btn.onclick=()=>{ if(selectedConvCats.has(cat)){selectedConvCats.delete(cat);btn.classList.remove('selected');}else{selectedConvCats.add(cat);btn.classList.add('selected');} updateConvCatBtn(); }; grid.appendChild(btn); });
+  updateConvCatBtn();
+}
+function updateConvCatBtn(){ const b=document.getElementById('conv-cat-start-btn'); if(selectedConvCats.size>0){b.style.opacity='1';b.style.pointerEvents='auto';b.textContent=`${selectedConvCats.size}テーマでスタート →`;}else{b.style.opacity='0.4';b.style.pointerEvents='none';b.textContent='えらんだテーマでスタート →';} }
+function startConvCategoryQuiz(){ convCurrentCats=[...selectedConvCats]; startConvQuiz('category'); }
+
+function startConvQuiz(mode){
+  convCurrentMode=mode||'all'; let pool=[];
+  if(convCurrentMode==='all') pool=CONVS;
+  else if(convCurrentMode==='category') pool=CONVS.filter(c=>convCurrentCats.includes(c.category));
+  if(pool.length<CONV_COUNT) pool=[...pool,...shuffle(CONVS)];
+  const seen=new Set(); const picked=[];
+  for(const c of shuffle(pool)){ if(!seen.has(c.question+c.answer)){seen.add(c.question+c.answer);picked.push(c);} if(picked.length>=CONV_COUNT)break; }
+  convQuestions=picked.map(q=>({...q,shuffledOpts:shuffle(q.options)}));
+  convCurrent=0; convAnswers=[];
+  showScreen('screen-conv'); renderConvQuestion();
+}
+function retryConvQuiz(){ startConvQuiz(convCurrentMode); }
+
+function renderConvQuestion(){
+  const q=convQuestions[convCurrent];
+  showingTranslation=false;
+  document.getElementById('conv-translation').style.display='none';
+  document.getElementById('conv-category-tag').textContent=q.category;
+  document.getElementById('conv-progress').textContent=`${convCurrent+1} / ${CONV_COUNT}`;
+  document.getElementById('conv-bar').style.width=((convCurrent+1)/CONV_COUNT*100)+'%';
+  document.getElementById('conv-situation').textContent='📍 '+q.situation;
+  document.getElementById('conv-translation').textContent=q.translation;
+
+  // 会話文を描画（最後のセリフは空所）
+  const lines=document.getElementById('conv-lines'); lines.innerHTML='';
+  q.conversation.forEach((line,i)=>{
+    const div=document.createElement('div'); div.className='conv-line';
+    const sp=document.createElement('div'); sp.className='conv-speaker'; sp.textContent=line.speaker;
+    const txt=document.createElement('div'); txt.className='conv-text';
+    if(i===q.conversation.length-1){
+      // 最後のセリフに空所を入れる
+      txt.innerHTML=line.text.replace('( )','<span class="conv-blank">　　　　</span>');
+    } else {
+      txt.textContent=line.text;
+    }
+    div.appendChild(sp); div.appendChild(txt); lines.appendChild(div);
+  });
+
+  document.getElementById('conv-feedback').classList.add('hidden');
+  document.getElementById('conv-next-btn').classList.add('hidden');
+
+  const grid=document.getElementById('conv-options'); grid.innerHTML='';
+  q.shuffledOpts.forEach(opt=>{ const b=document.createElement('button'); b.className='conv-opt-btn'; b.textContent=opt; b.onclick=()=>handleConvSelect(opt); grid.appendChild(b); });
+
+  // 会話文全体を読み上げ
+  if(autoSpeak){ setTimeout(()=>speakConversation(q),300); }
+}
+
+// 会話文を1行ずつ読み上げ・空所でポン音
+function speakConversation(q){
+  if(!synth) return;
+  synth.cancel();
+  const lines = q.conversation;
+  let i = 0;
+
+  function playLine(){
+    if(i >= lines.length) return;
+    const text = lines[i].text;
+    i++;
+
+    if(text === '( )'){
+      // 空所だけのセリフ → ポン音のみ
+      playBlankTone();
+      setTimeout(playLine, 800);
+    } else if(text.includes('( )')){
+      // 空所が混じったセリフ → 前後に分割
+      const parts = text.split('( )');
+      const before = parts[0].trim();
+      const after  = parts[1] ? parts[1].trim() : '';
+
+      if(before){
+        const u = makeSpeech(before, ()=>{
+          playBlankTone();
+          setTimeout(()=>{
+            if(after){
+              const u2 = makeSpeech(after, ()=>setTimeout(playLine,400));
+              synth.speak(u2);
+            } else {
+              setTimeout(playLine, 400);
+            }
+          }, 700);
+        });
+        synth.speak(u);
+      } else {
+        playBlankTone();
+        setTimeout(()=>{
+          if(after){
+            const u2 = makeSpeech(after, ()=>setTimeout(playLine,400));
+            synth.speak(u2);
+          } else {
+            setTimeout(playLine, 400);
+          }
+        }, 700);
+      }
+    } else {
+      // 通常のセリフ
+      const u = makeSpeech(text, ()=>setTimeout(playLine, 400));
+      synth.speak(u);
+    }
+  }
+  playLine();
+}
+
+function makeSpeech(text, cb){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US'; u.rate = 0.82;
+  const voices = synth.getVoices();
+  const v = voices.find(x=>x.lang.startsWith('en')&&x.localService)||voices.find(x=>x.lang.startsWith('en'));
+  if(v) u.voice = v;
+  u.onend  = ()=>{ if(cb) cb(); };
+  u.onerror= ()=>{ if(cb) cb(); };
+  return u;
+}
+
+function playBlankTone(){
+  // 空所を示すポン音（高めのビープ）
+  const a = getAC(); if(!a) return;
+  const osc = a.createOscillator(), gain = a.createGain();
+  osc.connect(gain); gain.connect(a.destination);
+  osc.type = 'sine'; osc.frequency.setValueAtTime(880, a.currentTime);
+  gain.gain.setValueAtTime(0.3, a.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, a.currentTime + 0.4);
+  osc.start(a.currentTime); osc.stop(a.currentTime + 0.4);
+}
+
+function toggleTranslation(){
+  showingTranslation=!showingTranslation;
+  document.getElementById('conv-translation').style.display=showingTranslation?'block':'none';
+}
+
+function handleConvSelect(opt){
+  const q=convQuestions[convCurrent]; const ok=opt===q.answer;
+  convAnswers.push({...q,chosen:opt,correct:ok});
+  document.querySelectorAll('#conv-options .conv-opt-btn').forEach(b=>{ b.disabled=true; if(b.textContent===q.answer)b.classList.add('correct'); else if(b.textContent===opt&&!ok)b.classList.add('wrong'); });
+  ok?playCorrect():playWrong(); launchStamps(ok);
+  const fb=document.getElementById('conv-feedback');
+  const ok2=['🎉 せいかい！','✨ すごい！','🌟 パーフェクト！','🏆 やったね！','💯 かんぺき！'];
+  const ng=['💪 ざんねん…','🤔 むずかしかった？','😢 もうちょっと！'];
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.innerHTML=ok?ok2[Math.floor(Math.random()*ok2.length)]:`${ng[Math.floor(Math.random()*ng.length)]}<div style="font-size:13px;color:#5A7A9F;margin-top:3px;">こたえは「${q.answer}」だよ</div>`;
+  fb.classList.remove('hidden');
+  // 正解を読み上げ
+  if(ok) setTimeout(()=>speak(q.answer),500);
+  else   setTimeout(()=>speak(q.answer),800);
+  const nb=document.getElementById('conv-next-btn'); nb.textContent=convCurrent+1>=CONV_COUNT?'🏁 けっかを見る':'つぎへ →'; nb.classList.remove('hidden');
+}
+function nextConvQuestion(){ if(synth)synth.cancel(); if(convCurrent+1>=CONV_COUNT){ saveResult(convAnswers,'conv-'+convCurrentMode,CONV_COUNT); showConvResult(); return; } convCurrent++; renderConvQuestion(); }
+function showConvResult(){
+  showScreen('screen-conv-result');
+  const score=convAnswers.filter(a=>a.correct).length; const pct=Math.round(score/CONV_COUNT*100);
+  const ranks=[{min:90,label:'かんぺき！',emoji:'🏆',color:'#FFD700'},{min:70,label:'よくできました！',emoji:'🌟',color:'#4CAF82'},{min:50,label:'もう少し！',emoji:'💪',color:'#60C8F5'},{min:0,label:'れんしゅうしよう',emoji:'📚',color:'#FF6B6B'}];
+  const rank=ranks.find(r=>pct>=r.min);
+  if(pct>=70)launchStamps(true);
+  document.getElementById('conv-result-emoji').textContent=rank.emoji;
+  document.getElementById('conv-result-label').textContent=rank.label; document.getElementById('conv-result-label').style.color=rank.color;
+  document.getElementById('conv-result-score').innerHTML=`${score}<span style="font-size:22px;color:#8AABCC;">/${CONV_COUNT}</span>`;
+  document.getElementById('conv-result-pct').textContent=`正解率 ${pct}%`; document.getElementById('conv-result-pct').style.color=rank.color;
+  const rows=document.getElementById('conv-answer-rows'); rows.innerHTML='';
+  convAnswers.forEach(a=>{ const row=document.createElement('div'); row.className='answer-row'; row.innerHTML=`<span class="answer-en" onclick="speak('${a.answer.replace(/'/g,"\'")}')">🔊 ${a.situation}</span><span class="answer-ja">${a.correct?'⭕':'❌ →'+a.answer}</span>`; rows.appendChild(row); });
+}
+
+// ===== フラッシュカード =====
+function showFlashTitle(){
+  showScreen('screen-flash');
+  const cats=getCategories();
+  const CE={'家族・人':'👨‍👩‍👧‍👦','動物':'🐶','食べ物・飲み物':'🍎','学校・文房具':'📚','色・形':'🎨','自然・天気':'🌸','動詞・動作':'🏃','場所・建物':'🏠','時間・曜日':'⏰','体・健康':'💪','服・持ち物':'👕','形容詞・状態':'😊','乗り物':'🚗','家・部屋':'🏠','スポーツ・遊び':'⚽','数・量':'🔢','場所・方向':'📍','あいさつ・表現':'👋'};
+  const container=document.getElementById('flash-cat-filter'); container.innerHTML='';
+  const allBtn=document.createElement('button');
+  allBtn.style.cssText='padding:5px 12px;border-radius:20px;border:2px solid #60C8F5;background:#E8F7FF;color:#1A2E52;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
+  allBtn.textContent='すべて'; allBtn.dataset.cat='all'; allBtn.onclick=()=>toggleFlashCat('all',allBtn); container.appendChild(allBtn);
+  Object.keys(cats).forEach(cat=>{ const b=document.createElement('button'); b.style.cssText='padding:5px 12px;border-radius:20px;border:2px solid #D0E4F5;background:#fff;color:#1A2E52;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;'; b.textContent=(CE[cat]||'📝')+' '+cat; b.dataset.cat=cat; b.onclick=()=>toggleFlashCat(cat,b); container.appendChild(b); });
+  flashCatFilter=[];
+}
+function toggleFlashCat(cat,btn){ if(cat==='all'){flashCatFilter=[]; document.querySelectorAll('#flash-cat-filter button').forEach(b=>{ b.style.background=b.dataset.cat==='all'?'#60C8F5':'#fff'; b.style.borderColor=b.dataset.cat==='all'?'#60C8F5':'#D0E4F5'; b.style.color=b.dataset.cat==='all'?'#fff':'#1A2E52'; }); return;} if(flashCatFilter.includes(cat))flashCatFilter=flashCatFilter.filter(c=>c!==cat); else flashCatFilter.push(cat); btn.style.background=flashCatFilter.includes(cat)?'#B06EF5':'#fff'; btn.style.borderColor=flashCatFilter.includes(cat)?'#7C3AED':'#D0E4F5'; btn.style.color=flashCatFilter.includes(cat)?'#fff':'#1A2E52'; const ab=document.querySelector('#flash-cat-filter button[data-cat="all"]'); if(ab){ab.style.background='#fff';ab.style.borderColor='#D0E4F5';ab.style.color='#1A2E52';} }
+function toggleFlashDir(){ flashDir=flashDir==='en2ja'?'ja2en':'en2ja'; document.getElementById('flash-dir-label').textContent=flashDir==='en2ja'?'英語 → 日本語':'日本語 → 英語'; }
+function startFlash(){ let pool=flashCatFilter.length>0?WORDS.filter(w=>flashCatFilter.includes(w.category)):WORDS; flashWords=shuffle(pool); flashIndex=0; flashKnow=[]; flashUnsure=[]; flashFlipped=false; showScreen('screen-flash-play'); document.getElementById('flash-mode-tag').textContent=flashDir==='en2ja'?'英→日':'日→英'; renderFlash(); }
+function retryUnsure(){ if(!flashUnsure.length)return; flashWords=shuffle(flashUnsure); flashIndex=0; flashKnow=[]; flashUnsure=[]; flashFlipped=false; showScreen('screen-flash-play'); renderFlash(); }
+function renderFlash(){ if(flashIndex>=flashWords.length){showFlashResult();return;} const w=flashWords[flashIndex]; flashFlipped=false; document.getElementById('flash-progress').textContent=`${flashIndex+1} / ${flashWords.length}`; document.getElementById('flash-bar').style.width=((flashIndex+1)/flashWords.length*100)+'%'; document.getElementById('flash-sub').textContent='カードをタップして答えを見てね'; document.getElementById('flash-nav').classList.add('hidden'); const card=document.getElementById('flash-card'); card.classList.remove('flipped'); document.getElementById('flash-front').classList.remove('hidden'); document.getElementById('flash-back').classList.add('hidden'); if(flashDir==='en2ja'){ document.getElementById('flash-hint-front').textContent='👆 TAP TO LISTEN'; document.getElementById('flash-main').textContent=w.en; const sb=document.getElementById('flash-spell'); sb.innerHTML=''; w.en.split('').forEach(ch=>{const d=document.createElement('div');d.className='spell-letter';d.textContent=ch===' '?'·':ch;sb.appendChild(d);}); document.getElementById('flash-emoji-back').textContent=w.emoji||'📝'; document.getElementById('flash-ja').textContent=w.ja; if(autoSpeak)setTimeout(()=>speak(w.en),200); }else{ document.getElementById('flash-hint-front').textContent='日本語のいみ'; document.getElementById('flash-main').textContent=w.ja; document.getElementById('flash-emoji-back').textContent=w.emoji||'📝'; document.getElementById('flash-ja').textContent=w.en; document.getElementById('flash-spell').innerHTML=''; } }
+function flipCard(){ if(flashFlipped)return; flashFlipped=true; playFlip(); const card=document.getElementById('flash-card'); card.classList.add('flipped'); document.getElementById('flash-front').classList.add('hidden'); document.getElementById('flash-back').classList.remove('hidden'); document.getElementById('flash-nav').classList.remove('hidden'); document.getElementById('flash-sub').textContent='わかった？'; const w=flashWords[flashIndex]; if(flashDir==='ja2en')setTimeout(()=>speak(w.en),100); }
+function flashAnswer(know){ const w=flashWords[flashIndex]; if(know){flashKnow.push(w);launchStamps(true);playCorrect();}else{flashUnsure.push(w);playWrong();} flashIndex++; setTimeout(renderFlash,300); }
+function showFlashResult(){ showScreen('screen-flash-result'); const total=flashKnow.length+flashUnsure.length; const pct=Math.round(flashKnow.length/total*100); const emoji=pct>=80?'🏆':pct>=60?'🌟':'💪'; const label=pct>=80?'すごい！よくわかってるね！':pct>=60?'いいかんじ！':'もう一度れんしゅうしよう'; document.getElementById('fr-emoji').textContent=emoji; document.getElementById('fr-label').textContent=label; document.getElementById('fr-know').textContent=flashKnow.length; document.getElementById('fr-unsure').textContent=flashUnsure.length; if(pct>=60)launchStamps(true); const ul=document.getElementById('fr-unsure-list'); if(flashUnsure.length>0){ ul.innerHTML='<p style="font-size:12px;font-weight:700;color:#1A2E52;margin-bottom:6px;">😓 もう一度みよう</p>'+flashUnsure.map(w=>`<span class="weak-word" onclick="speak('${w.en.replace(/'/g,"\'")}')">🔊 ${w.en}（${w.ja}）</span>`).join(''); }else{ ul.innerHTML='<p style="color:#4CAF82;font-size:13px;text-align:center;">🎉 ぜんぶわかった！すごい！</p>'; } }
+
+// ===== ミニ統計 =====
+function updateMiniStats(){ const h=loadHistory(); if(!h.length){document.getElementById('mini-stats').classList.add('hidden');return;} document.getElementById('mini-stats').classList.remove('hidden'); const avg=Math.round(h.reduce((s,r)=>s+r.score/r.total*100,0)/h.length); const best=Math.max(...h.map(r=>r.score)); document.getElementById('ms-plays').textContent=h.length; document.getElementById('ms-avg').textContent=avg+'%'; document.getElementById('ms-best').textContent=best+'/'+h[h.length-1].total; }
+
+// ===== 分析 =====
+function showStats(){ showScreen('screen-stats'); const h=loadHistory(); if(!h.length){document.getElementById('st-plays').textContent='まだありません';['st-total','st-avg','st-best','st-streak'].forEach(id=>document.getElementById(id).textContent='-');document.getElementById('score-chart').innerHTML='<p style="color:#8AABCC;font-size:12px;text-align:center;width:100%;">プレイするとグラフが表示されます</p>';document.getElementById('cat-stats').innerHTML='<p style="color:#8AABCC;font-size:12px;">データがありません</p>';document.getElementById('weak-words').innerHTML='<p style="color:#8AABCC;font-size:12px;">データがありません</p>';document.getElementById('history-list').innerHTML='<p style="color:#8AABCC;font-size:12px;">まだプレイしていません</p>';return;} const tq=h.reduce((s,r)=>s+r.total,0),tc=h.reduce((s,r)=>s+r.score,0); const avg=Math.round(tc/tq*100),best=Math.max(...h.map(r=>r.score)); let ms=0,cs=0; h.forEach(r=>r.details.forEach(d=>{if(d.correct){cs++;ms=Math.max(ms,cs);}else cs=0;})); document.getElementById('st-plays').textContent=h.length+'回'; document.getElementById('st-total').textContent=tq+'問'; document.getElementById('st-avg').textContent=avg+'%'; document.getElementById('st-best').textContent=best+'/'+h[h.length-1].total; document.getElementById('st-streak').textContent=ms+'問連続'; const recent=h.slice(-10),chart=document.getElementById('score-chart'); chart.innerHTML=''; recent.forEach(r=>{const p=r.score/r.total;const b=document.createElement('div');b.className='mini-bar';b.style.height=(p*44+4)+'px';b.style.background=p>=0.9?'#FFD700':p>=0.7?'#4CAF82':p>=0.5?'#60C8F5':'#FF6B6B';chart.appendChild(b);}); const cs2={}; h.forEach(r=>r.details.forEach(d=>{if(!cs2[d.category])cs2[d.category]={c:0,t:0};cs2[d.category].t++;if(d.correct)cs2[d.category].c++;})); const ce=document.getElementById('cat-stats'); ce.innerHTML=''; Object.entries(cs2).sort((a,b)=>a[1].c/a[1].t-b[1].c/b[1].t).forEach(([cat,s])=>{const p=Math.round(s.c/s.t*100);const col=p>=80?'#4CAF82':p>=60?'#FFD93D':'#FF6B6B';ce.innerHTML+=`<div class="cat-row"><span class="cat-name">${cat}</span><div class="cat-bar-bg"><div class="cat-bar" style="width:${p}%;background:${col};"></div></div><span class="cat-pct" style="color:${col};">${p}%</span></div>`;}); const ws={}; h.forEach(r=>r.details.forEach(d=>{if(!ws[d.en])ws[d.en]={en:d.en,ja:d.ja,w:0,t:0};ws[d.en].t++;if(!d.correct)ws[d.en].w++;})); const weak=Object.values(ws).filter(w=>w.t>=2).sort((a,b)=>b.w/b.t-a.w/a.t).slice(0,10); const we=document.getElementById('weak-words'); we.innerHTML=weak.length?weak.map(w=>`<span class="weak-word" onclick="speak('${w.en.replace(/'/g,"\'")}')">🔊 ${w.en}（${w.ja}）<span style="color:#AABCCC;font-size:10px;"> ${Math.round(w.w/w.t*100)}%</span></span>`).join(''):'<p style="color:#4CAF82;font-size:12px;">苦手な単語はありません！🎉</p>'; const hl=document.getElementById('history-list'); hl.innerHTML=''; [...h].reverse().slice(0,20).forEach(r=>{const d=new Date(r.date);const ds=`${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;const p=Math.round(r.score/r.total*100);const col=p>=70?'#4CAF82':p>=50?'#FFD93D':'#FF6B6B';const ml=r.mode==='weak'?'😓にがて':r.mode==='category'?'📚カテゴリ':r.mode&&r.mode.startsWith('conv')?'💬かいわ':'🌍ぜんはんい';hl.innerHTML+=`<div class="history-row"><span>${ds} <span style="font-size:10px;color:#AABCCC;">${ml}</span></span><span style="font-weight:700;color:${col};">${r.score}/${r.total}（${p}%）</span></div>`;}); }
+
+// ===== 読解クイズ =====
+const READING_COUNT = 5;
+let readingQuestions=[], readingCurrent=0, readingAnswers=[];
+let showingReadingTranslation=false;
+
+function startReadingQuiz(mode){
+  const pool = shuffle([...READING]);
+  readingQuestions = pool.slice(0, READING_COUNT).map(q=>({...q, shuffledOpts:shuffle(q.options)}));
+  readingCurrent=0; readingAnswers=[];
+  showingReadingTranslation=false;
+  showScreen('screen-reading');
+  renderReadingQuestion();
+}
+
+function renderReadingQuestion(){
+  const q = readingQuestions[readingCurrent];
+  showingReadingTranslation=false;
+  document.getElementById('reading-translation').style.display='none';
+  document.getElementById('reading-category-tag').textContent=q.category;
+  document.getElementById('reading-progress').textContent=`${readingCurrent+1} / ${READING_COUNT}`;
+  document.getElementById('reading-bar').style.width=((readingCurrent+1)/READING_COUNT*100)+'%';
+  document.getElementById('reading-title').textContent='📖 '+q.title;
+  document.getElementById('reading-passage').textContent=q.passage;
+  document.getElementById('reading-translation').textContent=q.translation;
+  document.getElementById('reading-question').textContent='❓ '+q.question;
+  document.getElementById('reading-feedback').classList.add('hidden');
+  document.getElementById('reading-next-btn').classList.add('hidden');
+
+  const grid=document.getElementById('reading-options'); grid.innerHTML='';
+  q.shuffledOpts.forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='conv-opt-btn';
+    b.textContent=opt;
+    b.onclick=()=>handleReadingSelect(opt);
     grid.appendChild(b);
   });
 
-  setSpeaking(false);
-  if (autoSpeak) setTimeout(() => speak(q.en), 300);
+  if(autoSpeak) setTimeout(()=>speakPassage(), 400);
 }
 
-function speakCurrent() {
-  speak(questions[current].en);
-}
-
-function handleSelect(opt) {
-  const q = questions[current];
-  const ok = opt === q.ja;
-  answers.push({ ...q, chosen: opt, correct: ok });
-
-  // ボタン色変更
-  document.querySelectorAll('.opt-btn').forEach(b => {
-    b.disabled = true;
-    if (b.textContent === q.ja) b.classList.add('correct');
-    else if (b.textContent === opt && !ok) b.classList.add('wrong');
+function speakPassage(){
+  const q = readingQuestions[readingCurrent];
+  if(!synth) return;
+  synth.cancel();
+  // パッセージを読んだあと質問を読む
+  const u1 = makeSpeech(q.passage, ()=>{
+    setTimeout(()=>{
+      const u2 = makeSpeech('Question. ' + q.question, null);
+      synth.speak(u2);
+    }, 600);
   });
+  synth.speak(u1);
+}
 
-  // フィードバック
-  const fb = document.getElementById('feedback');
-  const emojisOk  = ['🎉','✨','🌟','🎊','💯','🏆','👏','🥳'];
-  const emojisNg  = ['💪','😢','ドンマイ！','次はできる！','もう一度！'];
-  const emojis = ok ? emojisOk : emojisNg;
-  const e = emojis[Math.floor(Math.random() * emojis.length)];
-  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
-  fb.innerHTML = ok
-    ? `${e} せいかい！`
-    : `${e}<div style="font-size:14px;color:#5A7A9F;margin-top:4px;">こたえは「${q.ja}」だよ</div>`;
+function toggleReadingTranslation(){
+  showingReadingTranslation=!showingReadingTranslation;
+  document.getElementById('reading-translation').style.display=showingReadingTranslation?'block':'none';
+}
+
+function handleReadingSelect(opt){
+  const q=readingQuestions[readingCurrent]; const ok=opt===q.answer;
+  readingAnswers.push({...q, chosen:opt, correct:ok});
+  document.querySelectorAll('#reading-options .conv-opt-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===q.answer) b.classList.add('correct');
+    else if(b.textContent===opt&&!ok) b.classList.add('wrong');
+  });
+  ok?playCorrect():playWrong(); launchStamps(ok);
+  const fb=document.getElementById('reading-feedback');
+  const ok2=['🎉 せいかい！','✨ すごい！','🌟 パーフェクト！','🏆 やったね！','💯 かんぺき！'];
+  const ng=['💪 ざんねん…','🤔 もう一度よんでみよう','😢 つぎはできる！'];
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.innerHTML=ok?ok2[Math.floor(Math.random()*ok2.length)]:`${ng[Math.floor(Math.random()*ng.length)]}<div style="font-size:13px;color:#5A7A9F;margin-top:3px;">こたえは「${q.answer}」だよ</div>`;
   fb.classList.remove('hidden');
-
-  // 次へボタン
-  const nb = document.getElementById('next-btn');
-  nb.textContent = current + 1 >= QUIZ_COUNT ? '🏁 けっかを見る' : 'つぎへ →';
+  if(ok) setTimeout(()=>speak(q.answer), 500);
+  else   setTimeout(()=>speak(q.answer), 800);
+  const nb=document.getElementById('reading-next-btn');
+  nb.textContent=readingCurrent+1>=READING_COUNT?'🏁 けっかを見る':'つぎへ →';
   nb.classList.remove('hidden');
 }
 
-function nextQuestion() {
-  if (synth) synth.cancel();
-  if (current + 1 >= QUIZ_COUNT) { showResult(); return; }
-  current++;
-  renderQuestion();
+function nextReadingQuestion(){
+  if(synth)synth.cancel();
+  if(readingCurrent+1>=READING_COUNT){ saveResult(readingAnswers,'reading',READING_COUNT); showReadingResult(); return; }
+  readingCurrent++; renderReadingQuestion();
 }
 
-function showResult() {
-  showScreen('screen-result');
-  const score = answers.filter(a => a.correct).length;
-  const pct = Math.round(score / QUIZ_COUNT * 100);
-  const ranks = [
-    { min:90, label:'かんぺき！',      emoji:'🏆', color:'#FFD700' },
-    { min:70, label:'よくできました！', emoji:'🌟', color:'#4CAF82' },
-    { min:50, label:'もう少し！',      emoji:'💪', color:'#60C8F5' },
-    { min:0,  label:'れんしゅうしよう', emoji:'📚', color:'#FF6B6B' },
+function showReadingResult(){
+  showScreen('screen-reading-result');
+  const score=readingAnswers.filter(a=>a.correct).length;
+  const pct=Math.round(score/READING_COUNT*100);
+  const ranks=[
+    {min:100,label:'かんぺき！',     emoji:'🏆',color:'#FFD700'},
+    {min:80, label:'よくできました！',emoji:'🌟',color:'#4CAF82'},
+    {min:60, label:'もう少し！',     emoji:'💪',color:'#60C8F5'},
+    {min:0,  label:'れんしゅうしよう',emoji:'📚',color:'#FF6B6B'},
   ];
-  const rank = ranks.find(r => pct >= r.min);
-  document.getElementById('result-emoji').textContent = rank.emoji;
-  document.getElementById('result-label').textContent = rank.label;
-  document.getElementById('result-label').style.color = rank.color;
-  document.getElementById('result-score').innerHTML = `${score}<span style="font-size:24px;color:#8AABCC;">/${QUIZ_COUNT}</span>`;
-  document.getElementById('result-pct').textContent = `正解率 ${pct}%`;
-  document.getElementById('result-pct').style.color = rank.color;
-  document.getElementById('result-total').textContent = `${WORDS.length}語から毎回ランダム出題`;
-
-  const rows = document.getElementById('answer-rows');
-  rows.innerHTML = '';
-  answers.forEach(a => {
-    const row = document.createElement('div');
-    row.className = 'answer-row';
-    row.innerHTML = `
-      <span class="answer-en" onclick="speak('${a.en}')">🔊 ${a.en}</span>
-      <span class="answer-ja">→ ${a.ja}</span>
-      <span>${a.correct ? '⭕' : '❌'}</span>`;
+  const rank=ranks.find(r=>pct>=r.min);
+  if(pct>=60) launchStamps(true);
+  document.getElementById('reading-result-emoji').textContent=rank.emoji;
+  document.getElementById('reading-result-label').textContent=rank.label;
+  document.getElementById('reading-result-label').style.color=rank.color;
+  document.getElementById('reading-result-score').innerHTML=`${score}<span style="font-size:22px;color:#8AABCC;">/${READING_COUNT}</span>`;
+  document.getElementById('reading-result-pct').textContent=`正解率 ${pct}%`;
+  document.getElementById('reading-result-pct').style.color=rank.color;
+  const rows=document.getElementById('reading-answer-rows'); rows.innerHTML='';
+  readingAnswers.forEach(a=>{
+    const row=document.createElement('div'); row.className='answer-row';
+    row.innerHTML=`<span style="font-weight:700;color:#1A2E52;font-size:12px;min-width:80px;">📖 ${a.title}</span><span style="color:#5A7A9F;flex:1;text-align:center;font-size:12px;">${a.answer}</span><span>${a.correct?'⭕':'❌'}</span>`;
     rows.appendChild(row);
   });
 }
+
+function clearHistory(){ if(confirm('きろくをぜんぶけしますか？')){ localStorage.removeItem(STORAGE_KEY); showStats(); updateMiniStats(); } }
 </script>
 </body>
 </html>
