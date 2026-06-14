@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>えいご たんごクイズ｜英検5級</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'BIZ UDPGothic', 'Hiragino Maru Gothic Pro', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #60C8F5 0%, #B8F0D8 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .card {
+    background: #FFFDF4; border-radius: 28px;
+    padding: 28px 24px; max-width: 500px; width: 100%;
+    box-shadow: 0 8px 40px rgba(26,46,82,0.13);
+  }
+  .btn {
+    width: 100%; border: none; border-radius: 18px;
+    padding: 15px; font-size: 18px; font-weight: 900;
+    cursor: pointer; margin-bottom: 10px; display: block;
+    font-family: inherit;
+  }
+  .btn-yellow { background: linear-gradient(135deg,#FFD93D,#FF9F1C); color: #1A2E52; box-shadow: 0 4px 16px rgba(255,180,0,0.4); }
+  .btn-green  { background: linear-gradient(135deg,#4CAF82,#2E9E6A); color: #fff;     box-shadow: 0 4px 16px rgba(76,175,130,0.4); }
+  .btn-ghost  { background: transparent; color: #8AABCC; border: 2px solid #C8DCF0; font-size: 15px; }
+  .progress-bar-bg { background: #DDE8F5; border-radius: 8px; height: 10px; overflow: hidden; margin-bottom: 20px; }
+  .progress-bar    { height: 100%; border-radius: 8px; background: linear-gradient(90deg,#60C8F5,#4CAF82); transition: width 0.4s; }
+  .word-card {
+    background: linear-gradient(135deg,#1A2E52,#2E4A82);
+    border-radius: 20px; padding: 24px 20px; text-align: center;
+    margin-bottom: 20px; cursor: pointer; transition: all 0.15s;
+  }
+  .word-card:hover { transform: scale(1.01); }
+  .word-card.speaking { box-shadow: 0 0 0 4px #FFD93D, 0 8px 24px rgba(26,46,82,0.3); transform: scale(0.99); }
+  .word-label { font-size: 11px; color: #8AADD0; letter-spacing: 2px; margin-bottom: 4px; }
+  .word-text  { font-size: 46px; font-weight: 900; color: #fff; letter-spacing: 2px; }
+  .wave { display:flex; justify-content:center; gap:4px; height:24px; align-items:center; margin-top:8px; }
+  .wave span { width:4px; background:#FFD93D; border-radius:2px; animation: wave 0.8s ease-in-out infinite; }
+  .wave span:nth-child(2) { animation-delay:.1s; }
+  .wave span:nth-child(3) { animation-delay:.2s; }
+  .wave span:nth-child(4) { animation-delay:.3s; }
+  .wave span:nth-child(5) { animation-delay:.4s; }
+  @keyframes wave { 0%,100%{height:4px} 50%{height:20px} }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .opt-btn {
+    border-radius: 16px; padding: 14px 8px; font-size: 16px;
+    font-weight: 700; cursor: pointer; transition: all 0.15s;
+    border: 2px solid #D0E4F5; background: #fff; color: #1A2E52;
+    font-family: inherit;
+  }
+  .opt-btn.correct { background:#E8FFF4; border-color:#4CAF82; color:#1A5A3A; }
+  .opt-btn.wrong   { background:#FFF0F0; border-color:#FF6B6B; color:#7A1A1A; }
+  .opt-btn:disabled { cursor: default; }
+  .feedback { text-align:center; font-size:20px; font-weight:900; margin-bottom:12px; }
+  .feedback.correct { color:#4CAF82; }
+  .feedback.wrong   { color:#FF6B6B; }
+  .answer-list { background:#E8F7FF; border-radius:16px; padding:14px; margin-bottom:20px; max-height:220px; overflow-y:auto; }
+  .answer-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #C8DCF0; font-size:13px; }
+  .answer-en  { font-weight:700; color:#1A2E52; min-width:90px; cursor:pointer; text-decoration:underline dotted; }
+  .answer-ja  { color:#5A7A9F; flex:1; text-align:center; }
+  .tag { background:#60C8F5; color:#1A2E52; border-radius:12px; padding:4px 12px; font-size:12px; font-weight:700; }
+  .badge-count { background:#E8FFF4; border-radius:16px; padding:14px; margin-bottom:16px; text-align:center; }
+  .toggle-row { background:#E8F7FF; border-radius:14px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }
+  .toggle { width:52px; height:28px; border-radius:14px; background:#B0C4D8; position:relative; cursor:pointer; transition:background 0.2s; border:none; }
+  .toggle.on { background:#4CAF82; }
+  .toggle::after { content:''; width:22px; height:22px; background:#fff; border-radius:50%; position:absolute; top:3px; left:3px; transition:left 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+  .toggle.on::after { left:27px; }
+  #screen-title, #screen-quiz, #screen-result { display:none; }
+  .hidden { display:none !important; }
+  .info-box { background:#E8F7FF; border-radius:16px; padding:16px; margin-bottom:16px; }
+  .info-row { font-size:14px; color:#3A5A7A; margin-bottom:6px; }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- タイトル画面 -->
+  <div id="screen-title">
+    <div style="text-align:center; margin-bottom:16px;">
+      <div style="font-size:64px;">🌈</div>
+      <h1 style="font-size:26px;font-weight:900;color:#1A2E52;margin:8px 0 4px;">えいご たんごクイズ</h1>
+      <p style="font-size:13px;color:#5A7A9F;margin:0 0 16px;">英検5級レベル</p>
+    </div>
+    <div class="toggle-row">
+      <span style="font-size:14px;font-weight:700;color:#1A2E52;">🔊 もんだいを自動で読む</span>
+      <button class="toggle on" id="toggle-auto" onclick="toggleAuto()"></button>
+    </div>
+    <div class="info-box">
+      <p style="font-weight:700;color:#1A2E52;font-size:14px;margin-bottom:10px;">📋 あそびかた</p>
+      <p class="info-row">① えいごが読まれる → いみを4つから えらぼう</p>
+      <p class="info-row">② えいごカードをタップすると もう一度きける</p>
+      <p class="info-row" style="margin-bottom:0;">③ 10もんチャレンジ！何点とれるかな？</p>
+    </div>
+    <p style="font-size:13px;color:#1A5A3A;font-weight:700;text-align:center;margin-bottom:16px;">✅ <span id="word-count"></span>語 準備完了！</p>
+    <button class="btn btn-yellow" onclick="startQuiz()">🚀 クイズをはじめる！</button>
+  </div>
+
+  <!-- クイズ画面 -->
+  <div id="screen-quiz">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span class="tag" id="quiz-category"></span>
+      <span style="font-size:14px;color:#5A7A9F;font-weight:700;" id="quiz-progress"></span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar" id="quiz-bar"></div></div>
+    <div class="word-card" id="word-card" onclick="speakCurrent()">
+      <p class="word-label" id="word-label">👆 TAP TO LISTEN</p>
+      <p class="word-text" id="word-text"></p>
+      <div class="wave hidden" id="wave">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <p id="speaker-icon" style="margin-top:8px;font-size:20px;">🔊</p>
+    </div>
+    <div class="feedback hidden" id="feedback"></div>
+    <div class="options-grid" id="options"></div>
+    <button class="btn btn-green hidden" id="next-btn" onclick="nextQuestion()">つぎへ →</button>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="screen-result">
+    <div style="text-align:center;">
+      <div style="font-size:60px;" id="result-emoji"></div>
+      <h2 style="font-size:22px;font-weight:900;margin:8px 0 4px;" id="result-label"></h2>
+      <div style="font-size:64px;font-weight:900;color:#1A2E52;line-height:1;margin:8px 0 4px;" id="result-score"></div>
+      <p style="font-size:22px;font-weight:700;margin:4px 0 20px;" id="result-pct"></p>
+      <div class="answer-list">
+        <p style="font-weight:700;color:#1A2E52;font-size:13px;margin-bottom:8px;">📋 こたえあわせ（英語をタップすると読み上げ）</p>
+        <div id="answer-rows"></div>
+      </div>
+      <button class="btn btn-yellow" onclick="startQuiz()">🔄 もういちど！</button>
+      <button class="btn btn-ghost" onclick="showTitle()">🏠 トップにもどる</button>
+      <p style="font-size:11px;color:#AABCCC;margin-top:8px;" id="result-total"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const WORDS = [{"en": "mother", "ja": "おかあさん", "category": "家族・人", "options": ["おかあさん", "おとうさん", "おねえさん", "おばあさん"]}, {"en": "father", "ja": "おとうさん", "category": "家族・人", "options": ["おとうさん", "おにいさん", "おじいさん", "おじさん"]}, {"en": "sister", "ja": "おねえさん・いもうと", "category": "家族・人", "options": ["おねえさん・いもうと", "おにいさん・おとうと", "おばさん", "むすめ"]}, {"en": "brother", "ja": "おにいさん・おとうと", "category": "家族・人", "options": ["おにいさん・おとうと", "おねえさん・いもうと", "むすこ", "いとこ"]}, {"en": "friend", "ja": "ともだち", "category": "家族・人", "options": ["ともだち", "せんせい", "いしゃ", "きゃく"]}, {"en": "teacher", "ja": "せんせい", "category": "家族・人", "options": ["せんせい", "がくせい", "いしゃ", "かんごし"]}, {"en": "student", "ja": "せいと・がくせい", "category": "家族・人", "options": ["せいと・がくせい", "せんせい", "こども", "おとな"]}, {"en": "baby", "ja": "あかちゃん", "category": "家族・人", "options": ["あかちゃん", "こども", "おとな", "おじいさん"]}, {"en": "child", "ja": "こども", "category": "家族・人", "options": ["こども", "おとな", "あかちゃん", "わかもの"]}, {"en": "boy", "ja": "おとこのこ", "category": "家族・人", "options": ["おとこのこ", "おんなのこ", "おとこのひと", "おんなのひと"]}, {"en": "girl", "ja": "おんなのこ", "category": "家族・人", "options": ["おんなのこ", "おとこのこ", "おんなのひと", "おとこのひと"]}, {"en": "man", "ja": "おとこのひと", "category": "家族・人", "options": ["おとこのひと", "おんなのひと", "おとこのこ", "おじいさん"]}, {"en": "woman", "ja": "おんなのひと", "category": "家族・人", "options": ["おんなのひと", "おとこのひと", "おんなのこ", "おばあさん"]}, {"en": "doctor", "ja": "いしゃ", "category": "家族・人", "options": ["いしゃ", "かんごし", "きょうし", "けいさつかん"]}, {"en": "nurse", "ja": "かんごし", "category": "家族・人", "options": ["かんごし", "いしゃ", "やくざいし", "じゅうい"]}, {"en": "police", "ja": "けいさつかん", "category": "家族・人", "options": ["けいさつかん", "しょうぼうし", "へいし", "うんてんし"]}, {"en": "cook", "ja": "コック・りょうりにん", "category": "家族・人", "options": ["コック・りょうりにん", "ウェイター", "かじや", "のうか"]}, {"en": "farmer", "ja": "のうか・のうふ", "category": "家族・人", "options": ["のうか・のうふ", "りょうし", "もりもり", "こうじょうろうどうしゃ"]}, {"en": "singer", "ja": "かしゅ", "category": "家族・人", "options": ["かしゅ", "げいにん", "はいゆう", "ダンサー"]}, {"en": "player", "ja": "せんしゅ・プレーヤー", "category": "家族・人", "options": ["せんしゅ・プレーヤー", "コーチ", "しんぱん", "かんきゃく"]}, {"en": "dog", "ja": "いぬ", "category": "動物", "options": ["いぬ", "ねこ", "うさぎ", "とり"]}, {"en": "cat", "ja": "ねこ", "category": "動物", "options": ["ねこ", "いぬ", "ねずみ", "うし"]}, {"en": "bird", "ja": "とり", "category": "動物", "options": ["とり", "さかな", "むし", "カエル"]}, {"en": "fish", "ja": "さかな", "category": "動物", "options": ["さかな", "カメ", "うさぎ", "くま"]}, {"en": "horse", "ja": "うま", "category": "動物", "options": ["うま", "うし", "ぶた", "ひつじ"]}, {"en": "rabbit", "ja": "うさぎ", "category": "動物", "options": ["うさぎ", "ねずみ", "りす", "キツネ"]}, {"en": "cow", "ja": "うし", "category": "動物", "options": ["うし", "うま", "やぎ", "ひつじ"]}, {"en": "pig", "ja": "ぶた", "category": "動物", "options": ["ぶた", "うし", "ひつじ", "うま"]}, {"en": "sheep", "ja": "ひつじ", "category": "動物", "options": ["ひつじ", "やぎ", "うし", "ぶた"]}, {"en": "bear", "ja": "くま", "category": "動物", "options": ["くま", "おおかみ", "きつね", "たぬき"]}, {"en": "lion", "ja": "ライオン", "category": "動物", "options": ["ライオン", "トラ", "ヒョウ", "チーター"]}, {"en": "tiger", "ja": "トラ", "category": "動物", "options": ["トラ", "ライオン", "ヒョウ", "オオカミ"]}, {"en": "monkey", "ja": "さる", "category": "動物", "options": ["さる", "ゴリラ", "チンパンジー", "パンダ"]}, {"en": "elephant", "ja": "ぞう", "category": "動物", "options": ["ぞう", "キリン", "サイ", "カバ"]}, {"en": "giraffe", "ja": "キリン", "category": "動物", "options": ["キリン", "ぞう", "サイ", "カバ"]}, {"en": "snake", "ja": "へび", "category": "動物", "options": ["へび", "とかげ", "カメ", "カエル"]}, {"en": "frog", "ja": "カエル", "category": "動物", "options": ["カエル", "へび", "とかげ", "カメ"]}, {"en": "duck", "ja": "アヒル・かも", "category": "動物", "options": ["アヒル・かも", "にわとり", "はと", "からす"]}, {"en": "chicken", "ja": "にわとり", "category": "動物", "options": ["にわとり", "アヒル", "はと", "つばめ"]}, {"en": "insect", "ja": "むし・こんちゅう", "category": "動物", "options": ["むし・こんちゅう", "さかな", "とり", "カエル"]}, {"en": "butterfly", "ja": "ちょうちょ", "category": "動物", "options": ["ちょうちょ", "とんぼ", "カブトムシ", "バッタ"]}, {"en": "bee", "ja": "ハチ", "category": "動物", "options": ["ハチ", "アリ", "ちょうちょ", "カブトムシ"]}, {"en": "ant", "ja": "アリ", "category": "動物", "options": ["アリ", "ハチ", "ゴキブリ", "バッタ"]}, {"en": "bread", "ja": "パン", "category": "食べ物・飲み物", "options": ["パン", "ごはん", "めん", "スープ"]}, {"en": "milk", "ja": "ぎゅうにゅう", "category": "食べ物・飲み物", "options": ["ぎゅうにゅう", "みず", "ジュース", "おちゃ"]}, {"en": "cake", "ja": "ケーキ", "category": "食べ物・飲み物", "options": ["ケーキ", "クッキー", "アイス", "チョコ"]}, {"en": "apple", "ja": "りんご", "category": "食べ物・飲み物", "options": ["りんご", "バナナ", "みかん", "いちご"]}, {"en": "rice", "ja": "ごはん", "category": "食べ物・飲み物", "options": ["ごはん", "パン", "めん", "スープ"]}, {"en": "water", "ja": "みず", "category": "食べ物・飲み物", "options": ["みず", "ぎゅうにゅう", "ジュース", "コーヒー"]}, {"en": "egg", "ja": "たまご", "category": "食べ物・飲み物", "options": ["たまご", "にく", "さかな", "やさい"]}, {"en": "meat", "ja": "にく", "category": "食べ物・飲み物", "options": ["にく", "さかな", "やさい", "たまご"]}, {"en": "vegetable", "ja": "やさい", "category": "食べ物・飲み物", "options": ["やさい", "くだもの", "にく", "さかな"]}, {"en": "fruit", "ja": "くだもの・フルーツ", "category": "食べ物・飲み物", "options": ["くだもの・フルーツ", "やさい", "かしゃく", "のみもの"]}, {"en": "juice", "ja": "ジュース", "category": "食べ物・飲み物", "options": ["ジュース", "みず", "おちゃ", "コーヒー"]}, {"en": "tea", "ja": "おちゃ", "category": "食べ物・飲み物", "options": ["おちゃ", "コーヒー", "ジュース", "みず"]}, {"en": "coffee", "ja": "コーヒー", "category": "食べ物・飲み物", "options": ["コーヒー", "おちゃ", "ジュース", "みず"]}, {"en": "soup", "ja": "スープ", "category": "食べ物・飲み物", "options": ["スープ", "シチュー", "カレー", "みそしる"]}, {"en": "salad", "ja": "サラダ", "category": "食べ物・飲み物", "options": ["サラダ", "スープ", "カレー", "シチュー"]}, {"en": "pizza", "ja": "ピザ", "category": "食べ物・飲み物", "options": ["ピザ", "ハンバーガー", "ホットドッグ", "サンドイッチ"]}, {"en": "hamburger", "ja": "ハンバーガー", "category": "食べ物・飲み物", "options": ["ハンバーガー", "ピザ", "ホットドッグ", "サンドイッチ"]}, {"en": "sandwich", "ja": "サンドイッチ", "category": "食べ物・飲み物", "options": ["サンドイッチ", "ハンバーガー", "ピザ", "ホットドッグ"]}, {"en": "cookie", "ja": "クッキー", "category": "食べ物・飲み物", "options": ["クッキー", "ケーキ", "アイス", "チョコ"]}, {"en": "ice cream", "ja": "アイスクリーム", "category": "食べ物・飲み物", "options": ["アイスクリーム", "ケーキ", "クッキー", "チョコ"]}, {"en": "banana", "ja": "バナナ", "category": "食べ物・飲み物", "options": ["バナナ", "りんご", "みかん", "ぶどう"]}, {"en": "orange", "ja": "オレンジ", "category": "食べ物・飲み物", "options": ["オレンジ", "りんご", "バナナ", "レモン"]}, {"en": "strawberry", "ja": "いちご", "category": "食べ物・飲み物", "options": ["いちご", "りんご", "ぶどう", "もも"]}, {"en": "tomato", "ja": "トマト", "category": "食べ物・飲み物", "options": ["トマト", "にんじん", "たまねぎ", "きゅうり"]}, {"en": "potato", "ja": "じゃがいも", "category": "食べ物・飲み物", "options": ["じゃがいも", "さつまいも", "にんじん", "だいこん"]}, {"en": "carrot", "ja": "にんじん", "category": "食べ物・飲み物", "options": ["にんじん", "だいこん", "かぶ", "ごぼう"]}, {"en": "corn", "ja": "とうもろこし", "category": "食べ物・飲み物", "options": ["とうもろこし", "にんじん", "かぼちゃ", "なす"]}, {"en": "cheese", "ja": "チーズ", "category": "食べ物・飲み物", "options": ["チーズ", "バター", "マヨネーズ", "ヨーグルト"]}, {"en": "butter", "ja": "バター", "category": "食べ物・飲み物", "options": ["バター", "チーズ", "マーガリン", "ヨーグルト"]}, {"en": "book", "ja": "ほん", "category": "学校・文房具", "options": ["ほん", "ノート", "えんぴつ", "けしごむ"]}, {"en": "pen", "ja": "ペン", "category": "学校・文房具", "options": ["ペン", "えんぴつ", "ものさし", "はさみ"]}, {"en": "pencil", "ja": "えんぴつ", "category": "学校・文房具", "options": ["えんぴつ", "ペン", "クレヨン", "マーカー"]}, {"en": "eraser", "ja": "けしごむ", "category": "学校・文房具", "options": ["けしごむ", "のり", "テープ", "ホチキス"]}, {"en": "desk", "ja": "つくえ", "category": "学校・文房具", "options": ["つくえ", "いす", "こくばん", "かばん"]}, {"en": "chair", "ja": "いす", "category": "学校・文房具", "options": ["いす", "つくえ", "ソファ", "ベッド"]}, {"en": "bag", "ja": "かばん", "category": "学校・文房具", "options": ["かばん", "くつ", "ぼうし", "ふで"]}, {"en": "school", "ja": "がっこう", "category": "学校・文房具", "options": ["がっこう", "いえ", "こうえん", "びょういん"]}, {"en": "class", "ja": "クラス・じゅぎょう", "category": "学校・文房具", "options": ["クラス・じゅぎょう", "クラブ", "テスト", "しゅくだい"]}, {"en": "test", "ja": "テスト", "category": "学校・文房具", "options": ["テスト", "しゅくだい", "クラス", "じゅぎょう"]}, {"en": "homework", "ja": "しゅくだい", "category": "学校・文房具", "options": ["しゅくだい", "テスト", "べんきょう", "れんしゅう"]}, {"en": "notebook", "ja": "ノート", "category": "学校・文房具", "options": ["ノート", "ほん", "てちょう", "アルバム"]}, {"en": "ruler", "ja": "ものさし・じょうぎ", "category": "学校・文房具", "options": ["ものさし・じょうぎ", "コンパス", "はさみ", "のり"]}, {"en": "scissors", "ja": "はさみ", "category": "学校・文房具", "options": ["はさみ", "ものさし", "のり", "カッター"]}, {"en": "glue", "ja": "のり", "category": "学校・文房具", "options": ["のり", "テープ", "はさみ", "ホチキス"]}, {"en": "blackboard", "ja": "こくばん", "category": "学校・文房具", "options": ["こくばん", "ホワイトボード", "スクリーン", "かいじ"]}, {"en": "chalk", "ja": "チョーク", "category": "学校・文房具", "options": ["チョーク", "マーカー", "えんぴつ", "クレヨン"]}, {"en": "library", "ja": "としょかん", "category": "学校・文房具", "options": ["としょかん", "きょうしつ", "たいいくかん", "ほけんしつ"]}, {"en": "gym", "ja": "たいいくかん・ジム", "category": "学校・文房具", "options": ["たいいくかん・ジム", "としょかん", "きょうしつ", "ほけんしつ"]}, {"en": "red", "ja": "あか", "category": "色・形", "options": ["あか", "あお", "きいろ", "みどり"]}, {"en": "blue", "ja": "あお", "category": "色・形", "options": ["あお", "むらさき", "みどり", "しろ"]}, {"en": "green", "ja": "みどり", "category": "色・形", "options": ["みどり", "あお", "きいろ", "ちゃいろ"]}, {"en": "white", "ja": "しろ", "category": "色・形", "options": ["しろ", "くろ", "はいいろ", "ピンク"]}, {"en": "black", "ja": "くろ", "category": "色・形", "options": ["くろ", "しろ", "こん", "グレー"]}, {"en": "yellow", "ja": "きいろ", "category": "色・形", "options": ["きいろ", "オレンジ", "きんいろ", "ベージュ"]}, {"en": "pink", "ja": "ピンク", "category": "色・形", "options": ["ピンク", "むらさき", "あか", "オレンジ"]}, {"en": "purple", "ja": "むらさき", "category": "色・形", "options": ["むらさき", "ピンク", "あお", "こん"]}, {"en": "brown", "ja": "ちゃいろ", "category": "色・形", "options": ["ちゃいろ", "みどり", "きいろ", "くろ"]}, {"en": "circle", "ja": "まる・えん", "category": "色・形", "options": ["まる・えん", "さんかく", "しかく", "ほし"]}, {"en": "square", "ja": "しかく", "category": "色・形", "options": ["しかく", "まる", "さんかく", "ながしかく"]}, {"en": "triangle", "ja": "さんかく", "category": "色・形", "options": ["さんかく", "しかく", "まる", "ほし"]}, {"en": "star", "ja": "ほし・スター", "category": "色・形", "options": ["ほし・スター", "まる", "ハート", "つき"]}, {"en": "heart", "ja": "ハート", "category": "色・形", "options": ["ハート", "ほし", "まる", "ダイヤ"]}, {"en": "sun", "ja": "たいよう", "category": "自然・天気", "options": ["たいよう", "つき", "ほし", "くも"]}, {"en": "moon", "ja": "つき", "category": "自然・天気", "options": ["つき", "たいよう", "ほし", "くも"]}, {"en": "rain", "ja": "あめ", "category": "自然・天気", "options": ["あめ", "ゆき", "かぜ", "くもり"]}, {"en": "snow", "ja": "ゆき", "category": "自然・天気", "options": ["ゆき", "あめ", "こおり", "あられ"]}, {"en": "wind", "ja": "かぜ", "category": "自然・天気", "options": ["かぜ", "あめ", "ゆき", "くも"]}, {"en": "cloud", "ja": "くも", "category": "自然・天気", "options": ["くも", "たいよう", "かぜ", "にじ"]}, {"en": "rainbow", "ja": "にじ", "category": "自然・天気", "options": ["にじ", "くも", "かぜ", "たいよう"]}, {"en": "flower", "ja": "はな", "category": "自然・天気", "options": ["はな", "き", "くさ", "はっぱ"]}, {"en": "tree", "ja": "き", "category": "自然・天気", "options": ["き", "くさ", "はな", "やま"]}, {"en": "grass", "ja": "くさ", "category": "自然・天気", "options": ["くさ", "き", "はな", "はっぱ"]}, {"en": "sea", "ja": "うみ", "category": "自然・天気", "options": ["うみ", "かわ", "みずうみ", "いけ"]}, {"en": "river", "ja": "かわ", "category": "自然・天気", "options": ["かわ", "うみ", "みずうみ", "いけ"]}, {"en": "mountain", "ja": "やま", "category": "自然・天気", "options": ["やま", "おか", "たに", "もり"]}, {"en": "forest", "ja": "もり・はやし", "category": "自然・天気", "options": ["もり・はやし", "やま", "たに", "こうえん"]}, {"en": "lake", "ja": "みずうみ", "category": "自然・天気", "options": ["みずうみ", "かわ", "いけ", "うみ"]}, {"en": "sky", "ja": "そら", "category": "自然・天気", "options": ["そら", "うみ", "やま", "かわ"]}, {"en": "earth", "ja": "ちきゅう・つち", "category": "自然・天気", "options": ["ちきゅう・つち", "そら", "うみ", "かわ"]}, {"en": "rock", "ja": "いわ・いし", "category": "自然・天気", "options": ["いわ・いし", "すな", "つち", "どろ"]}, {"en": "run", "ja": "はしる", "category": "動詞・動作", "options": ["はしる", "あるく", "とぶ", "およぐ"]}, {"en": "walk", "ja": "あるく", "category": "動詞・動作", "options": ["あるく", "はしる", "とぶ", "およぐ"]}, {"en": "eat", "ja": "たべる", "category": "動詞・動作", "options": ["たべる", "のむ", "つくる", "かう"]}, {"en": "drink", "ja": "のむ", "category": "動詞・動作", "options": ["のむ", "たべる", "もつ", "おく"]}, {"en": "sleep", "ja": "ねる", "category": "動詞・動作", "options": ["ねる", "おきる", "やすむ", "あるく"]}, {"en": "wake", "ja": "おきる", "category": "動詞・動作", "options": ["おきる", "ねる", "やすむ", "すわる"]}, {"en": "play", "ja": "あそぶ", "category": "動詞・動作", "options": ["あそぶ", "はたらく", "べんきょうする", "よむ"]}, {"en": "study", "ja": "べんきょうする", "category": "動詞・動作", "options": ["べんきょうする", "あそぶ", "はたらく", "よむ"]}, {"en": "read", "ja": "よむ", "category": "動詞・動作", "options": ["よむ", "かく", "みる", "きく"]}, {"en": "write", "ja": "かく", "category": "動詞・動作", "options": ["かく", "よむ", "えがく", "けす"]}, {"en": "listen", "ja": "きく", "category": "動詞・動作", "options": ["きく", "みる", "よむ", "かんがえる"]}, {"en": "watch", "ja": "みる・みまもる", "category": "動詞・動作", "options": ["みる・みまもる", "きく", "よむ", "かんがえる"]}, {"en": "speak", "ja": "はなす", "category": "動詞・動作", "options": ["はなす", "きく", "よむ", "かく"]}, {"en": "say", "ja": "いう", "category": "動詞・動作", "options": ["いう", "はなす", "こたえる", "たずねる"]}, {"en": "ask", "ja": "たずねる・きく", "category": "動詞・動作", "options": ["たずねる・きく", "こたえる", "いう", "はなす"]}, {"en": "answer", "ja": "こたえる", "category": "動詞・動作", "options": ["こたえる", "たずねる", "いう", "はなす"]}, {"en": "come", "ja": "くる", "category": "動詞・動作", "options": ["くる", "いく", "もどる", "でかける"]}, {"en": "go", "ja": "いく", "category": "動詞・動作", "options": ["いく", "くる", "もどる", "でかける"]}, {"en": "stop", "ja": "とまる", "category": "動詞・動作", "options": ["とまる", "うごく", "はしる", "あるく"]}, {"en": "start", "ja": "はじまる・はじめる", "category": "動詞・動作", "options": ["はじまる・はじめる", "おわる", "とまる", "やすむ"]}, {"en": "finish", "ja": "おわる・おえる", "category": "動詞・動作", "options": ["おわる・おえる", "はじまる", "とまる", "やすむ"]}, {"en": "open", "ja": "あける", "category": "動詞・動作", "options": ["あける", "しめる", "おす", "ひく"]}, {"en": "close", "ja": "しめる", "category": "動詞・動作", "options": ["しめる", "あける", "おす", "ひく"]}, {"en": "give", "ja": "あげる", "category": "動詞・動作", "options": ["あげる", "もらう", "かす", "かりる"]}, {"en": "take", "ja": "とる", "category": "動詞・動作", "options": ["とる", "もつ", "おく", "わたす"]}, {"en": "make", "ja": "つくる", "category": "動詞・動作", "options": ["つくる", "こわす", "なおす", "かえる"]}, {"en": "use", "ja": "つかう", "category": "動詞・動作", "options": ["つかう", "もつ", "おく", "しまう"]}, {"en": "like", "ja": "すき", "category": "動詞・動作", "options": ["すき", "きらい", "ほしい", "いやだ"]}, {"en": "love", "ja": "あいする・だいすき", "category": "動詞・動作", "options": ["あいする・だいすき", "すき", "きらい", "ほしい"]}, {"en": "want", "ja": "ほしい・ほしがる", "category": "動詞・動作", "options": ["ほしい・ほしがる", "いらない", "すき", "きらい"]}, {"en": "know", "ja": "しっている", "category": "動詞・動作", "options": ["しっている", "わからない", "おぼえている", "わすれた"]}, {"en": "think", "ja": "おもう・かんがえる", "category": "動詞・動作", "options": ["おもう・かんがえる", "しる", "わかる", "きめる"]}, {"en": "see", "ja": "みえる・みる", "category": "動詞・動作", "options": ["みえる・みる", "きこえる", "かんじる", "においがする"]}, {"en": "hear", "ja": "きこえる", "category": "動詞・動作", "options": ["きこえる", "みえる", "かんじる", "においがする"]}, {"en": "sing", "ja": "うたう", "category": "動詞・動作", "options": ["うたう", "ふく", "ひく", "たたく"]}, {"en": "dance", "ja": "おどる", "category": "動詞・動作", "options": ["おどる", "うたう", "とぶ", "はしる"]}, {"en": "swim", "ja": "およぐ", "category": "動詞・動作", "options": ["およぐ", "とぶ", "はしる", "あるく"]}, {"en": "jump", "ja": "とぶ・ジャンプする", "category": "動詞・動作", "options": ["とぶ・ジャンプする", "はしる", "あるく", "はねる"]}, {"en": "climb", "ja": "のぼる", "category": "動詞・動作", "options": ["のぼる", "おりる", "あるく", "はしる"]}, {"en": "sit", "ja": "すわる", "category": "動詞・動作", "options": ["すわる", "たつ", "ねる", "あるく"]}, {"en": "stand", "ja": "たつ", "category": "動詞・動作", "options": ["たつ", "すわる", "ねる", "しゃがむ"]}, {"en": "buy", "ja": "かう", "category": "動詞・動作", "options": ["かう", "うる", "もらう", "かりる"]}, {"en": "sell", "ja": "うる", "category": "動詞・動作", "options": ["うる", "かう", "もらう", "かす"]}, {"en": "help", "ja": "たすける・てつだう", "category": "動詞・動作", "options": ["たすける・てつだう", "じゃまする", "みる", "まつ"]}, {"en": "wait", "ja": "まつ", "category": "動詞・動作", "options": ["まつ", "いそぐ", "すすむ", "もどる"]}, {"en": "carry", "ja": "はこぶ", "category": "動詞・動作", "options": ["はこぶ", "もつ", "おく", "わたす"]}, {"en": "put", "ja": "おく", "category": "動詞・動作", "options": ["おく", "もつ", "とる", "わたす"]}, {"en": "park", "ja": "こうえん", "category": "場所・建物", "options": ["こうえん", "びょういん", "がっこう", "えき"]}, {"en": "store", "ja": "おみせ", "category": "場所・建物", "options": ["おみせ", "ぎんこう", "としょかん", "ゆうびんきょく"]}, {"en": "home", "ja": "いえ・うち", "category": "場所・建物", "options": ["いえ・うち", "ホテル", "がっこう", "びょういん"]}, {"en": "hospital", "ja": "びょういん", "category": "場所・建物", "options": ["びょういん", "としょかん", "がっこう", "こうばん"]}, {"en": "station", "ja": "えき", "category": "場所・建物", "options": ["えき", "バスてい", "くうこう", "みなと"]}, {"en": "airport", "ja": "くうこう", "category": "場所・建物", "options": ["くうこう", "えき", "みなと", "バスてい"]}, {"en": "hotel", "ja": "ホテル", "category": "場所・建物", "options": ["ホテル", "りょかん", "アパート", "マンション"]}, {"en": "restaurant", "ja": "レストラン", "category": "場所・建物", "options": ["レストラン", "カフェ", "バー", "しょくどう"]}, {"en": "supermarket", "ja": "スーパー", "category": "場所・建物", "options": ["スーパー", "コンビニ", "デパート", "やおや"]}, {"en": "bank", "ja": "ぎんこう", "category": "場所・建物", "options": ["ぎんこう", "ゆうびんきょく", "としょかん", "やくしょ"]}, {"en": "post office", "ja": "ゆうびんきょく", "category": "場所・建物", "options": ["ゆうびんきょく", "ぎんこう", "やくしょ", "としょかん"]}, {"en": "museum", "ja": "はくぶつかん", "category": "場所・建物", "options": ["はくぶつかん", "びじゅつかん", "どうぶつえん", "すいぞくかん"]}, {"en": "zoo", "ja": "どうぶつえん", "category": "場所・建物", "options": ["どうぶつえん", "はくぶつかん", "びじゅつかん", "すいぞくかん"]}, {"en": "church", "ja": "きょうかい", "category": "場所・建物", "options": ["きょうかい", "おてら", "じんじゃ", "モスク"]}, {"en": "temple", "ja": "おてら", "category": "場所・建物", "options": ["おてら", "きょうかい", "じんじゃ", "かいどう"]}, {"en": "bridge", "ja": "はし", "category": "場所・建物", "options": ["はし", "どうろ", "トンネル", "ダム"]}, {"en": "road", "ja": "どうろ・みち", "category": "場所・建物", "options": ["どうろ・みち", "こうそくどうろ", "てつどう", "こみち"]}, {"en": "city", "ja": "まち・し", "category": "場所・建物", "options": ["まち・し", "むら", "くに", "しゅと"]}, {"en": "town", "ja": "まち・ちょう", "category": "場所・建物", "options": ["まち・ちょう", "し", "むら", "くに"]}, {"en": "country", "ja": "くに", "category": "場所・建物", "options": ["くに", "まち", "し", "むら"]}, {"en": "morning", "ja": "あさ", "category": "時間・曜日", "options": ["あさ", "ひる", "ゆうがた", "よる"]}, {"en": "noon", "ja": "ひる・しょうご", "category": "時間・曜日", "options": ["ひる・しょうご", "あさ", "ゆうがた", "よる"]}, {"en": "evening", "ja": "ゆうがた", "category": "時間・曜日", "options": ["ゆうがた", "あさ", "ひる", "よる"]}, {"en": "night", "ja": "よる", "category": "時間・曜日", "options": ["よる", "ひる", "ゆうがた", "あさ"]}, {"en": "today", "ja": "きょう", "category": "時間・曜日", "options": ["きょう", "きのう", "あした", "あさって"]}, {"en": "yesterday", "ja": "きのう", "category": "時間・曜日", "options": ["きのう", "きょう", "あした", "おととい"]}, {"en": "tomorrow", "ja": "あした", "category": "時間・曜日", "options": ["あした", "きょう", "きのう", "あさって"]}, {"en": "week", "ja": "しゅう", "category": "時間・曜日", "options": ["しゅう", "にち", "つき", "ねん"]}, {"en": "month", "ja": "つき・がつ", "category": "時間・曜日", "options": ["つき・がつ", "しゅう", "にち", "ねん"]}, {"en": "year", "ja": "ねん・とし", "category": "時間・曜日", "options": ["ねん・とし", "つき", "しゅう", "にち"]}, {"en": "Monday", "ja": "げつようび", "category": "時間・曜日", "options": ["げつようび", "かようび", "すいようび", "もくようび"]}, {"en": "Tuesday", "ja": "かようび", "category": "時間・曜日", "options": ["かようび", "げつようび", "すいようび", "きんようび"]}, {"en": "Wednesday", "ja": "すいようび", "category": "時間・曜日", "options": ["すいようび", "かようび", "もくようび", "きんようび"]}, {"en": "Thursday", "ja": "もくようび", "category": "時間・曜日", "options": ["もくようび", "すいようび", "きんようび", "どようび"]}, {"en": "Friday", "ja": "きんようび", "category": "時間・曜日", "options": ["きんようび", "もくようび", "どようび", "にちようび"]}, {"en": "Saturday", "ja": "どようび", "category": "時間・曜日", "options": ["どようび", "きんようび", "にちようび", "げつようび"]}, {"en": "Sunday", "ja": "にちようび", "category": "時間・曜日", "options": ["にちようび", "どようび", "げつようび", "かようび"]}, {"en": "spring", "ja": "はる", "category": "時間・曜日", "options": ["はる", "なつ", "あき", "ふゆ"]}, {"en": "summer", "ja": "なつ", "category": "時間・曜日", "options": ["なつ", "はる", "あき", "ふゆ"]}, {"en": "autumn", "ja": "あき", "category": "時間・曜日", "options": ["あき", "はる", "なつ", "ふゆ"]}, {"en": "winter", "ja": "ふゆ", "category": "時間・曜日", "options": ["ふゆ", "はる", "なつ", "あき"]}, {"en": "head", "ja": "あたま", "category": "体・健康", "options": ["あたま", "かお", "くび", "かた"]}, {"en": "face", "ja": "かお", "category": "体・健康", "options": ["かお", "あたま", "くび", "むね"]}, {"en": "eye", "ja": "め", "category": "体・健康", "options": ["め", "はな", "くち", "みみ"]}, {"en": "nose", "ja": "はな", "category": "体・健康", "options": ["はな", "め", "くち", "みみ"]}, {"en": "mouth", "ja": "くち", "category": "体・健康", "options": ["くち", "め", "はな", "みみ"]}, {"en": "ear", "ja": "みみ", "category": "体・健康", "options": ["みみ", "め", "はな", "くち"]}, {"en": "hand", "ja": "て", "category": "体・健康", "options": ["て", "あし", "うで", "ゆび"]}, {"en": "foot", "ja": "あし・あしのうら", "category": "体・健康", "options": ["あし・あしのうら", "て", "ひざ", "つめ"]}, {"en": "arm", "ja": "うで", "category": "体・健康", "options": ["うで", "あし", "て", "かた"]}, {"en": "leg", "ja": "あし・あしのつけね", "category": "体・健康", "options": ["あし・あしのつけね", "うで", "て", "かた"]}, {"en": "tooth", "ja": "は", "category": "体・健康", "options": ["は", "した", "くちびる", "のど"]}, {"en": "hair", "ja": "かみのけ", "category": "体・健康", "options": ["かみのけ", "まゆげ", "まつげ", "ひげ"]}, {"en": "sick", "ja": "びょうき", "category": "体・健康", "options": ["びょうき", "けんこう", "げんき", "つかれ"]}, {"en": "cold", "ja": "かぜ・さむい", "category": "体・健康", "options": ["かぜ・さむい", "びょうき", "ねつ", "せき"]}, {"en": "fever", "ja": "ねつ", "category": "体・健康", "options": ["ねつ", "かぜ", "せき", "はきけ"]}, {"en": "medicine", "ja": "くすり", "category": "体・健康", "options": ["くすり", "びょうき", "ちりょう", "しんさつ"]}, {"en": "shirt", "ja": "シャツ", "category": "服・持ち物", "options": ["シャツ", "ズボン", "スカート", "ジャケット"]}, {"en": "pants", "ja": "ズボン", "category": "服・持ち物", "options": ["ズボン", "シャツ", "スカート", "コート"]}, {"en": "skirt", "ja": "スカート", "category": "服・持ち物", "options": ["スカート", "ズボン", "シャツ", "ワンピース"]}, {"en": "dress", "ja": "ドレス・ワンピース", "category": "服・持ち物", "options": ["ドレス・ワンピース", "スカート", "シャツ", "ジャケット"]}, {"en": "jacket", "ja": "ジャケット", "category": "服・持ち物", "options": ["ジャケット", "コート", "シャツ", "セーター"]}, {"en": "coat", "ja": "コート", "category": "服・持ち物", "options": ["コート", "ジャケット", "セーター", "マフラー"]}, {"en": "shoes", "ja": "くつ", "category": "服・持ち物", "options": ["くつ", "くつした", "サンダル", "ブーツ"]}, {"en": "hat", "ja": "ぼうし", "category": "服・持ち物", "options": ["ぼうし", "スカーフ", "てぶくろ", "マフラー"]}, {"en": "glasses", "ja": "めがね", "category": "服・持ち物", "options": ["めがね", "コンタクト", "サングラス", "めのまえ"]}, {"en": "umbrella", "ja": "かさ", "category": "服・持ち物", "options": ["かさ", "レインコート", "ながぐつ", "カッパ"]}, {"en": "wallet", "ja": "さいふ", "category": "服・持ち物", "options": ["さいふ", "かばん", "てさげ", "リュック"]}, {"en": "happy", "ja": "しあわせ・うれしい", "category": "形容詞・状態", "options": ["しあわせ・うれしい", "かなしい", "おこっている", "さみしい"]}, {"en": "sad", "ja": "かなしい", "category": "形容詞・状態", "options": ["かなしい", "うれしい", "おこっている", "たのしい"]}, {"en": "angry", "ja": "おこっている", "category": "形容詞・状態", "options": ["おこっている", "うれしい", "かなしい", "おどろいた"]}, {"en": "surprised", "ja": "おどろいた", "category": "形容詞・状態", "options": ["おどろいた", "こわい", "たのしい", "かなしい"]}, {"en": "scared", "ja": "こわい", "category": "形容詞・状態", "options": ["こわい", "おどろいた", "かなしい", "さみしい"]}, {"en": "tired", "ja": "つかれた", "category": "形容詞・状態", "options": ["つかれた", "げんき", "ねむい", "くたくた"]}, {"en": "hungry", "ja": "おなかがすいた", "category": "形容詞・状態", "options": ["おなかがすいた", "のどがかわいた", "おなかいっぱい", "げんき"]}, {"en": "thirsty", "ja": "のどがかわいた", "category": "形容詞・状態", "options": ["のどがかわいた", "おなかがすいた", "おなかいっぱい", "つかれた"]}, {"en": "big", "ja": "おおきい", "category": "形容詞・状態", "options": ["おおきい", "ちいさい", "ながい", "みじかい"]}, {"en": "small", "ja": "ちいさい", "category": "形容詞・状態", "options": ["ちいさい", "おおきい", "ながい", "みじかい"]}, {"en": "long", "ja": "ながい", "category": "形容詞・状態", "options": ["ながい", "みじかい", "おおきい", "ちいさい"]}, {"en": "short", "ja": "みじかい・ひくい", "category": "形容詞・状態", "options": ["みじかい・ひくい", "ながい", "たかい", "おおきい"]}, {"en": "tall", "ja": "たかい・せがたかい", "category": "形容詞・状態", "options": ["たかい・せがたかい", "ひくい", "おおきい", "ちいさい"]}, {"en": "fast", "ja": "はやい", "category": "形容詞・状態", "options": ["はやい", "おそい", "つよい", "よわい"]}, {"en": "slow", "ja": "おそい", "category": "形容詞・状態", "options": ["おそい", "はやい", "つよい", "よわい"]}, {"en": "hot", "ja": "あつい", "category": "形容詞・状態", "options": ["あつい", "さむい", "あたたかい", "すずしい"]}, {"en": "warm", "ja": "あたたかい", "category": "形容詞・状態", "options": ["あたたかい", "さむい", "あつい", "すずしい"]}, {"en": "cool", "ja": "すずしい", "category": "形容詞・状態", "options": ["すずしい", "あたたかい", "あつい", "さむい"]}, {"en": "good", "ja": "よい", "category": "形容詞・状態", "options": ["よい", "わるい", "すばらしい", "ふつう"]}, {"en": "bad", "ja": "わるい", "category": "形容詞・状態", "options": ["わるい", "よい", "ひどい", "ふつう"]}, {"en": "new", "ja": "あたらしい", "category": "形容詞・状態", "options": ["あたらしい", "ふるい", "きれい", "きたない"]}, {"en": "old", "ja": "ふるい", "category": "形容詞・状態", "options": ["ふるい", "あたらしい", "きれい", "きたない"]}, {"en": "clean", "ja": "きれい", "category": "形容詞・状態", "options": ["きれい", "きたない", "あたらしい", "ふるい"]}, {"en": "dirty", "ja": "きたない", "category": "形容詞・状態", "options": ["きたない", "きれい", "あたらしい", "ふるい"]}, {"en": "easy", "ja": "かんたん", "category": "形容詞・状態", "options": ["かんたん", "むずかしい", "ふつう", "むり"]}, {"en": "difficult", "ja": "むずかしい", "category": "形容詞・状態", "options": ["むずかしい", "かんたん", "ふつう", "むり"]}, {"en": "strong", "ja": "つよい", "category": "形容詞・状態", "options": ["つよい", "よわい", "はやい", "おそい"]}, {"en": "weak", "ja": "よわい", "category": "形容詞・状態", "options": ["よわい", "つよい", "はやい", "おそい"]}, {"en": "right", "ja": "ただしい・みぎ", "category": "形容詞・状態", "options": ["ただしい・みぎ", "まちがい・ひだり", "まっすぐ", "うえ"]}, {"en": "wrong", "ja": "まちがい", "category": "形容詞・状態", "options": ["まちがい", "ただしい", "ふつう", "むり"]}, {"en": "free", "ja": "じゆう・むりょう", "category": "形容詞・状態", "options": ["じゆう・むりょう", "いそがしい", "ゆうりょう", "たかい"]}, {"en": "busy", "ja": "いそがしい", "category": "形容詞・状態", "options": ["いそがしい", "ひま", "じゆう", "たいくつ"]}, {"en": "car", "ja": "くるま", "category": "乗り物", "options": ["くるま", "バス", "でんしゃ", "ひこうき"]}, {"en": "bus", "ja": "バス", "category": "乗り物", "options": ["バス", "くるま", "でんしゃ", "タクシー"]}, {"en": "train", "ja": "でんしゃ", "category": "乗り物", "options": ["でんしゃ", "バス", "くるま", "ちかてつ"]}, {"en": "airplane", "ja": "ひこうき", "category": "乗り物", "options": ["ひこうき", "ヘリコプター", "ロケット", "グライダー"]}, {"en": "bicycle", "ja": "じてんしゃ", "category": "乗り物", "options": ["じてんしゃ", "バイク", "くるま", "バス"]}, {"en": "ship", "ja": "ふね", "category": "乗り物", "options": ["ふね", "ボート", "ヨット", "せんすいかん"]}, {"en": "taxi", "ja": "タクシー", "category": "乗り物", "options": ["タクシー", "バス", "くるま", "でんしゃ"]}, {"en": "truck", "ja": "トラック", "category": "乗り物", "options": ["トラック", "くるま", "バス", "バン"]}, {"en": "room", "ja": "へや", "category": "家・部屋", "options": ["へや", "うち", "たてもの", "ろうか"]}, {"en": "kitchen", "ja": "だいどころ", "category": "家・部屋", "options": ["だいどころ", "しんしつ", "リビング", "トイレ"]}, {"en": "bedroom", "ja": "しんしつ", "category": "家・部屋", "options": ["しんしつ", "だいどころ", "リビング", "バスルーム"]}, {"en": "bathroom", "ja": "バスルーム・おふろ", "category": "家・部屋", "options": ["バスルーム・おふろ", "トイレ", "しんしつ", "だいどころ"]}, {"en": "door", "ja": "ドア", "category": "家・部屋", "options": ["ドア", "まど", "かべ", "てんじょう"]}, {"en": "window", "ja": "まど", "category": "家・部屋", "options": ["まど", "ドア", "かべ", "ゆか"]}, {"en": "bed", "ja": "ベッド", "category": "家・部屋", "options": ["ベッド", "ソファ", "いす", "つくえ"]}, {"en": "table", "ja": "テーブル", "category": "家・部屋", "options": ["テーブル", "つくえ", "いす", "ソファ"]}, {"en": "sofa", "ja": "ソファ", "category": "家・部屋", "options": ["ソファ", "いす", "ベッド", "テーブル"]}, {"en": "lamp", "ja": "ランプ・でんき", "category": "家・部屋", "options": ["ランプ・でんき", "でんきゅう", "スイッチ", "コンセント"]}, {"en": "TV", "ja": "テレビ", "category": "家・部屋", "options": ["テレビ", "ラジオ", "パソコン", "スマホ"]}, {"en": "phone", "ja": "でんわ", "category": "家・部屋", "options": ["でんわ", "スマホ", "タブレット", "パソコン"]}, {"en": "computer", "ja": "パソコン", "category": "家・部屋", "options": ["パソコン", "タブレット", "スマホ", "テレビ"]}, {"en": "ball", "ja": "ボール", "category": "スポーツ・遊び", "options": ["ボール", "バット", "ラケット", "ネット"]}, {"en": "game", "ja": "ゲーム", "category": "スポーツ・遊び", "options": ["ゲーム", "スポーツ", "えいが", "おんがく"]}, {"en": "sport", "ja": "スポーツ", "category": "スポーツ・遊び", "options": ["スポーツ", "ゲーム", "たいそう", "うんどう"]}, {"en": "soccer", "ja": "サッカー", "category": "スポーツ・遊び", "options": ["サッカー", "やきゅう", "バスケット", "テニス"]}, {"en": "baseball", "ja": "やきゅう", "category": "スポーツ・遊び", "options": ["やきゅう", "サッカー", "バスケット", "テニス"]}, {"en": "tennis", "ja": "テニス", "category": "スポーツ・遊び", "options": ["テニス", "バドミントン", "サッカー", "やきゅう"]}, {"en": "music", "ja": "おんがく", "category": "スポーツ・遊び", "options": ["おんがく", "えいが", "ほん", "アート"]}, {"en": "movie", "ja": "えいが", "category": "スポーツ・遊び", "options": ["えいが", "おんがく", "テレビ", "ゲーム"]}, {"en": "song", "ja": "うた", "category": "スポーツ・遊び", "options": ["うた", "おんがく", "えんそう", "ダンス"]}, {"en": "piano", "ja": "ピアノ", "category": "スポーツ・遊び", "options": ["ピアノ", "ギター", "バイオリン", "ドラム"]}, {"en": "guitar", "ja": "ギター", "category": "スポーツ・遊び", "options": ["ギター", "ピアノ", "バイオリン", "ドラム"]}, {"en": "one", "ja": "いち", "category": "数・量", "options": ["いち", "に", "さん", "し"]}, {"en": "two", "ja": "に", "category": "数・量", "options": ["に", "いち", "さん", "し"]}, {"en": "three", "ja": "さん", "category": "数・量", "options": ["さん", "に", "し", "ご"]}, {"en": "four", "ja": "し・よん", "category": "数・量", "options": ["し・よん", "さん", "ご", "ろく"]}, {"en": "five", "ja": "ご", "category": "数・量", "options": ["ご", "し", "ろく", "なな"]}, {"en": "six", "ja": "ろく", "category": "数・量", "options": ["ろく", "ご", "なな", "はち"]}, {"en": "seven", "ja": "なな・しち", "category": "数・量", "options": ["なな・しち", "ろく", "はち", "く"]}, {"en": "eight", "ja": "はち", "category": "数・量", "options": ["はち", "なな", "く", "じゅう"]}, {"en": "nine", "ja": "く・きゅう", "category": "数・量", "options": ["く・きゅう", "はち", "じゅう", "じゅういち"]}, {"en": "ten", "ja": "じゅう", "category": "数・量", "options": ["じゅう", "く", "じゅういち", "じゅうに"]}, {"en": "hundred", "ja": "ひゃく", "category": "数・量", "options": ["ひゃく", "じゅう", "せん", "まん"]}, {"en": "thousand", "ja": "せん", "category": "数・量", "options": ["せん", "ひゃく", "まん", "じゅう"]}, {"en": "first", "ja": "さいしょ・いちばん", "category": "数・量", "options": ["さいしょ・いちばん", "さいご", "なかば", "まんなか"]}, {"en": "last", "ja": "さいご・おわり", "category": "数・量", "options": ["さいご・おわり", "さいしょ", "まんなか", "なかば"]}, {"en": "much", "ja": "たくさん", "category": "数・量", "options": ["たくさん", "すこし", "ちょっと", "ほとんど"]}, {"en": "many", "ja": "おおい", "category": "数・量", "options": ["おおい", "すくない", "たくさん", "すこし"]}, {"en": "few", "ja": "すくない・ほとんどない", "category": "数・量", "options": ["すくない・ほとんどない", "おおい", "たくさん", "すこし"]}, {"en": "some", "ja": "いくつか・すこし", "category": "数・量", "options": ["いくつか・すこし", "たくさん", "すべて", "ない"]}, {"en": "all", "ja": "すべて・みんな", "category": "数・量", "options": ["すべて・みんな", "すこし", "いくつか", "ない"]}, {"en": "here", "ja": "ここ", "category": "場所・方向", "options": ["ここ", "そこ", "あそこ", "どこ"]}, {"en": "there", "ja": "そこ・あそこ", "category": "場所・方向", "options": ["そこ・あそこ", "ここ", "どこ", "むこう"]}, {"en": "up", "ja": "うえ", "category": "場所・方向", "options": ["うえ", "した", "みぎ", "ひだり"]}, {"en": "down", "ja": "した", "category": "場所・方向", "options": ["した", "うえ", "みぎ", "ひだり"]}, {"en": "left", "ja": "ひだり", "category": "場所・方向", "options": ["ひだり", "みぎ", "うえ", "した"]}, {"en": "front", "ja": "まえ", "category": "場所・方向", "options": ["まえ", "うしろ", "よこ", "となり"]}, {"en": "back", "ja": "うしろ", "category": "場所・方向", "options": ["うしろ", "まえ", "よこ", "となり"]}, {"en": "inside", "ja": "なか", "category": "場所・方向", "options": ["なか", "そと", "うえ", "した"]}, {"en": "outside", "ja": "そと", "category": "場所・方向", "options": ["そと", "なか", "うえ", "した"]}, {"en": "near", "ja": "ちかい", "category": "場所・方向", "options": ["ちかい", "とおい", "となり", "むこう"]}, {"en": "far", "ja": "とおい", "category": "場所・方向", "options": ["とおい", "ちかい", "むこう", "はなれた"]}, {"en": "hello", "ja": "こんにちは", "category": "あいさつ・表現", "options": ["こんにちは", "さようなら", "おはよう", "こんばんは"]}, {"en": "goodbye", "ja": "さようなら", "category": "あいさつ・表現", "options": ["さようなら", "こんにちは", "またね", "じゃあね"]}, {"en": "thank you", "ja": "ありがとう", "category": "あいさつ・表現", "options": ["ありがとう", "ごめんなさい", "どういたしまして", "よろしく"]}, {"en": "sorry", "ja": "ごめんなさい", "category": "あいさつ・表現", "options": ["ごめんなさい", "ありがとう", "どういたしまして", "すみません"]}, {"en": "please", "ja": "おねがいします", "category": "あいさつ・表現", "options": ["おねがいします", "ありがとう", "どうぞ", "いいえ"]}, {"en": "yes", "ja": "はい", "category": "あいさつ・表現", "options": ["はい", "いいえ", "そう", "ちがう"]}, {"en": "no", "ja": "いいえ", "category": "あいさつ・表現", "options": ["いいえ", "はい", "そう", "ちがう"]}, {"en": "OK", "ja": "わかった・いいよ", "category": "あいさつ・表現", "options": ["わかった・いいよ", "だめ", "わからない", "むり"]}, {"en": "name", "ja": "なまえ", "category": "あいさつ・表現", "options": ["なまえ", "ねんれい", "じゅうしょ", "くに"]}, {"en": "age", "ja": "ねんれい", "category": "あいさつ・表現", "options": ["ねんれい", "なまえ", "たんじょうび", "しゅみ"]}, {"en": "birthday", "ja": "たんじょうび", "category": "あいさつ・表現", "options": ["たんじょうび", "きねんび", "やすみ", "まつり"]}, {"en": "hobby", "ja": "しゅみ", "category": "あいさつ・表現", "options": ["しゅみ", "とくぎ", "しごと", "きょうみ"]}, {"en": "holiday", "ja": "きゅうじつ", "category": "あいさつ・表現", "options": ["きゅうじつ", "へいじつ", "やすみ", "まつり"]}, {"en": "party", "ja": "パーティー", "category": "あいさつ・表現", "options": ["パーティー", "まつり", "イベント", "コンサート"]}, {"en": "present", "ja": "プレゼント", "category": "あいさつ・表現", "options": ["プレゼント", "おかし", "カード", "はな"]}, {"en": "letter", "ja": "てがみ", "category": "あいさつ・表現", "options": ["てがみ", "メール", "でんわ", "メッセージ"]}, {"en": "color", "ja": "いろ", "category": "あいさつ・表現", "options": ["いろ", "かたち", "おおきさ", "ながさ"]}, {"en": "picture", "ja": "えいが・え", "category": "あいさつ・表現", "options": ["えいが・え", "しゃしん", "ずあん", "イラスト"]}, {"en": "photo", "ja": "しゃしん", "category": "あいさつ・表現", "options": ["しゃしん", "え", "ポスター", "イラスト"]}];
+const QUIZ_COUNT = 10;
+let autoSpeak = true;
+let questions = [];
+let current = 0;
+let answers = [];
+let isSpeaking = false;
+let synth = window.speechSynthesis;
+
+// 初期化
+window.addEventListener('load', () => {
+  document.getElementById('word-count').textContent = WORDS.length;
+  showTitle();
+  if (synth) synth.getVoices(); // 音声リストを事前ロード
+  if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = () => synth.getVoices();
+});
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function speak(text, cb) {
+  if (!synth) { if(cb) cb(); return; }
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US'; u.rate = 0.85;
+  const voices = synth.getVoices();
+  const v = voices.find(x => x.lang.startsWith('en') && x.localService) || voices.find(x => x.lang.startsWith('en'));
+  if (v) u.voice = v;
+  u.onstart = () => setSpeaking(true);
+  u.onend   = () => { setSpeaking(false); if(cb) cb(); };
+  u.onerror = () => { setSpeaking(false); if(cb) cb(); };
+  synth.speak(u);
+}
+
+function setSpeaking(s) {
+  isSpeaking = s;
+  const card = document.getElementById('word-card');
+  const wave = document.getElementById('wave');
+  const icon = document.getElementById('speaker-icon');
+  const label = document.getElementById('word-label');
+  if (s) {
+    card.classList.add('speaking');
+    wave.classList.remove('hidden');
+    icon.classList.add('hidden');
+    label.textContent = '🔊 SPEAKING...';
+  } else {
+    card.classList.remove('speaking');
+    wave.classList.add('hidden');
+    icon.classList.remove('hidden');
+    label.textContent = '👆 TAP TO LISTEN';
+  }
+}
+
+function toggleAuto() {
+  autoSpeak = !autoSpeak;
+  const t = document.getElementById('toggle-auto');
+  autoSpeak ? t.classList.add('on') : t.classList.remove('on');
+}
+
+function showScreen(id) {
+  ['screen-title','screen-quiz','screen-result'].forEach(s => {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+}
+function showTitle() { if(synth) synth.cancel(); showScreen('screen-title'); }
+
+function startQuiz() {
+  questions = shuffle(WORDS).slice(0, QUIZ_COUNT).map(q => ({ ...q, shuffled: shuffle(q.options) }));
+  current = 0; answers = [];
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const pct = ((current + 1) / QUIZ_COUNT) * 100;
+  document.getElementById('quiz-category').textContent = q.category;
+  document.getElementById('quiz-progress').textContent = `${current+1} / ${QUIZ_COUNT}`;
+  document.getElementById('quiz-bar').style.width = pct + '%';
+  document.getElementById('word-text').textContent = q.en;
+  document.getElementById('feedback').classList.add('hidden');
+  document.getElementById('next-btn').classList.add('hidden');
+
+  // 選択肢
+  const grid = document.getElementById('options');
+  grid.innerHTML = '';
+  q.shuffled.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.textContent = opt;
+    b.onclick = () => handleSelect(opt);
+    grid.appendChild(b);
+  });
+
+  setSpeaking(false);
+  if (autoSpeak) setTimeout(() => speak(q.en), 300);
+}
+
+function speakCurrent() {
+  speak(questions[current].en);
+}
+
+function handleSelect(opt) {
+  const q = questions[current];
+  const ok = opt === q.ja;
+  answers.push({ ...q, chosen: opt, correct: ok });
+
+  // ボタン色変更
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.ja) b.classList.add('correct');
+    else if (b.textContent === opt && !ok) b.classList.add('wrong');
+  });
+
+  // フィードバック
+  const fb = document.getElementById('feedback');
+  const emojisOk  = ['🎉','✨','🌟','🎊','💯','🏆','👏','🥳'];
+  const emojisNg  = ['💪','😢','ドンマイ！','次はできる！','もう一度！'];
+  const emojis = ok ? emojisOk : emojisNg;
+  const e = emojis[Math.floor(Math.random() * emojis.length)];
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+  fb.innerHTML = ok
+    ? `${e} せいかい！`
+    : `${e}<div style="font-size:14px;color:#5A7A9F;margin-top:4px;">こたえは「${q.ja}」だよ</div>`;
+  fb.classList.remove('hidden');
+
+  // 次へボタン
+  const nb = document.getElementById('next-btn');
+  nb.textContent = current + 1 >= QUIZ_COUNT ? '🏁 けっかを見る' : 'つぎへ →';
+  nb.classList.remove('hidden');
+}
+
+function nextQuestion() {
+  if (synth) synth.cancel();
+  if (current + 1 >= QUIZ_COUNT) { showResult(); return; }
+  current++;
+  renderQuestion();
+}
+
+function showResult() {
+  showScreen('screen-result');
+  const score = answers.filter(a => a.correct).length;
+  const pct = Math.round(score / QUIZ_COUNT * 100);
+  const ranks = [
+    { min:90, label:'かんぺき！',      emoji:'🏆', color:'#FFD700' },
+    { min:70, label:'よくできました！', emoji:'🌟', color:'#4CAF82' },
+    { min:50, label:'もう少し！',      emoji:'💪', color:'#60C8F5' },
+    { min:0,  label:'れんしゅうしよう', emoji:'📚', color:'#FF6B6B' },
+  ];
+  const rank = ranks.find(r => pct >= r.min);
+  document.getElementById('result-emoji').textContent = rank.emoji;
+  document.getElementById('result-label').textContent = rank.label;
+  document.getElementById('result-label').style.color = rank.color;
+  document.getElementById('result-score').innerHTML = `${score}<span style="font-size:24px;color:#8AABCC;">/${QUIZ_COUNT}</span>`;
+  document.getElementById('result-pct').textContent = `正解率 ${pct}%`;
+  document.getElementById('result-pct').style.color = rank.color;
+  document.getElementById('result-total').textContent = `${WORDS.length}語から毎回ランダム出題`;
+
+  const rows = document.getElementById('answer-rows');
+  rows.innerHTML = '';
+  answers.forEach(a => {
+    const row = document.createElement('div');
+    row.className = 'answer-row';
+    row.innerHTML = `
+      <span class="answer-en" onclick="speak('${a.en}')">🔊 ${a.en}</span>
+      <span class="answer-ja">→ ${a.ja}</span>
+      <span>${a.correct ? '⭕' : '❌'}</span>`;
+    rows.appendChild(row);
+  });
+}
+</script>
+</body>
+</html>
