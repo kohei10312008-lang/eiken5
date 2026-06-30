@@ -423,7 +423,44 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
     <button onclick="showTitle()" style="background:#FFF0F0;color:#E05050;border:1.5px solid #F0B0B0;border-radius:16px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🏠 やめる</button>
     <span style="font-size:13px;" id="flash-mode-tag"></span>
   </div>
-ss="btn btn-ghost" style="margin-top:4px;" onclick="showFlashTitle()">やめる</button>
+  <div class="progress-bar-bg"><div class="progress-bar" id="flash-bar"></div></div>
+
+  <div class="flash-card" id="flash-card" onclick="flashCurrentMode==='phrase' ? flipFlashPhrase() : flipCard()">
+    <div id="flash-front">
+      <div id="flash-front-word-mode">
+        <div class="flash-hint" id="flash-hint-front">👆 TAP TO LISTEN</div>
+        <div class="flash-main" id="flash-main"></div>
+        <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:8px;" id="flash-spell"></div>
+      </div>
+      <div id="flash-front-phrase-mode" class="hidden">
+        <div class="flash-hint" id="flash-front-emoji" style="font-size:34px;margin-bottom:6px;"></div>
+        <div class="flash-main" id="flash-front-word" style="font-size:26px;"></div>
+        <div class="flash-hint" id="flash-front-sub"></div>
+      </div>
+    </div>
+    <div id="flash-back" class="hidden">
+      <div id="flash-back-word-mode">
+        <div style="font-size:40px;" id="flash-emoji-back"></div>
+        <div class="flash-ja" id="flash-ja"></div>
+      </div>
+      <div id="flash-back-phrase-mode" class="hidden">
+        <div style="font-size:40px;" id="flash-back-emoji"></div>
+        <div class="flash-main" id="flash-back-word" style="font-size:26px;"></div>
+        <div class="flash-hint" id="flash-back-sub"></div>
+        <div id="flash-back-listen" style="margin-top:6px;font-size:13px;color:#8AADD0;">🔊 タップして発音をきいてね</div>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center;font-size:12px;color:#8AADD0;margin-bottom:10px;" id="flash-sub">カードをタップして答えを見てね</p>
+  <p style="text-align:center;font-size:12px;color:#8AADD0;margin-bottom:10px;" id="flash-flip-hint">カードをタップしてね</p>
+
+  <div class="flash-nav hidden" id="flash-nav">
+    <button style="background:#FFE0E0;color:#E05050;" onclick="handleFlashKnow(false)">😅 まだかな</button>
+    <button style="background:#D0F5DC;color:#1A8A4A;" onclick="handleFlashKnow(true)">✅ わかった！</button>
+  </div>
+
+  <button class="btn btn-ghost" style="margin-top:4px;" onclick="showFlashTitle()">やめる</button>
 </div>
 
 <!-- フラッシュカード結果 -->
@@ -437,7 +474,7 @@ ss="btn btn-ghost" style="margin-top:4px;" onclick="showFlashTitle()">やめる<
     <div class="flash-stat"><div class="flash-stat-num" style="color:#FF6B6B;" id="fr-unsure"></div><div class="flash-stat-label">まだかな…</div></div>
   </div>
   <div id="fr-unsure-list" style="margin-bottom:14px;"></div>
-  <button class="btn btn-purple" onclick="retryUnsure()">🔁 まだかなをもう一度</button>
+  <button class="btn btn-purple" id="flash-retry-unsure" onclick="retryUnsure()">🔁 まだかなをもう一度</button>
   <button class="btn btn-yellow" onclick="startFlash()">🔄 最初からやりなおす</button>
   <button class="btn btn-ghost" onclick="showTitle()">🏠 トップ</button>
 </div>
@@ -838,7 +875,9 @@ function showFlashTitle(){
 }
 function toggleFlashCat(cat,btn){ if(cat==='all'){flashCatFilter=[]; document.querySelectorAll('#flash-cat-filter button').forEach(b=>{ b.style.background=b.dataset.cat==='all'?'#60C8F5':'#fff'; b.style.borderColor=b.dataset.cat==='all'?'#60C8F5':'#D0E4F5'; b.style.color=b.dataset.cat==='all'?'#fff':'#1A2E52'; }); return;} if(flashCatFilter.includes(cat))flashCatFilter=flashCatFilter.filter(c=>c!==cat); else flashCatFilter.push(cat); btn.style.background=flashCatFilter.includes(cat)?'#B06EF5':'#fff'; btn.style.borderColor=flashCatFilter.includes(cat)?'#7C3AED':'#D0E4F5'; btn.style.color=flashCatFilter.includes(cat)?'#fff':'#1A2E52'; const ab=document.querySelector('#flash-cat-filter button[data-cat="all"]'); if(ab){ab.style.background='#fff';ab.style.borderColor='#D0E4F5';ab.style.color='#1A2E52';} }
 function toggleFlashDir(){ flashDir=flashDir==='en2ja'?'ja2en':'en2ja'; document.getElementById('flash-dir-label').textContent=flashDir==='en2ja'?'英語 → 日本語':'日本語 → 英語'; }
-function startFlash(){ let pool=flashCatFilter.length>0?WORDS.filter(w=>flashCatFilter.includes(w.category)):WORDS; flashWords=shuffle(pool); flashIndex=0; flashKnow=[]; flashUnsure=[]; flashFlipped=false; showScreen('screen-flash-play'); document.getElementById('flash-mode-tag').textContent=flashDir==='en2ja'?'英→日':'日→英'; renderFlash(); }
+function startFlash(){ let pool=flashCatFilter.length>0?WORDS.filter(w=>flashCatFilter.includes(w.category)):WORDS; flashWords=shuffle(pool); flashIndex=0; flashKnow=[]; flashUnsure=[]; flashFlipped=false; showScreen('screen-flash-play'); document.getElementById('flash-mode-tag').textContent=flashDir==='en2ja'?'英→日':'日→英'; document.getElementById('flash-front-word-mode').classList.remove('hidden'); document.getElementById('flash-front-phrase-mode').classList.add('hidden'); document.getElementById('flash-back-word-mode').classList.remove('hidden'); document.getElementById('flash-back-phrase-mode').classList.add('hidden'); renderFlash(); }
+function markKnow(){ const w=flashWords[flashIndex]; flashKnow.push(w); flashIndex++; renderFlash(); }
+function markUnsure(){ const w=flashWords[flashIndex]; flashUnsure.push(w); flashIndex++; renderFlash(); }
 function retryUnsure(){ if(!flashUnsure.length)return; flashWords=shuffle(flashUnsure); flashIndex=0; flashKnow=[]; flashUnsure=[]; flashFlipped=false; showScreen('screen-flash-play'); renderFlash(); }
 function renderFlash(){ if(flashIndex>=flashWords.length){showFlashResult();return;} const w=flashWords[flashIndex]; flashFlipped=false; document.getElementById('flash-progress').textContent=`${flashIndex+1} / ${flashWords.length}`; document.getElementById('flash-bar').style.width=((flashIndex+1)/flashWords.length*100)+'%'; document.getElementById('flash-sub').textContent='カードをタップして答えを見てね'; document.getElementById('flash-nav').classList.add('hidden'); const card=document.getElementById('flash-card'); card.classList.remove('flipped'); document.getElementById('flash-front').classList.remove('hidden'); document.getElementById('flash-back').classList.add('hidden'); if(flashDir==='en2ja'){ document.getElementById('flash-hint-front').textContent='👆 TAP TO LISTEN'; document.getElementById('flash-main').textContent=w.en; const sb=document.getElementById('flash-spell'); sb.innerHTML=''; w.en.split('').forEach(ch=>{const d=document.createElement('div');d.className='spell-letter';d.textContent=ch===' '?'·':ch;sb.appendChild(d);}); document.getElementById('flash-emoji-back').textContent=w.emoji||'📝'; document.getElementById('flash-ja').textContent=w.ja; if(autoSpeak)setTimeout(()=>speak(w.en),200); }else{ document.getElementById('flash-hint-front').textContent='日本語のいみ'; document.getElementById('flash-main').textContent=w.ja; document.getElementById('flash-emoji-back').textContent=w.emoji||'📝'; document.getElementById('flash-ja').textContent=w.en; document.getElementById('flash-spell').innerHTML=''; } }
 function flipCard(){ if(flashFlipped)return; flashFlipped=true; playFlip(); const card=document.getElementById('flash-card'); card.classList.add('flipped'); document.getElementById('flash-front').classList.add('hidden'); document.getElementById('flash-back').classList.remove('hidden'); document.getElementById('flash-nav').classList.remove('hidden'); document.getElementById('flash-sub').textContent='わかった？'; const w=flashWords[flashIndex]; if(flashDir==='ja2en')setTimeout(()=>speak(w.en),100); }
@@ -1801,6 +1840,10 @@ function startFlashPhrase(){
   flashPhraseUnsure = [];
   flashPhraseFlipped = false;
   showScreen('screen-flash-play');
+  document.getElementById('flash-front-word-mode').classList.add('hidden');
+  document.getElementById('flash-front-phrase-mode').classList.remove('hidden');
+  document.getElementById('flash-back-word-mode').classList.add('hidden');
+  document.getElementById('flash-back-phrase-mode').classList.remove('hidden');
   renderFlashPhrase();
 }
 
@@ -1809,7 +1852,7 @@ function renderFlashPhrase(){
   const total = flashPhraseWords.length;
   // progress
   document.getElementById('flash-progress').textContent = `${flashPhraseIdx+1} / ${total}`;
-  document.getElementById('flash-prog-bar').style.width = ((flashPhraseIdx+1)/total*100)+'%';
+  document.getElementById('flash-bar').style.width = ((flashPhraseIdx+1)/total*100)+'%';
   document.getElementById('flash-mode-tag').textContent = '🔑 フレーズ';
 
   // カード表示（日本語→英語）
@@ -1822,9 +1865,10 @@ function renderFlashPhrase(){
   document.getElementById('flash-back-listen').style.display = 'none';
 
   flashPhraseFlipped = false;
-  const card = document.getElementById('flash-card-inner');
-  if(card) card.style.transform = 'rotateY(0deg)';
-  document.getElementById('flash-action-btns').style.display = 'none';
+  document.getElementById('flash-card').classList.remove('flipped');
+  document.getElementById('flash-front').classList.remove('hidden');
+  document.getElementById('flash-back').classList.add('hidden');
+  document.getElementById('flash-nav').classList.add('hidden');
   document.getElementById('flash-flip-hint').style.display = 'block';
 
   // カードタップでめくる
@@ -1834,9 +1878,11 @@ function renderFlashPhrase(){
 function flipFlashPhrase(){
   if(flashPhraseFlipped) return;
   flashPhraseFlipped = true;
-  const card = document.getElementById('flash-card-inner');
-  if(card) card.style.transform = 'rotateY(180deg)';
-  document.getElementById('flash-action-btns').style.display = 'flex';
+  playFlip();
+  document.getElementById('flash-card').classList.add('flipped');
+  document.getElementById('flash-front').classList.add('hidden');
+  document.getElementById('flash-back').classList.remove('hidden');
+  document.getElementById('flash-nav').classList.remove('hidden');
   document.getElementById('flash-flip-hint').style.display = 'none';
   // 英語フレーズを読み上げ
   if(synth) speak(flashPhraseWords[flashPhraseIdx].full);
