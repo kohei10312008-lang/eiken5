@@ -410,6 +410,10 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
       <p style="font-size:12px;color:#5B21B6;font-weight:700;margin-bottom:4px;">🔑 フレーズモードとは</p>
       <p style="font-size:11px;color:#7C3AED;line-height:1.6;">えいごのフレーズ（go fishing など）を日本語でおぼえよう！174フレーズ収録。</p>
     </div>
+    <div class="toggle-row">
+      <span style="font-size:13px;font-weight:700;color:#1A2E52;" id="flash-phrase-dir-label">日本語 → 英語</span>
+      <button onclick="toggleFlashPhraseDir()" style="background:#60C8F5;color:#1A2E52;border:none;border-radius:10px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">切替</button>
+    </div>
   </div>
 
   <button class="btn btn-purple" onclick="startFlashAny()">🃏 スタート！</button>
@@ -1793,6 +1797,12 @@ function quitPhraseToTop(){
 let flashCurrentMode = 'word'; // 'word' or 'phrase'
 let flashPhraseWords = [], flashPhraseIdx = 0;
 let flashPhraseKnow = [], flashPhraseUnsure = [], flashPhraseFlipped = false;
+let flashPhraseDir = 'ja2en';
+
+function toggleFlashPhraseDir(){
+  flashPhraseDir = flashPhraseDir==='ja2en' ? 'en2ja' : 'ja2en';
+  document.getElementById('flash-phrase-dir-label').textContent = flashPhraseDir==='ja2en' ? '日本語 → 英語' : '英語 → 日本語';
+}
 
 function setFlashMode(mode){
   flashCurrentMode = mode;
@@ -1844,6 +1854,7 @@ function startFlashPhrase(){
   document.getElementById('flash-front-phrase-mode').classList.remove('hidden');
   document.getElementById('flash-back-word-mode').classList.add('hidden');
   document.getElementById('flash-back-phrase-mode').classList.remove('hidden');
+  document.getElementById('flash-mode-tag').textContent = flashPhraseDir==='ja2en' ? '🔑 日→英' : '🔑 英→日';
   renderFlashPhrase();
 }
 
@@ -1853,16 +1864,27 @@ function renderFlashPhrase(){
   // progress
   document.getElementById('flash-progress').textContent = `${flashPhraseIdx+1} / ${total}`;
   document.getElementById('flash-bar').style.width = ((flashPhraseIdx+1)/total*100)+'%';
-  document.getElementById('flash-mode-tag').textContent = '🔑 フレーズ';
 
-  // カード表示（日本語→英語）
-  document.getElementById('flash-front-emoji').textContent = '📖';
-  document.getElementById('flash-front-word').textContent = q.ja;
-  document.getElementById('flash-front-sub').textContent = 'タップして英語を見る';
-  document.getElementById('flash-back-emoji').textContent = '🔑';
-  document.getElementById('flash-back-word').textContent = q.full;
-  document.getElementById('flash-back-sub').textContent = q.ja;
-  document.getElementById('flash-back-listen').style.display = 'none';
+  if(flashPhraseDir==='ja2en'){
+    // 表：日本語 → 裏：英語
+    document.getElementById('flash-front-emoji').textContent = '📖';
+    document.getElementById('flash-front-word').textContent = q.ja;
+    document.getElementById('flash-front-sub').textContent = 'タップして英語を見る';
+    document.getElementById('flash-back-emoji').textContent = '🔑';
+    document.getElementById('flash-back-word').textContent = q.full;
+    document.getElementById('flash-back-sub').textContent = q.ja;
+    document.getElementById('flash-back-listen').style.display = 'block';
+  } else {
+    // 表：英語 → 裏：日本語
+    document.getElementById('flash-front-emoji').textContent = '🔑';
+    document.getElementById('flash-front-word').textContent = q.full;
+    document.getElementById('flash-front-sub').textContent = 'タップして日本語を見る';
+    document.getElementById('flash-back-emoji').textContent = '📖';
+    document.getElementById('flash-back-word').textContent = q.ja;
+    document.getElementById('flash-back-sub').textContent = q.full;
+    document.getElementById('flash-back-listen').style.display = 'none';
+    if(autoSpeak) setTimeout(()=>speak(q.full),200);
+  }
 
   flashPhraseFlipped = false;
   document.getElementById('flash-card').classList.remove('flipped');
@@ -1884,8 +1906,8 @@ function flipFlashPhrase(){
   document.getElementById('flash-back').classList.remove('hidden');
   document.getElementById('flash-nav').classList.remove('hidden');
   document.getElementById('flash-flip-hint').style.display = 'none';
-  // 英語フレーズを読み上げ
-  if(synth) speak(flashPhraseWords[flashPhraseIdx].full);
+  // ja2en時：裏返すと英語が出るので読み上げ
+  if(flashPhraseDir==='ja2en' && synth) speak(flashPhraseWords[flashPhraseIdx].full);
 }
 
 // know/unsure ボタン用（フレーズモード判定）
