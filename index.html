@@ -403,8 +403,16 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
     <button onclick="showTitle()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
     <h2 style="font-size:17px;font-weight:900;color:#1A2E52;">🏅 バッジ・実績</h2>
   </div>
-  <p id="badges-progress" style="font-size:13px;font-weight:700;color:#F97316;margin-bottom:12px;text-align:center;background:#FFF7E0;border-radius:12px;padding:8px;">0 / 0 こ かくとく</p>
-  <div id="badges-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+  <p id="badges-progress" style="font-size:13px;font-weight:700;color:#F97316;margin-bottom:10px;text-align:center;background:#FFF7E0;border-radius:12px;padding:8px;">0 / 0 こ かくとく</p>
+
+  <!-- フィルタータブ -->
+  <div style="display:flex;gap:6px;margin-bottom:14px;">
+    <button id="badge-tab-all"      onclick="setBadgeTab('all')"      style="flex:1;padding:7px 4px;border-radius:12px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;background:#1A2E52;color:#fff;">すべて</button>
+    <button id="badge-tab-unlocked" onclick="setBadgeTab('unlocked')" style="flex:1;padding:7px 4px;border-radius:12px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;background:#E0E8F5;color:#5A7A9F;">かくとく済み</button>
+    <button id="badge-tab-locked"   onclick="setBadgeTab('locked')"   style="flex:1;padding:7px 4px;border-radius:12px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;background:#E0E8F5;color:#5A7A9F;">みかくとく</button>
+  </div>
+
+  <div id="badges-body"></div>
 </div>
 
 <!-- バッジ獲得ポップアップ -->
@@ -1311,53 +1319,63 @@ function incrementFlashCount(){ try{ localStorage.setItem(FLASH_COUNT_KEY, Strin
 function loadBadges(){ try{ return JSON.parse(localStorage.getItem(BADGES_KEY)||'[]'); }catch(e){ return []; } }
 function saveBadges(arr){ try{ localStorage.setItem(BADGES_KEY, JSON.stringify(arr)); }catch(e){} }
 
+const BADGE_GROUPS = [
+  {id:'common',   label:'🌍 共通'},
+  {id:'streak',   label:'🔥 れんぞく学習'},
+  {id:'difficulty',label:'🟢🔴 難易度'},
+  {id:'spelling', label:'✏️ スペリング'},
+  {id:'timer',    label:'⏱️ タイマー'},
+  {id:'sort',     label:'🔀 ならべかえ'},
+  {id:'fill',     label:'📝 あなうめ'},
+  {id:'flash',    label:'🃏 フラッシュカード'},
+];
 const BADGES = [
-  {id:'first_quiz', emoji:'🌱', title:'はじめの一歩', desc:'はじめてクイズを1回クリア', check:c=>c.totalPlays>=1},
-  {id:'plays_10', emoji:'📘', title:'れんしゅうちゅう', desc:'クイズに10回ちょうせん', check:c=>c.totalPlays>=10},
-  {id:'plays_30', emoji:'📗', title:'がんばりや', desc:'クイズに30回ちょうせん', check:c=>c.totalPlays>=30},
-  {id:'plays_100', emoji:'🏆', title:'クイズの達人', desc:'クイズに100回ちょうせん', check:c=>c.totalPlays>=100},
-  {id:'correct_100', emoji:'💯', title:'100問正解', desc:'累計で100問せいかいする', check:c=>c.totalCorrect>=100},
-  {id:'correct_300', emoji:'🌟', title:'300問正解', desc:'累計で300問せいかいする', check:c=>c.totalCorrect>=300},
-  {id:'correct_500', emoji:'🏅', title:'500問正解', desc:'累計で500問せいかいする', check:c=>c.totalCorrect>=500},
-  {id:'correct_1000', emoji:'👑', title:'1000問正解', desc:'累計で1000問せいかいする', check:c=>c.totalCorrect>=1000},
-  {id:'perfect_1', emoji:'🎯', title:'パーフェクト！', desc:'1回のクイズで全問せいかい', check:c=>c.perfectCount>=1},
-  {id:'perfect_5', emoji:'🎯', title:'パーフェクトおうじゃ', desc:'全問せいかいを5回たっせい', check:c=>c.perfectCount>=5},
-  {id:'all_categories', emoji:'🗺️', title:'カテゴリせいは', desc:'すべてのカテゴリで1問以上せいかい', check:c=>c.categoriesCleared>=c.categoriesTotal && c.categoriesTotal>0},
-  {id:'sort_30', emoji:'🔤', title:'ならべかえマスター', desc:'ならべかえもんだいに30問せいかい', check:c=>c.sortCorrect>=30},
-  {id:'fill_30', emoji:'📝', title:'あなうめマスター', desc:'あなうめもんだいに30問せいかい', check:c=>c.fillCorrect>=30},
-  {id:'flash_20', emoji:'🃏', title:'フラッシュカード名人', desc:'フラッシュカードを20回かんりょう', check:c=>c.flashCount>=20},
-  // 連続学習日数系
-  {id:'streak_3', emoji:'🔥', title:'3日れんぞく', desc:'3日れんぞくで学習する', check:c=>c.streakLongest>=3},
-  {id:'streak_7', emoji:'🔥🔥', title:'1週間れんぞく', desc:'7日れんぞくで学習する', check:c=>c.streakLongest>=7},
-  {id:'streak_14', emoji:'🔥🔥🔥', title:'2週間れんぞく', desc:'14日れんぞくで学習する', check:c=>c.streakLongest>=14},
-  {id:'streak_30', emoji:'👑🔥', title:'1か月れんぞく', desc:'30日れんぞくで学習する', check:c=>c.streakLongest>=30},
-  // イージーモード系
-  {id:'easy_first', emoji:'🌱', title:'イージースタート', desc:'イージーモードではじめてクイズをクリア', check:c=>c.easyPlays>=1},
-  {id:'easy_10', emoji:'📗', title:'イージー10回', desc:'イージーモードで10回クリア', check:c=>c.easyPlays>=10},
-  {id:'easy_perfect', emoji:'🟢', title:'イージーパーフェクト', desc:'イージーモードで全問せいかい', check:c=>c.easyPerfect>=1},
-  {id:'easy_correct_100', emoji:'💚', title:'イージー100問正解', desc:'イージーモードで100問せいかい', check:c=>c.easyCorrect>=100},
-  // ノーマルモード系
-  {id:'normal_first', emoji:'⚡', title:'ノーマルちょうせん', desc:'ノーマルモードではじめてクイズをクリア', check:c=>c.normalPlays>=1},
-  {id:'normal_5', emoji:'🔴', title:'ノーマル5回', desc:'ノーマルモードで5回クリア', check:c=>c.normalPlays>=5},
-  {id:'normal_perfect', emoji:'🏆', title:'ノーマルパーフェクト', desc:'ノーマルモードで全問せいかい（すごい！）', check:c=>c.normalPerfect>=1},
-  {id:'normal_correct_100', emoji:'💎', title:'ノーマル100問正解', desc:'ノーマルモードで100問せいかい', check:c=>c.normalCorrect>=100},
-  // スペリング系
-  {id:'spell_first', emoji:'✍️', title:'スペリングスタート', desc:'スペリングモードをはじめてクリア', check:c=>c.spellPlays>=1},
-  {id:'spell_perfect', emoji:'📖', title:'スペリングパーフェクト', desc:'スペリングモードで全問せいかい', check:c=>c.spellPerfect>=1},
-  {id:'spell_hint_free', emoji:'🧠', title:'ヒントなしパーフェクト', desc:'ヒントをつかわずスペリング全問せいかい', check:c=>c.spellHintFreePerfect>=1},
-  {id:'spell_hint_free_3', emoji:'🧠💫', title:'ヒントなし3回達成', desc:'ヒントなしスペリング全問せいかいを3回', check:c=>c.spellHintFreePerfect>=3},
-  {id:'spell_correct_50', emoji:'🖊️', title:'スペリング50問正解', desc:'スペリングモードで累計50問せいかい', check:c=>c.spellCorrect>=50},
-  // タイマー系
-  {id:'timer_first', emoji:'⏱️', title:'タイマーちょうせん', desc:'タイマーモードをはじめてクリア', check:c=>c.timerPlays>=1},
-  {id:'timer_perfect', emoji:'⚡', title:'タイマーパーフェクト', desc:'タイマーモードで全問せいかい（はやい！）', check:c=>c.timerPerfect>=1},
-  // 大量出題系
-  {id:'big_quiz_30', emoji:'📚', title:'30問チャレンジ', desc:'30問クイズをクリア', check:c=>c.maxQuizSize>=30},
-  {id:'big_quiz_50', emoji:'📚📚', title:'50問チャレンジ', desc:'50問クイズをクリア', check:c=>c.maxQuizSize>=50},
-  // 連続正解系
-  {id:'consec_10', emoji:'🔗', title:'10問れんぞく', desc:'1回のセッションで10問れんぞくせいかい', check:c=>c.bestConsecutive>=10},
-  {id:'consec_20', emoji:'⛓️', title:'20問れんぞく', desc:'1回のセッションで20問れんぞくせいかい', check:c=>c.bestConsecutive>=20},
-  // 全モード制覇
-  {id:'all_modes', emoji:'🎪', title:'全モード制覇', desc:'すべてのクイズモードを1回以上プレイ', check:c=>c.modesPlayed>=7},
+  // 共通
+  {id:'first_quiz',   group:'common',  emoji:'🌱', title:'はじめの一歩',    desc:'はじめてクイズを1回クリア',          check:c=>c.totalPlays>=1},
+  {id:'plays_10',     group:'common',  emoji:'📘', title:'れんしゅうちゅう', desc:'クイズに10回ちょうせん',            check:c=>c.totalPlays>=10,   prog:c=>[c.totalPlays,10]},
+  {id:'plays_30',     group:'common',  emoji:'📗', title:'がんばりや',       desc:'クイズに30回ちょうせん',            check:c=>c.totalPlays>=30,   prog:c=>[c.totalPlays,30]},
+  {id:'plays_100',    group:'common',  emoji:'🏆', title:'クイズの達人',     desc:'クイズに100回ちょうせん',           check:c=>c.totalPlays>=100,  prog:c=>[c.totalPlays,100]},
+  {id:'correct_100',  group:'common',  emoji:'💯', title:'100問正解',        desc:'累計で100問せいかいする',           check:c=>c.totalCorrect>=100, prog:c=>[c.totalCorrect,100]},
+  {id:'correct_300',  group:'common',  emoji:'🌟', title:'300問正解',        desc:'累計で300問せいかいする',           check:c=>c.totalCorrect>=300, prog:c=>[c.totalCorrect,300]},
+  {id:'correct_500',  group:'common',  emoji:'🏅', title:'500問正解',        desc:'累計で500問せいかいする',           check:c=>c.totalCorrect>=500, prog:c=>[c.totalCorrect,500]},
+  {id:'correct_1000', group:'common',  emoji:'👑', title:'1000問正解',       desc:'累計で1000問せいかいする',          check:c=>c.totalCorrect>=1000,prog:c=>[c.totalCorrect,1000]},
+  {id:'perfect_1',    group:'common',  emoji:'🎯', title:'パーフェクト！',    desc:'1回のクイズで全問せいかい',         check:c=>c.perfectCount>=1},
+  {id:'perfect_5',    group:'common',  emoji:'🎯', title:'パーフェクトおうじゃ',desc:'全問せいかいを5回たっせい',       check:c=>c.perfectCount>=5,  prog:c=>[c.perfectCount,5]},
+  {id:'all_categories',group:'common', emoji:'🗺️', title:'カテゴリせいは',   desc:'すべてのカテゴリで1問以上せいかい', check:c=>c.categoriesCleared>=c.categoriesTotal&&c.categoriesTotal>0, prog:c=>[c.categoriesCleared,c.categoriesTotal]},
+  {id:'consec_10',    group:'common',  emoji:'🔗', title:'10問れんぞく',     desc:'10問れんぞくせいかい',              check:c=>c.bestConsecutive>=10, prog:c=>[Math.min(c.bestConsecutive,10),10]},
+  {id:'consec_20',    group:'common',  emoji:'⛓️', title:'20問れんぞく',     desc:'20問れんぞくせいかい',              check:c=>c.bestConsecutive>=20, prog:c=>[Math.min(c.bestConsecutive,20),20]},
+  {id:'big_quiz_30',  group:'common',  emoji:'📚', title:'30問チャレンジ',   desc:'30問クイズをクリア',                check:c=>c.maxQuizSize>=30, prog:c=>[Math.min(c.maxQuizSize,30),30]},
+  {id:'big_quiz_50',  group:'common',  emoji:'📚📚',title:'50問チャレンジ',  desc:'50問クイズをクリア',                check:c=>c.maxQuizSize>=50, prog:c=>[Math.min(c.maxQuizSize,50),50]},
+  {id:'all_modes',    group:'common',  emoji:'🎪', title:'全モード制覇',     desc:'すべてのクイズモードを1回以上プレイ', check:c=>c.modesPlayed>=7, prog:c=>[c.modesPlayed,7]},
+  // れんぞく学習
+  {id:'streak_3',  group:'streak', emoji:'🔥',   title:'3日れんぞく',    desc:'3日れんぞくで学習する',   check:c=>c.streakLongest>=3,  prog:c=>[Math.min(c.streakLongest,3),3]},
+  {id:'streak_7',  group:'streak', emoji:'🔥🔥', title:'1週間れんぞく',  desc:'7日れんぞくで学習する',   check:c=>c.streakLongest>=7,  prog:c=>[Math.min(c.streakLongest,7),7]},
+  {id:'streak_14', group:'streak', emoji:'🔥🔥🔥',title:'2週間れんぞく', desc:'14日れんぞくで学習する',  check:c=>c.streakLongest>=14, prog:c=>[Math.min(c.streakLongest,14),14]},
+  {id:'streak_30', group:'streak', emoji:'👑🔥', title:'1か月れんぞく',  desc:'30日れんぞくで学習する',  check:c=>c.streakLongest>=30, prog:c=>[Math.min(c.streakLongest,30),30]},
+  // 難易度
+  {id:'easy_first',      group:'difficulty', emoji:'🌱', title:'イージースタート',    desc:'イージーモードではじめてクリア',    check:c=>c.easyPlays>=1},
+  {id:'easy_10',         group:'difficulty', emoji:'📗', title:'イージー10回',        desc:'イージーモードで10回クリア',       check:c=>c.easyPlays>=10,    prog:c=>[c.easyPlays,10]},
+  {id:'easy_perfect',    group:'difficulty', emoji:'🟢', title:'イージーパーフェクト', desc:'イージーモードで全問せいかい',      check:c=>c.easyPerfect>=1},
+  {id:'easy_correct_100',group:'difficulty', emoji:'💚', title:'イージー100問正解',   desc:'イージーモードで100問せいかい',    check:c=>c.easyCorrect>=100, prog:c=>[c.easyCorrect,100]},
+  {id:'normal_first',    group:'difficulty', emoji:'⚡', title:'ノーマルちょうせん',   desc:'ノーマルモードではじめてクリア',    check:c=>c.normalPlays>=1},
+  {id:'normal_5',        group:'difficulty', emoji:'🔴', title:'ノーマル5回',          desc:'ノーマルモードで5回クリア',        check:c=>c.normalPlays>=5,   prog:c=>[c.normalPlays,5]},
+  {id:'normal_perfect',  group:'difficulty', emoji:'🏆', title:'ノーマルパーフェクト',  desc:'ノーマルモードで全問せいかい！',    check:c=>c.normalPerfect>=1},
+  {id:'normal_correct_100',group:'difficulty',emoji:'💎',title:'ノーマル100問正解',   desc:'ノーマルモードで100問せいかい',    check:c=>c.normalCorrect>=100,prog:c=>[c.normalCorrect,100]},
+  // スペリング
+  {id:'spell_first',       group:'spelling', emoji:'✍️', title:'スペリングスタート',    desc:'スペリングモードをはじめてクリア',         check:c=>c.spellPlays>=1},
+  {id:'spell_perfect',     group:'spelling', emoji:'📖', title:'スペリングパーフェクト', desc:'スペリングモードで全問せいかい',            check:c=>c.spellPerfect>=1},
+  {id:'spell_hint_free',   group:'spelling', emoji:'🧠', title:'ヒントなしパーフェクト', desc:'ヒントをつかわずスペリング全問せいかい',    check:c=>c.spellHintFreePerfect>=1},
+  {id:'spell_hint_free_3', group:'spelling', emoji:'🧠💫',title:'ヒントなし3回達成',    desc:'ヒントなしスペリング全問せいかいを3回',    check:c=>c.spellHintFreePerfect>=3, prog:c=>[c.spellHintFreePerfect,3]},
+  {id:'spell_correct_50',  group:'spelling', emoji:'🖊️', title:'スペリング50問正解',    desc:'スペリングモードで累計50問せいかい',       check:c=>c.spellCorrect>=50, prog:c=>[c.spellCorrect,50]},
+  // タイマー
+  {id:'timer_first',   group:'timer', emoji:'⏱️', title:'タイマーちょうせん',  desc:'タイマーモードをはじめてクリア',     check:c=>c.timerPlays>=1},
+  {id:'timer_perfect', group:'timer', emoji:'⚡', title:'タイマーパーフェクト', desc:'タイマーモードで全問せいかい！',      check:c=>c.timerPerfect>=1},
+  // ならべかえ
+  {id:'sort_30', group:'sort', emoji:'🔤', title:'ならべかえマスター', desc:'ならべかえもんだいに30問せいかい', check:c=>c.sortCorrect>=30, prog:c=>[c.sortCorrect,30]},
+  // あなうめ
+  {id:'fill_30', group:'fill', emoji:'📝', title:'あなうめマスター', desc:'あなうめもんだいに30問せいかい', check:c=>c.fillCorrect>=30, prog:c=>[c.fillCorrect,30]},
+  // フラッシュカード
+  {id:'flash_20', group:'flash', emoji:'🃏', title:'フラッシュカード名人', desc:'フラッシュカードを20回かんりょう', check:c=>c.flashCount>=20, prog:c=>[c.flashCount,20]},
 ];
 
 function buildBadgeContext(){
@@ -1462,33 +1480,95 @@ function closeBadgeUnlockModal(){
 }
 
 let revealedHints = new Set();
+let _badgeTab = 'all';
+
+function setBadgeTab(tab){
+  _badgeTab = tab;
+  ['all','unlocked','locked'].forEach(t=>{
+    const btn = document.getElementById('badge-tab-'+t);
+    if(btn){ btn.style.background = t===tab?'#1A2E52':'#E0E8F5'; btn.style.color = t===tab?'#fff':'#5A7A9F'; }
+  });
+  renderBadgesBody();
+}
+
 function showBadges(){
   showScreen('screen-badges');
   revealedHints = new Set();
+  _badgeTab = 'all';
+  ['all','unlocked','locked'].forEach(t=>{
+    const btn = document.getElementById('badge-tab-'+t);
+    if(btn){ btn.style.background = t==='all'?'#1A2E52':'#E0E8F5'; btn.style.color = t==='all'?'#fff':'#5A7A9F'; }
+  });
+  renderBadgesBody();
+}
+
+function renderBadgesBody(){
   const ctx = buildBadgeContext();
   const unlocked = loadBadges();
   const unlockedMap = {}; unlocked.forEach(b=>unlockedMap[b.id]=b.date);
   document.getElementById('badges-progress').textContent = `${unlocked.length} / ${BADGES.length} こ かくとく`;
-  const grid = document.getElementById('badges-grid');
-  grid.innerHTML = '';
-  BADGES.forEach(b=>{
-    const got = !!unlockedMap[b.id];
-    const card = document.createElement('div');
-    card.id = 'badge-card-'+b.id;
-    card.style.cssText = `border-radius:14px;padding:12px 8px;text-align:center;background:${got?'linear-gradient(135deg,#FFF7E0,#FFEFC0)':'#F0F2F5'};border:2px solid ${got?'#FFD700':'#E0E4EA'};${got?'':'cursor:pointer;'}`;
-    card.innerHTML = `<div style="font-size:32px;opacity:${got?'1':'0.25'};filter:${got?'none':'grayscale(1)'};">${b.emoji}</div>
-      <div style="font-size:11px;font-weight:900;color:${got?'#1A2E52':'#A0AAB8'};margin-top:4px;">${got?b.title:'？？？'}</div>
-      <div style="font-size:9px;color:${got?'#5A7A9F':'#B0B8C4'};margin-top:2px;line-height:1.3;" id="badge-hint-${b.id}">${got?b.desc:'タップしてヒント表示'}</div>`;
-    if(!got){ card.onclick = ()=>toggleBadgeHint(b.id, b.desc); }
-    grid.appendChild(card);
+  const now = Date.now();
+  const body = document.getElementById('badges-body'); if(!body) return;
+  body.innerHTML = '';
+
+  BADGE_GROUPS.forEach(grp=>{
+    const grpBadges = BADGES.filter(b=>b.group===grp.id);
+    const filtered = grpBadges.filter(b=>{
+      const got = !!unlockedMap[b.id];
+      if(_badgeTab==='unlocked') return got;
+      if(_badgeTab==='locked')   return !got;
+      return true;
+    });
+    if(!filtered.length) return;
+
+    const header = document.createElement('div');
+    const grpGot = grpBadges.filter(b=>unlockedMap[b.id]).length;
+    header.style.cssText='display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px;';
+    header.innerHTML=`<span style="font-size:13px;font-weight:900;color:#1A2E52;">${grp.label}</span><span style="font-size:11px;color:#8AABCC;">${grpGot}/${grpBadges.length}</span>`;
+    body.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;';
+
+    filtered.forEach(b=>{
+      const got = !!unlockedMap[b.id];
+      const dateStr = unlockedMap[b.id] ? new Date(unlockedMap[b.id]) : null;
+      const isNew = dateStr && (now - dateStr.getTime()) < 86400000;
+      let progHTML='';
+      if(!got && b.prog){
+        const [cur,max] = b.prog(ctx);
+        const pct = Math.min(100, Math.round(cur/max*100));
+        progHTML=`<div style="margin-top:4px;background:#E8EFF8;border-radius:4px;height:4px;overflow:hidden;"><div style="height:4px;background:#60C8F5;width:${pct}%;border-radius:4px;"></div></div><div style="font-size:8px;color:#8AABCC;margin-top:1px;">${cur}/${max}</div>`;
+      }
+      const dateLabelHTML = got && dateStr ? `<div style="font-size:8px;color:#AABCCC;margin-top:1px;">${dateStr.getMonth()+1}/${dateStr.getDate()}かくとく</div>` : '';
+      const newTag = isNew ? `<div style="position:absolute;top:4px;right:4px;background:#FF6B6B;color:#fff;font-size:7px;font-weight:900;padding:1px 4px;border-radius:6px;">NEW!</div>` : '';
+
+      const card = document.createElement('div');
+      card.id = 'badge-card-'+b.id;
+      card.style.cssText=`border-radius:14px;padding:10px 6px 8px;text-align:center;position:relative;background:${got?'linear-gradient(135deg,#FFF7E0,#FFEFC0)':'#F0F2F5'};border:2px solid ${got?'#FFD700':'#E0E4EA'};${got?'':'cursor:pointer;'}`;
+      card.innerHTML=`${newTag}
+        <div style="font-size:28px;opacity:${got?'1':'0.22'};filter:${got?'none':'grayscale(1)'};">${b.emoji}</div>
+        <div style="font-size:10px;font-weight:900;color:${got?'#1A2E52':'#A0AAB8'};margin-top:3px;line-height:1.2;">${got?b.title:'？？？'}</div>
+        <div style="font-size:8px;color:${got?'#5A7A9F':'#B0B8C4'};margin-top:2px;line-height:1.3;" id="badge-hint-${b.id}">${got?b.desc:'タップしてヒント'}</div>
+        ${dateLabelHTML}${progHTML}`;
+      if(!got){ card.onclick=()=>toggleBadgeHint(b.id, b.desc); }
+      grid.appendChild(card);
+    });
+    body.appendChild(grid);
   });
+
+  if(!body.children.length){
+    body.innerHTML='<p style="text-align:center;color:#8AABCC;font-size:12px;padding:20px;">該当するバッジがありません</p>';
+  }
 }
+
 function toggleBadgeHint(id, desc){
   const el = document.getElementById('badge-hint-'+id);
   if(!el) return;
-  if(revealedHints.has(id)){ revealedHints.delete(id); el.textContent='タップしてヒント表示'; }
+  if(revealedHints.has(id)){ revealedHints.delete(id); el.textContent='タップしてヒント'; }
   else { revealedHints.add(id); el.textContent='💡 '+desc; }
 }
+
 function saveResult(ans, mode, total){
   const h=loadHistory();
   const score=ans.filter(a=>a.correct).length;
