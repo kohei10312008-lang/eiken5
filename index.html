@@ -356,23 +356,15 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
     <span class="mode-icon">✏️</span>
     <div class="mode-info"><h3 style="color:#fff;">スペリングモード</h3><p style="color:rgba(255,255,255,0.85);">えいじをじぶんでいれよう</p></div>
   </button>
-  <button class="mode-card" style="background:linear-gradient(135deg,#F97316,#DC2626);" onclick="showDifficulty('timer','⏱️ タイマーモード','showMode')">
-    <span class="mode-icon">⏱️</span>
-    <div class="mode-info"><h3 style="color:#fff;">タイマーモード</h3><p style="color:rgba(255,255,255,0.85);">10びょうでこたえよう！</p></div>
-  </button>
-  <button class="mode-card" style="background:linear-gradient(135deg,#0EA5E9,#0369A1);" onclick="showDifficulty('listening','👂 ミミだめし','showMode')">
-    <span class="mode-icon">👂</span>
-    <div class="mode-info"><h3 style="color:#fff;">みみだめしモード</h3><p style="color:rgba(255,255,255,0.85);">おとだけをきいてこたえよう！</p></div>
-  </button>
   
   <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin:8px 0;">🔤 ならべかえクイズ（大問3対策）</p>
-  <button class="mode-card" style="background:linear-gradient(135deg,#F59E0B,#D97706);" onclick="showDifficulty('sort','🔀 ならべかえモード','showMode')">
+  <button class="mode-card" style="background:linear-gradient(135deg,#F59E0B,#D97706);" onclick="startSortQuiz()">
     <span class="mode-icon">🔤</span>
     <div class="mode-info"><h3 style="color:#fff;">ならべかえクイズ</h3><p style="color:#FEF3C7;">たんごをならべてえいぶんをつくろう！</p></div>
   </button>
 
   <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin:8px 0;">📝 えいぶん穴うめクイズ（大問1対策）</p>
-  <button class="mode-card" style="background:linear-gradient(135deg,#10B981,#065F46);" onclick="showDifficulty('fill','✏️ あなうめモード','showMode')">
+  <button class="mode-card" style="background:linear-gradient(135deg,#10B981,#065F46);" onclick="startFillQuiz()">
     <span class="mode-icon">📝</span>
     <div class="mode-info"><h3 style="color:#fff;">穴うめクイズ</h3><p style="color:#A7F3D0;">えいぶんの（　）にはいることばをえらぼう！</p></div>
   </button>
@@ -384,11 +376,43 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
   </button>
 
   <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin:8px 0;">🌐 フレーズ選択クイズ（C）</p>
+  <div style="display:flex;align-items:center;justify-content:space-between;background:#FFF8EE;border:1.5px solid #FCD34D;border-radius:14px;padding:8px 12px;margin-bottom:8px;">
+    <span style="font-size:12px;font-weight:700;color:#92400E;" id="psel-dir-label">日本語 → 英語</span>
+    <button onclick="togglePselDir()" style="background:#F59E0B;color:#fff;border:none;border-radius:10px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 切替</button>
+  </div>
   <button class="mode-card" style="background:linear-gradient(135deg,#F59E0B,#B45309);" onclick="startPhraseSelectQuiz()">
     <span class="mode-icon">🌐</span>
-    <div class="mode-info"><h3 style="color:#fff;">フレーズ日→英</h3><p style="color:#FEF3C7;">日本語からえいごフレーズをえらぼう！</p></div>
+    <div class="mode-info"><h3 style="color:#fff;" id="psel-mode-title">フレーズ日→英</h3><p style="color:#FEF3C7;" id="psel-mode-desc">日本語からえいごフレーズをえらぼう！</p></div>
   </button>
 
+  <p style="font-size:12px;color:#5A7A9F;font-weight:700;margin:8px 0;">🔤 どうしのかつようモード（D）</p>
+  <button class="mode-card" style="background:linear-gradient(135deg,#0D9488,#134E4A);" onclick="showVerbHub()">
+    <span class="mode-icon">🔤</span>
+    <div class="mode-info"><h3 style="color:#fff;">どうしのかつよう</h3><p style="color:#CCFBF1;">きそく・ふきそくどうしをまなぼう！</p></div>
+  </button>
+
+</div>
+
+<!-- どうしかつようハブ画面 -->
+<div id="screen-verb-hub" style="display:none;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <button onclick="showMode()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
+    <h2 style="font-size:17px;font-weight:900;color:#1A2E52;">🔤 どうしのかつよう</h2>
+  </div>
+  <p style="font-size:12px;color:#5A7A9F;margin-bottom:12px;">きそくどうし・ふきそくどうしの げんざいけい・かこけい・かこぶんし・げんざいぶんし（-ing）をまなぼう！　<span id="verb-count" style="color:#0D9488;font-weight:700;"></span>語収録</p>
+
+  <button class="mode-card" style="background:linear-gradient(135deg,#0D9488,#0F766E);" onclick="startVerbQuiz()">
+    <span class="mode-icon">❓</span>
+    <div class="mode-info"><h3 style="color:#fff;">4択かつようクイズ</h3><p style="color:#CCFBF1;">かこけい・かこぶんし・げんざいぶんしをあてよう！</p></div>
+  </button>
+  <button class="mode-card" style="background:linear-gradient(135deg,#F59E0B,#B45309);" onclick="startVerbSort()">
+    <span class="mode-icon">🔀</span>
+    <div class="mode-info"><h3 style="color:#fff;">なかまわけゲーム</h3><p style="color:#FEF3C7;">きそくどうし・ふきそくどうしをわけよう！</p></div>
+  </button>
+  <button class="mode-card" style="background:linear-gradient(135deg,#B06EF5,#7C3AED);" onclick="startVerbFlash()">
+    <span class="mode-icon">🃏</span>
+    <div class="mode-info"><h3 style="color:#fff;">かつようカード</h3><p style="color:rgba(255,255,255,0.85);">カードでかつようをおぼえよう！</p></div>
+  </button>
 </div>
 
 <!-- 復習モード ハブ画面 -->
@@ -430,7 +454,12 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
 
   <button onclick="confirmDifficulty('normal')" style="width:100%;background:linear-gradient(135deg,#F97316,#DC2626);color:#fff;border:none;border-radius:18px;padding:18px;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:10px;font-family:inherit;box-shadow:0 4px 16px rgba(249,115,22,0.4);">
     <div style="font-size:32px;margin-bottom:4px;">🔴 ノーマルモード</div>
-    <div style="font-size:12px;font-weight:700;opacity:0.9;">絵のヒントなし・本番レベルに挑戦！</div>
+    <div style="font-size:12px;font-weight:700;opacity:0.9;">絵のヒントなし・たんごクイズはタイマーつき！</div>
+  </button>
+
+  <button id="difficulty-hard-btn" onclick="confirmDifficulty('hard')" style="display:none;width:100%;background:linear-gradient(135deg,#374151,#111827);color:#fff;border:none;border-radius:18px;padding:18px;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:10px;font-family:inherit;box-shadow:0 4px 16px rgba(17,24,39,0.4);">
+    <div style="font-size:32px;margin-bottom:4px;">🔥 ハードモード</div>
+    <div style="font-size:12px;font-weight:700;opacity:0.9;">おとだけをきいてこたえよう！タイマーつき</div>
   </button>
 </div>
 
@@ -459,14 +488,15 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
   <div id="badges-body"></div>
 </div>
 
-<!-- バッジ獲得ポップアップ -->
-<div id="badge-unlock-modal" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,46,82,0.55);z-index:999;display:flex;align-items:center;justify-content:center;">
+<!-- バッジ詳細表示（かくとく済みバッジをタップした時） -->
+<div id="badge-unlock-modal" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,46,82,0.55);z-index:999;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this) closeBadgeUnlockModal()">
   <div style="background:#fff;border-radius:24px;padding:28px 24px;text-align:center;max-width:280px;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
-    <p style="font-size:13px;font-weight:900;color:#F97316;margin-bottom:6px;">🎉 バッジ かくとく！</p>
-    <div style="font-size:56px;margin:8px 0;" id="badge-unlock-emoji">🏅</div>
-    <h3 style="font-size:18px;font-weight:900;color:#1A2E52;margin-bottom:4px;" id="badge-unlock-title"></h3>
-    <p style="font-size:12px;color:#5A7A9F;margin-bottom:16px;" id="badge-unlock-desc"></p>
-    <button onclick="closeBadgeUnlockModal()" style="width:100%;background:linear-gradient(135deg,#FFD93D,#FF9F1C);color:#1A2E52;border:none;border-radius:18px;padding:12px;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;">やったね！</button>
+    <p style="font-size:13px;font-weight:900;color:#F97316;margin-bottom:6px;" id="badge-unlock-rarity">🥉 コモン バッジ</p>
+    <div style="font-size:64px;margin:8px 0;" id="badge-unlock-emoji">🏅</div>
+    <h3 style="font-size:19px;font-weight:900;color:#1A2E52;margin-bottom:4px;" id="badge-unlock-title"></h3>
+    <p style="font-size:12px;color:#5A7A9F;margin-bottom:8px;" id="badge-unlock-desc"></p>
+    <p style="font-size:11px;color:#AABCCC;margin-bottom:16px;" id="badge-unlock-date"></p>
+    <button onclick="closeBadgeUnlockModal()" style="width:100%;background:linear-gradient(135deg,#FFD93D,#FF9F1C);color:#1A2E52;border:none;border-radius:18px;padding:12px;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;">とじる</button>
   </div>
 </div>
 
@@ -509,7 +539,10 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
     </div>
   </div>
   <div class="progress-bar-bg"><div class="progress-bar" id="quiz-bar"></div></div>
-  <div id="streak-bar" style="text-align:right;font-size:13px;font-weight:700;color:#FF9F1C;min-height:20px;margin-bottom:2px;transition:all 0.3s;"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;min-height:20px;margin-bottom:2px;">
+    <span id="quiz-timer-badge" class="hidden" style="font-size:14px;font-weight:900;"></span>
+    <div id="streak-bar" style="text-align:right;font-size:13px;font-weight:700;color:#FF9F1C;transition:all 0.3s;"></div>
+  </div>
   <div id="spell-hide-toggle-wrap" class="hidden" style="text-align:right;margin-bottom:4px;">
     <button id="spell-hide-toggle-btn" onclick="toggleSpellHideEmoji()" style="background:#F0F4FF;color:#5A7A9F;border:1.5px solid #BFC8E0;border-radius:14px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">🙈 絵をかくす</button>
   </div>
@@ -529,7 +562,6 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
 <!-- たんごクイズ結果画面 -->
 <div id="screen-result">
   <div style="text-align:center;margin-bottom:16px;">
-    <div id="timer-best-banner" class="hidden" style="border-radius:14px;padding:10px 14px;margin-bottom:10px;font-size:13px;font-weight:900;text-align:center;"></div>
     <div style="font-size:50px;" id="result-emoji"></div>
     <h2 style="font-size:20px;font-weight:900;margin:6px 0 2px;color:#1A2E52;" id="result-label"></h2>
     <div style="font-size:50px;font-weight:900;color:#1A2E52;line-height:1;margin:6px 0;" id="result-score"></div>
@@ -540,7 +572,7 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
     <div id="answer-rows"></div>
   </div>
   <button id="retry-wrong-btn" onclick="retryWrong()" style="display:none;width:100%;background:linear-gradient(135deg,#FF6B6B,#CC3333);color:#fff;border:none;border-radius:18px;padding:14px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:10px;font-family:inherit;">❌ まちがいをやりなおす</button>
-  <button class="btn btn-yellow" onclick="startQuiz(currentMode)">🔄 もういちど！</button>
+  <button class="btn btn-yellow" onclick="retryCurrentQuiz()">🔄 もういちど！</button>
   <button class="btn btn-green" onclick="showMode()" style="margin-top:8px;">📚 モードをかえる</button>
   <button onclick="showTitle()" style="width:100%;background:#F0F4FF;color:#1A2E52;border:1.5px solid #BFC8E0;border-radius:22px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;">🏠 トップページにもどる</button>
 </div>
@@ -591,14 +623,14 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
 <!-- フラッシュカード練習 -->
 <div id="screen-flash-play" style="display:none;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <button onclick="showFlashTitle()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
+    <button id="flash-play-back-btn" onclick="backFromFlashPlay()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button>
     <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="flash-progress"></span>
     <button onclick="showTitle()" style="background:#FFF0F0;color:#E05050;border:1.5px solid #F0B0B0;border-radius:16px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🏠 やめる</button>
     <span style="font-size:13px;" id="flash-mode-tag"></span>
   </div>
   <div class="progress-bar-bg"><div class="progress-bar" id="flash-bar"></div></div>
 
-  <div class="flash-card" id="flash-card" onclick="flashCurrentMode==='phrase' ? flipFlashPhrase() : flipCard()">
+  <div class="flash-card" id="flash-card" onclick="flashCurrentMode==='phrase' ? flipFlashPhrase() : (flashCurrentMode==='verb' ? flipFlashVerb() : flipCard())">
     <div id="flash-front">
       <div id="flash-front-word-mode">
         <div class="flash-hint" id="flash-hint-front">👆 TAP TO LISTEN</div>
@@ -609,6 +641,12 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
         <div class="flash-hint" id="flash-front-emoji" style="font-size:34px;margin-bottom:6px;"></div>
         <div class="flash-main" id="flash-front-word" style="font-size:26px;"></div>
         <div class="flash-hint" id="flash-front-sub"></div>
+      </div>
+      <div id="flash-front-verb-mode" class="hidden">
+        <div class="flash-hint" id="flash-front-verb-badge" style="font-size:12px;font-weight:700;color:#0F766E;margin-bottom:4px;"></div>
+        <div class="flash-main" id="flash-front-verb-base" style="font-size:30px;"></div>
+        <div class="flash-hint" id="flash-front-verb-ja"></div>
+        <div class="flash-hint" style="margin-top:6px;">👆 タップしてかつようを見る</div>
       </div>
     </div>
     <div id="flash-back" class="hidden">
@@ -622,6 +660,10 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
         <div class="flash-hint" id="flash-back-sub"></div>
         <div id="flash-back-listen" style="margin-top:6px;font-size:13px;color:#8AADD0;">🔊 タップして発音をきいてね</div>
       </div>
+      <div id="flash-back-verb-mode" class="hidden">
+        <div class="flash-hint" id="flash-back-verb-base" style="font-size:20px;font-weight:900;color:#1A2E52;margin-bottom:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:6px;text-align:left;" id="flash-back-verb-table"></div>
+      </div>
     </div>
   </div>
 
@@ -633,7 +675,7 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
     <button style="background:#D0F5DC;color:#1A8A4A;" onclick="handleFlashKnow(true)">✅ わかった！</button>
   </div>
 
-  <button class="btn btn-ghost" style="margin-top:4px;" onclick="showFlashTitle()">やめる</button>
+  <button class="btn btn-ghost" style="margin-top:4px;" onclick="backFromFlashPlay()">やめる</button>
 </div>
 
 <!-- フラッシュカード結果 -->
@@ -647,8 +689,8 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
     <div class="flash-stat"><div class="flash-stat-num" style="color:#FF6B6B;" id="fr-unsure"></div><div class="flash-stat-label">まだかな…</div></div>
   </div>
   <div id="fr-unsure-list" style="margin-bottom:14px;"></div>
-  <button class="btn btn-purple" id="flash-retry-unsure" onclick="retryUnsure()">🔁 まだかなをもう一度</button>
-  <button class="btn btn-yellow" onclick="startFlash()">🔄 最初からやりなおす</button>
+  <button class="btn btn-purple" id="flash-retry-unsure" onclick="retryFlashUnsureAny()">🔁 まだかなをもう一度</button>
+  <button class="btn btn-yellow" onclick="retryFlashFromStart()">🔄 最初からやりなおす</button>
   <button class="btn btn-ghost" onclick="showTitle()">🏠 トップ</button>
 </div>
 
@@ -839,7 +881,7 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
 <!-- フレーズ日→英選択クイズ画面（C）-->
 <div id="screen-phrase-select" style="display:none;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <span style="background:linear-gradient(135deg,#F59E0B,#B45309);color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;">🌐 フレーズ日→英</span>
+    <span style="background:linear-gradient(135deg,#F59E0B,#B45309);color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;" id="psel-mode-tag">🌐 フレーズ日→英</span>
     <div style="display:flex;align-items:center;gap:10px;">
       <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="psel-progress"></span>
       <button onclick="quitPhraseToTop()" style="background:#FFF0F0;color:#E05050;border:1.5px solid #F0B0B0;border-radius:16px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🏠 やめる</button>
@@ -847,14 +889,14 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
   </div>
   <div class="progress-bar-bg"><div class="progress-bar" id="psel-bar"></div></div>
 
-  <!-- 日本語 -->
+  <!-- 問題文（方向によって日本語⇔英語） -->
   <div style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:16px;padding:14px;margin-bottom:12px;text-align:center;border:1.5px solid #F59E0B;">
-    <p style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:6px;">🇯🇵 にほんご</p>
+    <p style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:6px;" id="psel-prompt-label">🇯🇵 にほんご</p>
     <p style="font-size:20px;font-weight:700;color:#1A2E52;" id="psel-ja"></p>
   </div>
 
-  <!-- 選択肢（英語フレーズ4択）-->
-  <p style="font-size:12px;font-weight:700;color:#5A7A9F;margin-bottom:8px;">👇 えいごでなんていう？</p>
+  <!-- 選択肢（方向によって英語フレーズ4択 or 日本語4択）-->
+  <p style="font-size:12px;font-weight:700;color:#5A7A9F;margin-bottom:8px;" id="psel-instruction">👇 えいごでなんていう？</p>
   <div id="psel-options" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
 
   <!-- フィードバック -->
@@ -876,6 +918,89 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
   </div>
   <button class="btn btn-yellow" onclick="startPhraseSelectQuiz()" style="margin-bottom:8px;">🔄 もういちど！</button>
   <button class="btn btn-green" onclick="showMode()">📚 モードをかえる</button>
+  <button onclick="showTitle()" style="width:100%;background:#F0F4FF;color:#1A2E52;border:1.5px solid #BFC8E0;border-radius:22px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;">🏠 トップページにもどる</button>
+</div>
+
+<!-- 4択かつようクイズ画面 -->
+<div id="screen-verb-quiz" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="background:linear-gradient(135deg,#0D9488,#0F766E);color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;">🔤 かつようクイズ</span>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="vq-progress"></span>
+      <button onclick="quitVerbToTop()" style="background:#FFF0F0;color:#E05050;border:1.5px solid #F0B0B0;border-radius:16px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🏠 やめる</button>
+    </div>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="vq-bar"></div></div>
+
+  <div style="background:linear-gradient(135deg,#CCFBF1,#99F6E4);border-radius:16px;padding:14px;margin-bottom:12px;text-align:center;border:1.5px solid #0D9488;">
+    <p style="font-size:11px;font-weight:700;color:#0F766E;margin-bottom:4px;" id="vq-type-badge"></p>
+    <p style="font-size:26px;font-weight:900;color:#1A2E52;cursor:pointer;" id="vq-base" onclick="speak(VERB_QUESTIONS[vqIdx].q.base)">👆 きいてみよう</p>
+    <p style="font-size:13px;color:#0F766E;font-weight:700;" id="vq-ja"></p>
+  </div>
+  <p style="font-size:14px;font-weight:900;color:#1A2E52;margin-bottom:8px;text-align:center;" id="vq-question"></p>
+  <div id="vq-options" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+
+  <div id="vq-feedback" style="display:none;border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:15px;text-align:center;"></div>
+  <button id="vq-next-btn" class="btn btn-green" onclick="nextVerbQuizQuestion()" style="width:100%;display:none;">つぎへ →</button>
+</div>
+
+<!-- かつようクイズ結果画面 -->
+<div id="screen-verb-quiz-result" style="display:none;">
+  <div style="text-align:center;margin-bottom:16px;">
+    <div style="font-size:50px;" id="vq-result-emoji"></div>
+    <h2 style="font-size:20px;font-weight:900;margin:6px 0 2px;color:#1A2E52;" id="vq-result-label"></h2>
+    <div style="font-size:50px;font-weight:900;color:#1A2E52;line-height:1;margin:6px 0;" id="vq-result-score"></div>
+    <p style="font-size:16px;font-weight:700;color:#5A7A9F;" id="vq-result-pct"></p>
+  </div>
+  <div style="background:#F8FBFF;border-radius:14px;padding:12px;margin-bottom:14px;max-height:280px;overflow-y:auto;">
+    <p style="font-size:12px;font-weight:700;color:#1A2E52;margin-bottom:8px;">📋 こたえあわせ</p>
+    <div id="vq-answer-rows"></div>
+  </div>
+  <button class="btn btn-yellow" onclick="startVerbQuiz()" style="margin-bottom:8px;">🔄 もういちど！</button>
+  <button class="btn btn-green" onclick="showVerbHub()">📚 モードをかえる</button>
+  <button onclick="showTitle()" style="width:100%;background:#F0F4FF;color:#1A2E52;border:1.5px solid #BFC8E0;border-radius:22px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;">🏠 トップページにもどる</button>
+</div>
+
+<!-- なかまわけゲーム画面 -->
+<div id="screen-verb-sort" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="background:linear-gradient(135deg,#F59E0B,#B45309);color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;">🔀 なかまわけ</span>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="vs-progress"></span>
+      <button onclick="quitVerbToTop()" style="background:#FFF0F0;color:#E05050;border:1.5px solid #F0B0B0;border-radius:16px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🏠 やめる</button>
+    </div>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="vs-bar"></div></div>
+
+  <div style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:16px;padding:18px;margin-bottom:14px;text-align:center;border:1.5px solid #F59E0B;cursor:pointer;" id="vs-card" onclick="speak(VERB_SORT_QS[vsIdx].base)">
+    <p style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:6px;">👆 タップしてきいてみよう</p>
+    <p style="font-size:28px;font-weight:900;color:#1A2E52;" id="vs-base"></p>
+    <p style="font-size:14px;color:#92400E;font-weight:700;margin-top:4px;" id="vs-ja"></p>
+  </div>
+  <p style="font-size:13px;font-weight:700;color:#5A7A9F;margin-bottom:8px;text-align:center;">👇 きそくどうし？ふきそくどうし？</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+    <button id="vs-btn-regular" onclick="answerVerbSort('regular')" style="background:linear-gradient(135deg,#4CAF82,#2E9E6A);color:#fff;border:none;border-radius:16px;padding:18px 8px;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;">🟢 きそく<br><span style="font-size:11px;font-weight:700;opacity:0.9;">(-ed)</span></button>
+    <button id="vs-btn-irregular" onclick="answerVerbSort('irregular')" style="background:linear-gradient(135deg,#F97316,#DC2626);color:#fff;border:none;border-radius:16px;padding:18px 8px;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;">🔴 ふきそく<br><span style="font-size:11px;font-weight:700;opacity:0.9;">(かたちがかわる)</span></button>
+  </div>
+
+  <div id="vs-feedback" style="display:none;border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:15px;text-align:center;"></div>
+  <button id="vs-next-btn" class="btn btn-green" onclick="nextVerbSortQuestion()" style="width:100%;display:none;">つぎへ →</button>
+</div>
+
+<!-- なかまわけゲーム結果画面 -->
+<div id="screen-verb-sort-result" style="display:none;">
+  <div style="text-align:center;margin-bottom:16px;">
+    <div style="font-size:50px;" id="vs-result-emoji"></div>
+    <h2 style="font-size:20px;font-weight:900;margin:6px 0 2px;color:#1A2E52;" id="vs-result-label"></h2>
+    <div style="font-size:50px;font-weight:900;color:#1A2E52;line-height:1;margin:6px 0;" id="vs-result-score"></div>
+    <p style="font-size:16px;font-weight:700;color:#5A7A9F;" id="vs-result-pct"></p>
+  </div>
+  <div style="background:#F8FBFF;border-radius:14px;padding:12px;margin-bottom:14px;max-height:280px;overflow-y:auto;">
+    <p style="font-size:12px;font-weight:700;color:#1A2E52;margin-bottom:8px;">📋 こたえあわせ</p>
+    <div id="vs-answer-rows"></div>
+  </div>
+  <button class="btn btn-yellow" onclick="startVerbSort()" style="margin-bottom:8px;">🔄 もういちど！</button>
+  <button class="btn btn-green" onclick="showVerbHub()">📚 モードをかえる</button>
   <button onclick="showTitle()" style="width:100%;background:#F0F4FF;color:#1A2E52;border:1.5px solid #BFC8E0;border-radius:22px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;">🏠 トップページにもどる</button>
 </div>
 
@@ -1314,6 +1439,7 @@ const PHRASE_QUESTIONS=[{"phrase":"go ( )","ja":"つりにいく","keyword":"fis
 {"phrase":"play with ( )","ja":"じぶんのいぬとあそぶ","keyword":"my dog","keyword_ja":"じぶんのいぬ","options":["my dog","my cat","my friend","my sister"],"full":"play with my dog","category":"動物"},
 {"phrase":"throw ( )","ja":"ボールをなげる","keyword":"a ball","keyword_ja":"ボール","options":["a ball","a kite","a flag","a stone"],"full":"throw a ball","category":"動物"},
 {"phrase":"wag ( )","ja":"しっぽをふる","keyword":"a tail","keyword_ja":"しっぽ","options":["a tail","its ears","its head","a flag"],"full":"wag a tail","category":"動物"}];
+const VERBS=[{"base":"play","ja":"あそぶ","type":"regular","past":"played","pp":"played","ing":"playing"},{"base":"walk","ja":"あるく","type":"regular","past":"walked","pp":"walked","ing":"walking"},{"base":"watch","ja":"みる","type":"regular","past":"watched","pp":"watched","ing":"watching"},{"base":"want","ja":"ほしい","type":"regular","past":"wanted","pp":"wanted","ing":"wanting"},{"base":"need","ja":"ひつようとする","type":"regular","past":"needed","pp":"needed","ing":"needing"},{"base":"help","ja":"たすける","type":"regular","past":"helped","pp":"helped","ing":"helping"},{"base":"wash","ja":"あらう","type":"regular","past":"washed","pp":"washed","ing":"washing"},{"base":"cook","ja":"りょうりする","type":"regular","past":"cooked","pp":"cooked","ing":"cooking"},{"base":"clean","ja":"そうじする","type":"regular","past":"cleaned","pp":"cleaned","ing":"cleaning"},{"base":"listen","ja":"きく","type":"regular","past":"listened","pp":"listened","ing":"listening"},{"base":"talk","ja":"はなす","type":"regular","past":"talked","pp":"talked","ing":"talking"},{"base":"call","ja":"でんわする・よぶ","type":"regular","past":"called","pp":"called","ing":"calling"},{"base":"visit","ja":"たずねる","type":"regular","past":"visited","pp":"visited","ing":"visiting"},{"base":"study","ja":"べんきょうする","type":"regular","past":"studied","pp":"studied","ing":"studying"},{"base":"stay","ja":"とどまる","type":"regular","past":"stayed","pp":"stayed","ing":"staying"},{"base":"arrive","ja":"とうちゃくする","type":"regular","past":"arrived","pp":"arrived","ing":"arriving"},{"base":"dance","ja":"おどる","type":"regular","past":"danced","pp":"danced","ing":"dancing"},{"base":"jump","ja":"とぶ","type":"regular","past":"jumped","pp":"jumped","ing":"jumping"},{"base":"climb","ja":"のぼる","type":"regular","past":"climbed","pp":"climbed","ing":"climbing"},{"base":"paint","ja":"えをかく・ぬる","type":"regular","past":"painted","pp":"painted","ing":"painting"},{"base":"brush","ja":"みがく・ブラシをかける","type":"regular","past":"brushed","pp":"brushed","ing":"brushing"},{"base":"kick","ja":"ける","type":"regular","past":"kicked","pp":"kicked","ing":"kicking"},{"base":"pull","ja":"ひく","type":"regular","past":"pulled","pp":"pulled","ing":"pulling"},{"base":"push","ja":"おす","type":"regular","past":"pushed","pp":"pushed","ing":"pushing"},{"base":"open","ja":"あける","type":"regular","past":"opened","pp":"opened","ing":"opening"},{"base":"close","ja":"しめる","type":"regular","past":"closed","pp":"closed","ing":"closing"},{"base":"ask","ja":"たずねる・きく","type":"regular","past":"asked","pp":"asked","ing":"asking"},{"base":"answer","ja":"こたえる","type":"regular","past":"answered","pp":"answered","ing":"answering"},{"base":"learn","ja":"まなぶ","type":"regular","past":"learned","pp":"learned","ing":"learning"},{"base":"work","ja":"はたらく","type":"regular","past":"worked","pp":"worked","ing":"working"},{"base":"live","ja":"すむ","type":"regular","past":"lived","pp":"lived","ing":"living"},{"base":"love","ja":"あいする","type":"regular","past":"loved","pp":"loved","ing":"loving"},{"base":"like","ja":"すき","type":"regular","past":"liked","pp":"liked","ing":"liking"},{"base":"enjoy","ja":"たのしむ","type":"regular","past":"enjoyed","pp":"enjoyed","ing":"enjoying"},{"base":"practice","ja":"れんしゅうする","type":"regular","past":"practiced","pp":"practiced","ing":"practicing"},{"base":"finish","ja":"おわる","type":"regular","past":"finished","pp":"finished","ing":"finishing"},{"base":"start","ja":"はじめる","type":"regular","past":"started","pp":"started","ing":"starting"},{"base":"stop","ja":"とめる・とまる","type":"regular","past":"stopped","pp":"stopped","ing":"stopping"},{"base":"plan","ja":"けいかくする","type":"regular","past":"planned","pp":"planned","ing":"planning"},{"base":"carry","ja":"はこぶ","type":"regular","past":"carried","pp":"carried","ing":"carrying"},{"base":"cry","ja":"なく","type":"regular","past":"cried","pp":"cried","ing":"crying"},{"base":"try","ja":"こころみる","type":"regular","past":"tried","pp":"tried","ing":"trying"},{"base":"worry","ja":"しんぱいする","type":"regular","past":"worried","pp":"worried","ing":"worrying"},{"base":"smile","ja":"ほほえむ","type":"regular","past":"smiled","pp":"smiled","ing":"smiling"},{"base":"laugh","ja":"わらう","type":"regular","past":"laughed","pp":"laughed","ing":"laughing"},{"base":"go","ja":"いく","type":"irregular","past":"went","pp":"gone","ing":"going"},{"base":"come","ja":"くる","type":"irregular","past":"came","pp":"come","ing":"coming"},{"base":"eat","ja":"たべる","type":"irregular","past":"ate","pp":"eaten","ing":"eating"},{"base":"drink","ja":"のむ","type":"irregular","past":"drank","pp":"drunk","ing":"drinking"},{"base":"see","ja":"みる","type":"irregular","past":"saw","pp":"seen","ing":"seeing"},{"base":"do","ja":"する","type":"irregular","past":"did","pp":"done","ing":"doing"},{"base":"make","ja":"つくる","type":"irregular","past":"made","pp":"made","ing":"making"},{"base":"take","ja":"とる","type":"irregular","past":"took","pp":"taken","ing":"taking"},{"base":"give","ja":"あげる","type":"irregular","past":"gave","pp":"given","ing":"giving"},{"base":"get","ja":"える・てにいれる","type":"irregular","past":"got","pp":"gotten","ing":"getting"},{"base":"have","ja":"もつ","type":"irregular","past":"had","pp":"had","ing":"having"},{"base":"know","ja":"しっている","type":"irregular","past":"knew","pp":"known","ing":"knowing"},{"base":"think","ja":"おもう","type":"irregular","past":"thought","pp":"thought","ing":"thinking"},{"base":"buy","ja":"かう","type":"irregular","past":"bought","pp":"bought","ing":"buying"},{"base":"bring","ja":"もってくる","type":"irregular","past":"brought","pp":"brought","ing":"bringing"},{"base":"teach","ja":"おしえる","type":"irregular","past":"taught","pp":"taught","ing":"teaching"},{"base":"catch","ja":"つかまえる","type":"irregular","past":"caught","pp":"caught","ing":"catching"},{"base":"find","ja":"みつける","type":"irregular","past":"found","pp":"found","ing":"finding"},{"base":"feel","ja":"かんじる","type":"irregular","past":"felt","pp":"felt","ing":"feeling"},{"base":"keep","ja":"たもつ","type":"irregular","past":"kept","pp":"kept","ing":"keeping"},{"base":"sleep","ja":"ねる","type":"irregular","past":"slept","pp":"slept","ing":"sleeping"},{"base":"leave","ja":"でかける・のこす","type":"irregular","past":"left","pp":"left","ing":"leaving"},{"base":"meet","ja":"あう","type":"irregular","past":"met","pp":"met","ing":"meeting"},{"base":"read","ja":"よむ","type":"irregular","past":"read","pp":"read","ing":"reading"},{"base":"say","ja":"いう","type":"irregular","past":"said","pp":"said","ing":"saying"},{"base":"sit","ja":"すわる","type":"irregular","past":"sat","pp":"sat","ing":"sitting"},{"base":"stand","ja":"たつ","type":"irregular","past":"stood","pp":"stood","ing":"standing"},{"base":"run","ja":"はしる","type":"irregular","past":"ran","pp":"run","ing":"running"},{"base":"swim","ja":"およぐ","type":"irregular","past":"swam","pp":"swum","ing":"swimming"},{"base":"sing","ja":"うたう","type":"irregular","past":"sang","pp":"sung","ing":"singing"},{"base":"drive","ja":"うんてんする","type":"irregular","past":"drove","pp":"driven","ing":"driving"},{"base":"ride","ja":"のる","type":"irregular","past":"rode","pp":"ridden","ing":"riding"},{"base":"write","ja":"かく","type":"irregular","past":"wrote","pp":"written","ing":"writing"},{"base":"speak","ja":"はなす","type":"irregular","past":"spoke","pp":"spoken","ing":"speaking"},{"base":"break","ja":"こわす","type":"irregular","past":"broke","pp":"broken","ing":"breaking"},{"base":"choose","ja":"えらぶ","type":"irregular","past":"chose","pp":"chosen","ing":"choosing"},{"base":"wear","ja":"きる","type":"irregular","past":"wore","pp":"worn","ing":"wearing"},{"base":"fly","ja":"とぶ","type":"irregular","past":"flew","pp":"flown","ing":"flying"},{"base":"grow","ja":"そだつ・そだてる","type":"irregular","past":"grew","pp":"grown","ing":"growing"},{"base":"throw","ja":"なげる","type":"irregular","past":"threw","pp":"thrown","ing":"throwing"},{"base":"draw","ja":"えをかく","type":"irregular","past":"drew","pp":"drawn","ing":"drawing"},{"base":"fall","ja":"おちる","type":"irregular","past":"fell","pp":"fallen","ing":"falling"},{"base":"tell","ja":"つたえる","type":"irregular","past":"told","pp":"told","ing":"telling"},{"base":"sell","ja":"うる","type":"irregular","past":"sold","pp":"sold","ing":"selling"},{"base":"send","ja":"おくる","type":"irregular","past":"sent","pp":"sent","ing":"sending"},{"base":"spend","ja":"つかう・すごす","type":"irregular","past":"spent","pp":"spent","ing":"spending"},{"base":"build","ja":"たてる","type":"irregular","past":"built","pp":"built","ing":"building"},{"base":"hold","ja":"もつ","type":"irregular","past":"held","pp":"held","ing":"holding"},{"base":"win","ja":"かつ","type":"irregular","past":"won","pp":"won","ing":"winning"},{"base":"begin","ja":"はじまる","type":"irregular","past":"began","pp":"begun","ing":"beginning"},{"base":"become","ja":"なる","type":"irregular","past":"became","pp":"become","ing":"becoming"},{"base":"forget","ja":"わすれる","type":"irregular","past":"forgot","pp":"forgotten","ing":"forgetting"},{"base":"hit","ja":"うつ・あたる","type":"irregular","past":"hit","pp":"hit","ing":"hitting"},{"base":"cut","ja":"きる","type":"irregular","past":"cut","pp":"cut","ing":"cutting"},{"base":"put","ja":"おく","type":"irregular","past":"put","pp":"put","ing":"putting"},{"base":"let","ja":"させる","type":"irregular","past":"let","pp":"let","ing":"letting"},{"base":"lose","ja":"なくす・まける","type":"irregular","past":"lost","pp":"lost","ing":"losing"},{"base":"pay","ja":"はらう","type":"irregular","past":"paid","pp":"paid","ing":"paying"},{"base":"hear","ja":"きこえる","type":"irregular","past":"heard","pp":"heard","ing":"hearing"},{"base":"understand","ja":"りかいする","type":"irregular","past":"understood","pp":"understood","ing":"understanding"},{"base":"wake","ja":"めがさめる","type":"irregular","past":"woke","pp":"woken","ing":"waking"},{"base":"shut","ja":"しめる","type":"irregular","past":"shut","pp":"shut","ing":"shutting"},{"base":"rise","ja":"のぼる","type":"irregular","past":"rose","pp":"risen","ing":"rising"},{"base":"show","ja":"みせる","type":"irregular","past":"showed","pp":"shown","ing":"showing"},{"base":"ring","ja":"なる","type":"irregular","past":"rang","pp":"rung","ing":"ringing"},{"base":"fight","ja":"たたかう","type":"irregular","past":"fought","pp":"fought","ing":"fighting"},{"base":"lead","ja":"みちびく","type":"irregular","past":"led","pp":"led","ing":"leading"}];
 const SORT_QUESTIONS = [{"ja":"わたしはまいにちがっこうへいきます。","words":["I","go","to","school","every","day."],"answer":"I go to school every day."},{"ja":"かれはサッカーがすきです。","words":["He","likes","soccer","very","much."],"answer":"He likes soccer very much."},{"ja":"わたしのおかあさんは料理が上手です。","words":["My","mother","is","a","good","cook."],"answer":"My mother is a good cook."},{"ja":"きょうはとてもあついです。","words":["It","is","very","hot","today."],"answer":"It is very hot today."},{"ja":"わたしはねこを2ひきかっています。","words":["I","have","two","cats."],"answer":"I have two cats."},{"ja":"かのじょはえいごをじょうずにはなします。","words":["She","speaks","English","well."],"answer":"She speaks English well."},{"ja":"わたしたちはこうえんでサッカーをします。","words":["We","play","soccer","in","the","park."],"answer":"We play soccer in the park."},{"ja":"このほんはとてもおもしろいです。","words":["This","book","is","very","interesting."],"answer":"This book is very interesting."},{"ja":"かれらはまいあさはやくおきます。","words":["They","get","up","early","every","morning."],"answer":"They get up early every morning."},{"ja":"わたしのいぬはとてもかわいいです。","words":["My","dog","is","very","cute."],"answer":"My dog is very cute."},{"ja":"わたしはピアノをひくことがすきです。","words":["I","like","playing","the","piano."],"answer":"I like playing the piano."},{"ja":"きょうはくもっています。","words":["It","is","cloudy","today."],"answer":"It is cloudy today."},{"ja":"わたしのちちはいしゃです。","words":["My","father","is","a","doctor."],"answer":"My father is a doctor."},{"ja":"かのじょはまいにちほんをよみます。","words":["She","reads","a","book","every","day."],"answer":"She reads a book every day."},{"ja":"わたしたちはバスでがっこうへいきます。","words":["We","go","to","school","by","bus."],"answer":"We go to school by bus."},{"ja":"かれはとても速くはしります。","words":["He","runs","very","fast."],"answer":"He runs very fast."},{"ja":"わたしのへやはとてもちいさいです。","words":["My","room","is","very","small."],"answer":"My room is very small."},{"ja":"きょうはにちようびです。","words":["Today","is","Sunday."],"answer":"Today is Sunday."},{"ja":"わたしはりんごがだいすきです。","words":["I","like","apples","very","much."],"answer":"I like apples very much."},{"ja":"かれのおとうさんはせんせいです。","words":["His","father","is","a","teacher."],"answer":"His father is a teacher."},{"ja":"わたしはまいにちえいごをべんきょうします。","words":["I","study","English","every","day."],"answer":"I study English every day."},{"ja":"かのじょはとてもやさしいひとです。","words":["She","is","a","very","kind","person."],"answer":"She is a very kind person."},{"ja":"わたしたちはうみでおよぎます。","words":["We","swim","in","the","sea."],"answer":"We swim in the sea."},{"ja":"このりょうりはとてもおいしいです。","words":["This","food","is","very","delicious."],"answer":"This food is very delicious."},{"ja":"かれはまいにちテレビをみます。","words":["He","watches","TV","every","day."],"answer":"He watches TV every day."},{"ja":"わたしのともだちはおおさかにすんでいます。","words":["My","friend","lives","in","Osaka."],"answer":"My friend lives in Osaka."},{"ja":"かのじょはあかいドレスをきています。","words":["She","is","wearing","a","red","dress."],"answer":"She is wearing a red dress."},{"ja":"わたしたちはいっしょにべんきょうします。","words":["We","study","together."],"answer":"We study together."},{"ja":"あのやまはとてもたかいです。","words":["That","mountain","is","very","high."],"answer":"That mountain is very high."},{"ja":"かれはサッカーせんしゅになりたいです。","words":["He","wants","to","be","a","soccer","player."],"answer":"He wants to be a soccer player."},{"ja":"わたしのたんじょうびは5がつ5かです。","words":["My","birthday","is","on","May","5th."],"answer":"My birthday is on May 5th."},{"ja":"これはにほんでいちばんたかいやまです。","words":["This","is","the","highest","mountain","in","Japan."],"answer":"This is the highest mountain in Japan."},{"ja":"わたしのあにはわたしよりせがたかいです。","words":["My","brother","is","taller","than","me."],"answer":"My brother is taller than me."},{"ja":"これはぜんぶのなかでいちばんかんたんなもんだいです。","words":["This","is","the","easiest","question","of","all."],"answer":"This is the easiest question of all."},{"ja":"わたしはあたまがいたいです。","words":["I","have","a","headache."],"answer":"I have a headache."},{"ja":"かのじょはおなかがいたいです。","words":["She","has","a","stomachache."],"answer":"She has a stomachache."},{"ja":"わたしはねつがあります。","words":["I","have","a","fever."],"answer":"I have a fever."},{"ja":"かれはひどいせきをしています。","words":["He","has","a","bad","cough."],"answer":"He has a bad cough."},{"ja":"わたしはじゅういになりたいです。","words":["I","want","to","be","a","vet."],"answer":"I want to be a vet."},{"ja":"かのじょはパイロットになりたいです。","words":["She","wants","to","be","a","pilot."],"answer":"She wants to be a pilot."},{"ja":"わたしのゆめはかんごしになることです。","words":["My","dream","is","to","be","a","nurse."],"answer":"My dream is to be a nurse."},{"ja":"かれはのうかではたらいています。","words":["He","works","as","a","farmer."],"answer":"He works as a farmer."},{"ja":"かのじょはカナダしゅっしんです。","words":["She","is","from","Canada."],"answer":"She is from Canada."},{"ja":"かのじょはカナダじんです。","words":["She","is","Canadian."],"answer":"She is Canadian."},{"ja":"かれはフランスごをはなします。","words":["He","speaks","French."],"answer":"He speaks French."},{"ja":"わたしのともだちはオーストラリアじんです。","words":["My","friend","is","Australian."],"answer":"My friend is Australian."},{"ja":"わたしは2じかんまえにしゅくだいをおえました。","words":["I","finished","my","homework","two","hours","ago."],"answer":"I finished my homework two hours ago."},{"ja":"わたしたちはおまつりでたのしいじかんをすごしました。","words":["We","had","a","great","time","at","the","festival."],"answer":"We had a great time at the festival."},{"ja":"かのじょはさくねんアメリカへひこうきでいきました。","words":["She","flew","to","America","last","year."],"answer":"She flew to America last year."},{"ja":"わたしはけさかぎをなくしました。","words":["I","lost","my","keys","this","morning."],"answer":"I lost my keys this morning."}];
 const STORAGE_KEY = 'eiken5_history';
 let autoSpeak=true, currentMode='all', currentCats=[];
@@ -1373,9 +1499,6 @@ function refreshStreakDisplay(){
 
 // ===== バッジ・実績システム =====
 const BADGES_KEY = 'eiken5_badges';
-const FLASH_COUNT_KEY = 'eiken5_flash_count';
-function loadFlashCount(){ try{ return parseInt(localStorage.getItem(FLASH_COUNT_KEY)||'0'); }catch(e){ return 0; } }
-function incrementFlashCount(){ try{ localStorage.setItem(FLASH_COUNT_KEY, String(loadFlashCount()+1)); }catch(e){} }
 function loadBadges(){ try{ return JSON.parse(localStorage.getItem(BADGES_KEY)||'[]'); }catch(e){ return []; } }
 function saveBadges(arr){ try{ localStorage.setItem(BADGES_KEY, JSON.stringify(arr)); }catch(e){} }
 
@@ -1384,10 +1507,10 @@ const BADGE_GROUPS = [
   {id:'streak',   label:'🔥 れんぞく学習'},
   {id:'difficulty',label:'🟢🔴 難易度'},
   {id:'spelling', label:'✏️ スペリング'},
-  {id:'timer',    label:'⏱️ タイマー'},
   {id:'sort',     label:'🔀 ならべかえ'},
   {id:'fill',     label:'📝 あなうめ'},
-  {id:'flash',    label:'🃏 フラッシュカード'},
+  {id:'phrase',   label:'🌐 フレーズ'},
+  {id:'verb',     label:'🔤 どうしのかつよう'},
 ];
 const BADGES = [
   // 共通
@@ -1406,7 +1529,7 @@ const BADGES = [
   {id:'consec_20',    rarity:'rare', group:'common',  emoji:'⛓️', title:'20問れんぞく',     desc:'20問れんぞくせいかい',              check:c=>c.bestConsecutive>=20, prog:c=>[Math.min(c.bestConsecutive,20),20]},
   {id:'big_quiz_30',  rarity:'common', group:'common',  emoji:'📚', title:'30問チャレンジ',   desc:'30問クイズをクリア',                check:c=>c.maxQuizSize>=30, prog:c=>[Math.min(c.maxQuizSize,30),30]},
   {id:'big_quiz_50',  rarity:'rare', group:'common',  emoji:'📚📚',title:'50問チャレンジ',  desc:'50問クイズをクリア',                check:c=>c.maxQuizSize>=50, prog:c=>[Math.min(c.maxQuizSize,50),50]},
-  {id:'all_modes',    rarity:'epic', group:'common',  emoji:'🎪', title:'全モード制覇',     desc:'すべてのクイズモードを1回以上プレイ', check:c=>c.modesPlayed>=7, prog:c=>[c.modesPlayed,7]},
+  {id:'all_modes',    rarity:'epic', group:'common',  emoji:'🎪', title:'全モード制覇',     desc:'すべてのクイズモードを1回以上プレイ', check:c=>c.modesPlayed>=6, prog:c=>[c.modesPlayed,6]},
   // れんぞく学習
   {id:'streak_3',  rarity:'common', group:'streak', emoji:'🔥',   title:'3日れんぞく',    desc:'3日れんぞくで学習する',   check:c=>c.streakLongest>=3,  prog:c=>[Math.min(c.streakLongest,3),3]},
   {id:'streak_7',  rarity:'rare', group:'streak', emoji:'🔥🔥', title:'1週間れんぞく',  desc:'7日れんぞくで学習する',   check:c=>c.streakLongest>=7,  prog:c=>[Math.min(c.streakLongest,7),7]},
@@ -1427,15 +1550,15 @@ const BADGES = [
   {id:'spell_hint_free',   rarity:'epic', group:'spelling', emoji:'🧠', title:'ヒントなしパーフェクト', desc:'ヒントをつかわずスペリング全問せいかい',    check:c=>c.spellHintFreePerfect>=1},
   {id:'spell_hint_free_3', rarity:'epic', group:'spelling', emoji:'🧠💫',title:'ヒントなし3回達成',    desc:'ヒントなしスペリング全問せいかいを3回',    check:c=>c.spellHintFreePerfect>=3, prog:c=>[c.spellHintFreePerfect,3]},
   {id:'spell_correct_50',  rarity:'rare', group:'spelling', emoji:'🖊️', title:'スペリング50問正解',    desc:'スペリングモードで累計50問せいかい',       check:c=>c.spellCorrect>=50, prog:c=>[c.spellCorrect,50]},
-  // タイマー
-  {id:'timer_first',    rarity:'common', group:'timer', emoji:'⏱️',  title:'タイマーちょうせん',    desc:'タイマーモードをはじめてクリア',          check:c=>c.timerPlays>=1},
-  {id:'timer_5',        rarity:'common', group:'timer', emoji:'⏱️🔥', title:'タイマー5回',           desc:'タイマーモードを5回クリア',               check:c=>c.timerPlays>=5,   prog:c=>[c.timerPlays,5]},
-  {id:'timer_20',       rarity:'rare', group:'timer', emoji:'⏱️💪', title:'タイマー20回',          desc:'タイマーモードを20回クリア',              check:c=>c.timerPlays>=20,  prog:c=>[c.timerPlays,20]},
-  {id:'timer_perfect',  rarity:'rare', group:'timer', emoji:'⚡',   title:'タイマーパーフェクト',   desc:'タイマーモードで全問せいかい！',           check:c=>c.timerPerfect>=1},
-  {id:'timer_perfect_3',rarity:'epic', group:'timer', emoji:'⚡⚡',  title:'タイマー3回パーフェクト', desc:'タイマーモードで全問せいかいを3回',       check:c=>c.timerPerfect>=3,  prog:c=>[c.timerPerfect,3]},
-  {id:'timer_correct_50', rarity:'rare', group:'timer', emoji:'🎯', title:'タイマー50問正解',      desc:'タイマーモードで累計50問せいかい',        check:c=>c.timerCorrect>=50, prog:c=>[c.timerCorrect,50]},
-  {id:'timer_correct_100',rarity:'rare', group:'timer', emoji:'🏆', title:'タイマー100問正解',     desc:'タイマーモードで累計100問せいかい',       check:c=>c.timerCorrect>=100,prog:c=>[c.timerCorrect,100]},
-  {id:'timer_high',     rarity:'rare', group:'timer', emoji:'⚡🌟', title:'はやおし名人',           desc:'タイマーモードで8問以上せいかい（1回）', check:c=>c.timerHighScore>=1},
+  // ハード（耳だめし方式・常時タイマーつき）
+  {id:'hard_first',    rarity:'common', group:'difficulty', emoji:'🔥',  title:'ハードちょうせん',    desc:'ハードモードをはじめてクリア',          check:c=>c.hardPlays>=1},
+  {id:'hard_5',        rarity:'common', group:'difficulty', emoji:'🔥🔥', title:'ハード5回',           desc:'ハードモードを5回クリア',               check:c=>c.hardPlays>=5,   prog:c=>[c.hardPlays,5]},
+  {id:'hard_20',       rarity:'rare', group:'difficulty', emoji:'🔥💪', title:'ハード20回',          desc:'ハードモードを20回クリア',              check:c=>c.hardPlays>=20,  prog:c=>[c.hardPlays,20]},
+  {id:'hard_perfect',  rarity:'rare', group:'difficulty', emoji:'⚡',   title:'ハードパーフェクト',   desc:'ハードモードで全問せいかい！',           check:c=>c.hardPerfect>=1},
+  {id:'hard_perfect_3',rarity:'epic', group:'difficulty', emoji:'⚡⚡',  title:'ハード3回パーフェクト', desc:'ハードモードで全問せいかいを3回',       check:c=>c.hardPerfect>=3,  prog:c=>[c.hardPerfect,3]},
+  {id:'hard_correct_50', rarity:'rare', group:'difficulty', emoji:'🎯', title:'ハード50問正解',      desc:'ハードモードで累計50問せいかい',        check:c=>c.hardCorrect>=50, prog:c=>[c.hardCorrect,50]},
+  {id:'hard_correct_100',rarity:'rare', group:'difficulty', emoji:'🏆', title:'ハード100問正解',     desc:'ハードモードで累計100問せいかい',       check:c=>c.hardCorrect>=100,prog:c=>[c.hardCorrect,100]},
+  {id:'hard_high',     rarity:'rare', group:'difficulty', emoji:'⚡🌟', title:'はやみみ名人',           desc:'ハードモードで8問以上せいかい（1回）', check:c=>c.hardHighScore>=1},
   // ならべかえ
   {id:'sort_first',     rarity:'common', group:'sort', emoji:'🔤',    title:'ならべかえスタート',     desc:'ならべかえモードをはじめてクリア',        check:c=>c.sortPlays>=1},
   {id:'sort_perfect',   rarity:'rare', group:'sort', emoji:'🔤✨',  title:'ならべかえパーフェクト',  desc:'ならべかえモードで全問せいかい',          check:c=>c.sortPerfect>=1},
@@ -1450,13 +1573,22 @@ const BADGES = [
   {id:'fill_30',        rarity:'common', group:'fill', emoji:'📝',    title:'あなうめマスター',       desc:'あなうめもんだいに30問せいかい',          check:c=>c.fillCorrect>=30, prog:c=>[c.fillCorrect,30]},
   {id:'fill_50',        rarity:'rare', group:'fill', emoji:'📝💪',  title:'あなうめ上級者',         desc:'あなうめもんだいに50問せいかい',          check:c=>c.fillCorrect>=50, prog:c=>[c.fillCorrect,50]},
   {id:'fill_100',       rarity:'epic', group:'fill', emoji:'📝👑',  title:'あなうめ達人',           desc:'あなうめもんだいに100問せいかい',         check:c=>c.fillCorrect>=100,prog:c=>[c.fillCorrect,100]},
-  // フラッシュカード
-  {id:'flash_first',    rarity:'common', group:'flash', emoji:'🃏',   title:'フラッシュカードスタート', desc:'フラッシュカードをはじめてかんりょう',   check:c=>c.flashCount>=1},
-  {id:'flash_5',        rarity:'common', group:'flash', emoji:'🃏🔥', title:'フラッシュカード5回',    desc:'フラッシュカードを5回かんりょう',         check:c=>c.flashCount>=5,   prog:c=>[c.flashCount,5]},
-  {id:'flash_20',       rarity:'rare', group:'flash', emoji:'🃏💪', title:'フラッシュカード名人',   desc:'フラッシュカードを20回かんりょう',        check:c=>c.flashCount>=20,  prog:c=>[c.flashCount,20]},
-  {id:'flash_50',       rarity:'epic', group:'flash', emoji:'🃏👑', title:'フラッシュカード達人',   desc:'フラッシュカードを50回かんりょう',        check:c=>c.flashCount>=50,  prog:c=>[c.flashCount,50]},
-  {id:'flash_all_know', rarity:'rare', group:'flash', emoji:'🌟',   title:'ぜんぶわかった！',       desc:'フラッシュカードで全カード「わかった！」', check:c=>c.flashAllKnow>=1},
-  {id:'flash_all_know_3',rarity:'epic', group:'flash',emoji:'🌟🌟', title:'ぜんぶわかった！3回',   desc:'フラッシュカード全カード「わかった！」を3回', check:c=>c.flashAllKnow>=3, prog:c=>[c.flashAllKnow,3]},
+  // フレーズ（フレーズ穴うめ・フレーズ選択・フラッシュカードのフレーズモード）
+  {id:'phrase_first',   rarity:'common', group:'phrase', emoji:'🌐',   title:'フレーズちょうせん',     desc:'フレーズもんだいをはじめてかんりょう',       check:c=>c.phrasePlays>=1},
+  {id:'phrase_10',      rarity:'common', group:'phrase', emoji:'🌐📘', title:'フレーズ10回',          desc:'フレーズもんだいを10回かんりょう',           check:c=>c.phrasePlays>=10, prog:c=>[c.phrasePlays,10]},
+  {id:'phrase_30',      rarity:'rare',   group:'phrase', emoji:'🌐📗', title:'フレーズ30回',          desc:'フレーズもんだいを30回かんりょう',           check:c=>c.phrasePlays>=30, prog:c=>[c.phrasePlays,30]},
+  {id:'phrase_perfect', rarity:'rare',   group:'phrase', emoji:'💯',   title:'フレーズパーフェクト',    desc:'フレーズもんだいで全問せいかい！',           check:c=>c.phrasePerfect>=1},
+  {id:'phrase_perfect_3',rarity:'epic',  group:'phrase', emoji:'💯💯', title:'フレーズ3回パーフェクト', desc:'フレーズもんだいで全問せいかいを3回',        check:c=>c.phrasePerfect>=3, prog:c=>[c.phrasePerfect,3]},
+  {id:'phrase_correct_100',rarity:'rare',group:'phrase', emoji:'🎯',   title:'フレーズ100問正解',      desc:'フレーズもんだいで累計100問せいかい',        check:c=>c.phraseCorrect>=100,prog:c=>[c.phraseCorrect,100]},
+  {id:'phrase_correct_300',rarity:'epic',group:'phrase', emoji:'🏆',   title:'フレーズ300問正解',      desc:'フレーズもんだいで累計300問せいかい',        check:c=>c.phraseCorrect>=300,prog:c=>[c.phraseCorrect,300]},
+  // どうしのかつよう（4択クイズ・なかまわけ・かつようカード）
+  {id:'verb_first',    rarity:'common', group:'verb', emoji:'🔤',   title:'どうしちょうせん',       desc:'どうしのかつようもんだいをはじめてかんりょう', check:c=>c.verbPlays>=1},
+  {id:'verb_10',       rarity:'common', group:'verb', emoji:'🔤📘', title:'どうし10回',            desc:'どうしのかつようもんだいを10回かんりょう',     check:c=>c.verbPlays>=10, prog:c=>[c.verbPlays,10]},
+  {id:'verb_30',       rarity:'rare',   group:'verb', emoji:'🔤📗', title:'どうし30回',            desc:'どうしのかつようもんだいを30回かんりょう',     check:c=>c.verbPlays>=30, prog:c=>[c.verbPlays,30]},
+  {id:'verb_perfect',  rarity:'rare',   group:'verb', emoji:'💯',   title:'どうしパーフェクト',      desc:'どうしのかつようもんだいで全問せいかい！',     check:c=>c.verbPerfect>=1},
+  {id:'verb_perfect_3',rarity:'epic',   group:'verb', emoji:'💯💯', title:'どうし3回パーフェクト',   desc:'どうしのかつようもんだいで全問せいかいを3回',  check:c=>c.verbPerfect>=3, prog:c=>[c.verbPerfect,3]},
+  {id:'verb_correct_50',rarity:'rare',  group:'verb', emoji:'🎯',   title:'どうし50問正解',         desc:'どうしのかつようもんだいで累計50問せいかい',   check:c=>c.verbCorrect>=50, prog:c=>[c.verbCorrect,50]},
+  {id:'verb_all_modes',rarity:'epic',   group:'verb', emoji:'🎪',   title:'どうしマスター',         desc:'4択・なかまわけ・かつようカードを全部プレイ',  check:c=>c.verbModesPlayed>=3, prog:c=>[c.verbModesPlayed,3]},
 ];
 
 function buildBadgeContext(){
@@ -1465,8 +1597,13 @@ function buildBadgeContext(){
   const totalCorrect = h.reduce((s,r)=>s+r.score,0);
   const perfectCount = h.filter(r=>r.total>0 && r.score===r.total).length;
   let sortCorrect=0, fillCorrect=0, spellCorrect=0, spellPerfect=0, spellHintFreePerfect=0;
-  let timerPlays=0, timerPerfect=0, timerCorrect=0, timerHighScore=0, spellPlays=0;
+  let hardPlays=0, hardPerfect=0, hardCorrect=0, hardHighScore=0, spellPlays=0;
   let sortPlays=0, sortPerfect=0, fillPlays=0, fillPerfect=0;
+  let phrasePlays=0, phraseCorrect=0, phrasePerfect=0;
+  let verbPlays=0, verbCorrect=0, verbPerfect=0;
+  const PHRASE_MODES = new Set(['phrase_key','phrase_select','phrase_flash']);
+  const VERB_MODES = new Set(['verb_quiz','verb_sort','verb_flash']);
+  const verbModesSeen = new Set();
   let maxQuizSize=0;
   const catSet = new Set();
   h.forEach(r=>{
@@ -1481,10 +1618,10 @@ function buildBadgeContext(){
       if(r.score===r.total && r.total>0) spellPerfect++;
       if(r.spellHintFreePerfect) spellHintFreePerfect++;
     }
-    if(r.mode==='timer'){
-      timerPlays++; timerCorrect+=r.score;
-      if(r.score===r.total && r.total>0) timerPerfect++;
-      if(r.score>=8) timerHighScore++;
+    if(r.mode==='hard'){
+      hardPlays++; hardCorrect+=r.score;
+      if(r.score===r.total && r.total>0) hardPerfect++;
+      if(r.score>=8) hardHighScore++;
     }
     if(r.mode==='sort'){
       sortPlays++;
@@ -1494,26 +1631,37 @@ function buildBadgeContext(){
       fillPlays++;
       if(r.score===r.total && r.total>0) fillPerfect++;
     }
+    if(PHRASE_MODES.has(r.mode)){
+      phrasePlays++; phraseCorrect+=r.score;
+      if(r.score===r.total && r.total>0) phrasePerfect++;
+    }
+    if(VERB_MODES.has(r.mode)){
+      verbPlays++; verbCorrect+=r.score; verbModesSeen.add(r.mode);
+      if(r.score===r.total && r.total>0) verbPerfect++;
+    }
   });
   let bestConsecutive=0, cs=0;
   h.forEach(r=>r.details.forEach(d=>{ if(d.correct){cs++;bestConsecutive=Math.max(bestConsecutive,cs);}else cs=0; }));
+  const NO_DIFFICULTY_MODES = new Set(['sort','fill','hard','phrase_key','phrase_select','phrase_flash','verb_quiz','verb_sort','verb_flash']);
   let easyPlays=0, easyCorrect=0, easyPerfect=0, normalPlays=0, normalCorrect=0, normalPerfect=0;
   h.forEach(r=>{
+    if(NO_DIFFICULTY_MODES.has(r.mode)) return; // 難易度分けがないモードは集計対象外
     if(r.easy!==false){ easyPlays++; easyCorrect+=r.score; if(r.score===r.total&&r.total>0) easyPerfect++; }
     else { normalPlays++; normalCorrect+=r.score; if(r.score===r.total&&r.total>0) normalPerfect++; }
   });
   const streak = loadStreak();
-  const flashAllKnow = (() => { try{ return parseInt(localStorage.getItem('eiken5_flash_all_know')||'0'); }catch(e){ return 0; } })();
-  const REQUIRED_MODES = ['all','spelling','timer','listening','sort','fill','weak'];
+  const REQUIRED_MODES = ['all','spelling','hard','sort','fill','weak'];
   const modesPlayed = REQUIRED_MODES.filter(m=>h.some(r=>r.mode===m||(!r.mode&&m==='all'))).length;
   return {
     totalPlays, totalCorrect, perfectCount, sortCorrect, fillCorrect,
     categoriesCleared: catSet.size, categoriesTotal: Object.keys(getCategories()).length,
-    flashCount: loadFlashCount(), flashAllKnow, streakLongest: streak.longest||0,
+    streakLongest: streak.longest||0,
     easyPlays, easyCorrect, easyPerfect, normalPlays, normalCorrect, normalPerfect,
     spellPlays, spellCorrect, spellPerfect, spellHintFreePerfect,
-    timerPlays, timerPerfect, timerCorrect, timerHighScore,
+    hardPlays, hardPerfect, hardCorrect, hardHighScore,
     sortPlays, sortPerfect, fillPlays, fillPerfect,
+    phrasePlays, phraseCorrect, phrasePerfect,
+    verbPlays, verbCorrect, verbPerfect, verbModesPlayed: verbModesSeen.size,
     maxQuizSize, bestConsecutive, modesPlayed
   };
 }
@@ -1616,6 +1764,45 @@ function closeJajan(){
 }
 let _badgeTab = 'all';
 
+// タップしたバッジを「既読」にしてNEW!タグを消すための管理
+const SEEN_BADGES_KEY = 'eiken5_badges_seen';
+function loadSeenBadges(){ try{ return new Set(JSON.parse(localStorage.getItem(SEEN_BADGES_KEY)||'[]')); }catch(e){ return new Set(); } }
+function markBadgeSeen(id){
+  try{
+    const s = loadSeenBadges();
+    if(s.has(id)) return;
+    s.add(id);
+    localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify([...s]));
+  }catch(e){}
+}
+
+// かくとく済みバッジをタップした時、大きく表示する
+function openBadgeDetail(id){
+  const b = BADGES.find(x=>x.id===id);
+  if(!b) return;
+  const unlocked = loadBadges();
+  const rec = unlocked.find(u=>u.id===id);
+  if(!rec) return;
+  const r = RARITY[b.rarity||'common'];
+  document.getElementById('badge-unlock-rarity').textContent = r.label + ' バッジ';
+  document.getElementById('badge-unlock-emoji').textContent = b.emoji;
+  document.getElementById('badge-unlock-title').textContent = b.title;
+  document.getElementById('badge-unlock-desc').textContent = b.desc;
+  const d = new Date(rec.date);
+  document.getElementById('badge-unlock-date').textContent = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} かくとく`;
+  document.getElementById('badge-unlock-modal').classList.remove('hidden');
+  // NEW!タグがついていた場合は既読にして即座に消す
+  const wasNew = (Date.now() - d.getTime()) < 86400000 && !loadSeenBadges().has(id);
+  if(wasNew){
+    markBadgeSeen(id);
+    renderBadgesBody();
+  }
+}
+function closeBadgeUnlockModal(){
+  const modal = document.getElementById('badge-unlock-modal');
+  if(modal) modal.classList.add('hidden');
+}
+
 function setBadgeTab(tab){
   _badgeTab = tab;
   ['all','unlocked','locked'].forEach(t=>{
@@ -1653,6 +1840,7 @@ function renderBadgesBody(){
   const cbc = document.getElementById('complete-badge-count');
   if(cbc) cbc.textContent = total;
   const now = Date.now();
+  const seen = loadSeenBadges();
   const body = document.getElementById('badges-body'); if(!body) return;
   body.innerHTML = '';
 
@@ -1678,7 +1866,7 @@ function renderBadgesBody(){
     filtered.forEach(b=>{
       const got = !!unlockedMap[b.id];
       const dateStr = unlockedMap[b.id] ? new Date(unlockedMap[b.id]) : null;
-      const isNew = dateStr && (now - dateStr.getTime()) < 86400000;
+      const isNew = dateStr && (now - dateStr.getTime()) < 86400000 && !seen.has(b.id);
       let progHTML='';
       if(!got && b.prog){
         const [cur,max] = b.prog(ctx);
@@ -1694,14 +1882,14 @@ function renderBadgesBody(){
       const card = document.createElement('div');
       card.id = 'badge-card-'+b.id;
       card.className = cardClass;
-      card.style.cssText=`border-radius:14px;padding:10px 6px 8px;text-align:center;position:relative;border:2px solid;${got?'':'cursor:pointer;'}`;
+      card.style.cssText=`border-radius:14px;padding:10px 6px 8px;text-align:center;position:relative;border:2px solid;cursor:pointer;`;
       card.innerHTML=`${newTag}
         ${rarityTagHTML}
         <div style="font-size:28px;opacity:${got?'1':'0.22'};filter:${got?'none':'grayscale(1)'};">${b.emoji}</div>
         <div style="font-size:10px;font-weight:900;color:${got?'#1A2E52':'#A0AAB8'};margin-top:3px;line-height:1.2;">${got?b.title:'？？？'}</div>
         <div style="font-size:8px;color:${got?'#5A7A9F':'#B0B8C4'};margin-top:2px;line-height:1.3;" id="badge-hint-${b.id}">${got?b.desc:'タップしてヒント'}</div>
         ${dateLabelHTML}${progHTML}`;
-      if(!got){ card.onclick=()=>toggleBadgeHint(b.id, b.desc); }
+      card.onclick = got ? (()=>openBadgeDetail(b.id)) : (()=>toggleBadgeHint(b.id, b.desc));
       grid.appendChild(card);
     });
     body.appendChild(grid);
@@ -1719,12 +1907,13 @@ function toggleBadgeHint(id, desc){
   else { revealedHints.add(id); el.textContent='💡 '+desc; }
 }
 
-function saveResult(ans, mode, total){
+function saveResult(ans, mode, total, timerUsed){
   const h=loadHistory();
   const score=ans.filter(a=>a.correct).length;
   const tot=total||ans.length;
   const spellHintFreePerfect = mode==='spelling' && score===tot && tot>0 && ans.every(a=>!a.usedHint);
   h.push({ date:new Date().toISOString(), score, total:tot, mode, easy:easyMode,
+    timerUsed: !!timerUsed,
     spellHintFreePerfect: spellHintFreePerfect||undefined,
     details:ans.map(a=>({en:a.en||a.answer,ja:a.ja||a.answer,category:a.category,correct:a.correct})) });
   if(h.length>100) h.shift();
@@ -1758,18 +1947,20 @@ function setSpeaking(s){ const card=document.getElementById('word-card'); if(!ca
 function toggleAuto(){ autoSpeak=!autoSpeak; const t=document.getElementById('toggle-auto'); autoSpeak?t.classList.add('on'):t.classList.remove('on'); }
 
 // 画面切替
-const SCREENS=['screen-title','screen-mode','screen-category','screen-difficulty','screen-review','screen-badges','screen-quiz','screen-result','screen-stats','screen-flash','screen-flash-play','screen-flash-result','screen-sort','screen-sort-result','screen-fill','screen-fill-result','screen-phrase-key','screen-phrase-key-result','screen-phrase-select','screen-phrase-select-result'];
+const SCREENS=['screen-title','screen-mode','screen-category','screen-difficulty','screen-review','screen-badges','screen-quiz','screen-result','screen-stats','screen-flash','screen-flash-play','screen-flash-result','screen-sort','screen-sort-result','screen-fill','screen-fill-result','screen-phrase-key','screen-phrase-key-result','screen-phrase-select','screen-phrase-select-result','screen-verb-hub','screen-verb-quiz','screen-verb-quiz-result','screen-verb-sort','screen-verb-sort-result'];
 function showScreen(id){ if(synth)synth.cancel(); SCREENS.forEach(s=>{ const el=document.getElementById(s); if(el)el.style.display=s===id?'block':'none'; }); }
-function showTitle(){ updateMiniStats(); showScreen('screen-title'); }
-function quitToTop(){ if(synth)synth.cancel(); if(confirm('🏠 トップページにもどりますか？\nとちゅうのきろくはきえます。')){ questions=[]; current=0; answers=[]; spellingMode=false; timerMode=false; listeningMode=false; clearInterval(timerInterval); sortQuestions=[]; if(retryWrongMode){QUIZ_COUNT=savedQuizCount;retryWrongMode=false;} showTitle(); } }
+function showTitle(){ pendingHardMode=false; updateMiniStats(); showScreen('screen-title'); }
+function quitToTop(){ if(synth)synth.cancel(); if(confirm('🏠 トップページにもどりますか？\nとちゅうのきろくはきえます。')){ questions=[]; current=0; answers=[]; spellingMode=false; timerActive=false; hardMode=false; clearInterval(timerInterval); sortQuestions=[]; if(retryWrongMode){QUIZ_COUNT=savedQuizCount;retryWrongMode=false;} showTitle(); } }
 
 
-function showMode(){ showScreen('screen-mode'); }
+function showMode(){ pendingHardMode=false; showScreen('screen-mode'); }
 
 // ===== 難易度選択 =====
 let easyMode = true;           // true=イージー(絵あり), false=ノーマル(絵なし)
+let timerActive = false;       // ノーマルモード時、単語選択クイズ(ぜんはんい/カテゴリ/にがて復習)でタイマーが有効かどうか
 let _pendingMode = '';         // 難易度選択後に起動するモード
 let _difficultyBackFn = 'showMode'; // ←ボタンの戻り先
+let pendingHardMode = false;   // カテゴリモードでハードを選んだ後、カテゴリ選択を経てハード起動するためのフラグ
 
 function showDifficulty(mode, title, backFn){
   _pendingMode = mode;
@@ -1778,19 +1969,23 @@ function showDifficulty(mode, title, backFn){
   document.getElementById('difficulty-back-btn').setAttribute('onclick', `${_difficultyBackFn}()`);
   const cl = document.getElementById('difficulty-count-label');
   if(cl) cl.textContent = `📊 ${QUIZ_COUNT}もん`;
+  // ハードモードは「ぜんはんい」「カテゴリ」のみで選べる
+  const hb = document.getElementById('difficulty-hard-btn');
+  if(hb) hb.style.display = (mode==='all' || mode==='category') ? 'block' : 'none';
   showScreen('screen-difficulty');
 }
 function confirmDifficulty(diff){
+  const m = _pendingMode;
+  if(diff === 'hard'){
+    if(m==='all'){ startHardMode('all'); }
+    else if(m==='category'){ pendingHardMode = true; showCategory(); }
+    return;
+  }
   easyMode = (diff === 'easy');
   // 選択したモードを起動
-  const m = _pendingMode;
   if(m==='all')           startQuiz('all');
   else if(m==='category') showCategory();
   else if(m==='spelling') startSpellingMode();
-  else if(m==='timer')    startTimerMode();
-  else if(m==='listening')startListeningMode();
-  else if(m==='sort')     startSortQuiz();
-  else if(m==='fill')     startFillQuiz();
 }
 // 絵の表示/非表示を easyMode に合わせて適用
 function applyEmojiVisibility(){
@@ -1833,10 +2028,15 @@ function showCategory(){
 }
 function updateCatBtn(){ const b=document.getElementById('cat-start-btn'); if(selectedCats.size>0){b.style.opacity='1';b.style.pointerEvents='auto';b.textContent=`${selectedCats.size}カテゴリでスタート →`;}else{b.style.opacity='0.4';b.style.pointerEvents='none';b.textContent='えらんだカテゴリでスタート →';} }
 function selectAllCats(){ document.querySelectorAll('#cat-grid .cat-btn').forEach(b=>b.classList.add('selected')); Object.keys(getCategories()).forEach(c=>selectedCats.add(c)); updateCatBtn(); }
-function startCategoryQuiz(){ currentCats=[...selectedCats]; startQuiz('category'); }
+function startCategoryQuiz(){
+  currentCats=[...selectedCats];
+  if(pendingHardMode){ pendingHardMode=false; startHardMode('category'); }
+  else { startQuiz('category'); }
+}
 
 function startQuiz(mode){
   currentMode=mode||'all'; let pool=[];
+  timerActive = !easyMode; // ノーマル(ふつう)むずかしさなら単語選択クイズにタイマーをつける
   if(currentMode==='all') pool=WORDS;
   else if(currentMode==='category') pool=WORDS.filter(w=>currentCats.includes(w.category));
   else if(currentMode==='weak'){ pool=getWeakWords(); if(pool.length<4){alert('まちがえた単語がまだ少ないです！'); showMode(); return;} }
@@ -1847,9 +2047,15 @@ function startQuiz(mode){
   showScreen('screen-quiz'); renderQuestion();
 }
 function retryQuiz(){ startQuiz(currentMode); }
+function retryCurrentQuiz(){
+  if(currentMode==='spelling') startSpellingMode();
+  else if(currentMode==='hard') startHardMode(hardModeBase);
+  else startQuiz(currentMode);
+}
 
 function renderQuestion(){
   const q=questions[current];
+  document.getElementById('next-btn').onclick=nextQuestion;
   if(current===0){ currentStreak=0; updateStreakBar(); }
   document.getElementById('quiz-category').textContent=q.category;
   document.getElementById('quiz-progress').textContent=`${current+1} / ${QUIZ_COUNT}`;
@@ -1867,9 +2073,12 @@ function renderQuestion(){
   q.shuffled.forEach(opt=>{ const b=document.createElement('button'); b.className='opt-btn'; b.textContent=opt; b.onclick=()=>handleSelect(opt); grid.appendChild(b); });
   setSpeaking(false);
   if(autoSpeak) setTimeout(()=>speak(q.en),300);
+  if(timerActive){ document.getElementById('quiz-timer-badge').classList.remove('hidden'); startQuestionTimer(); }
+  else { stopQuestionTimer(); }
 }
 function speakCurrent(){ speak(questions[current].en); }
 function handleSelect(opt){
+  stopQuestionTimer();
   const q=questions[current]; const ok=opt===q.ja;
   answers.push({...q,chosen:opt,correct:ok});
   document.querySelectorAll('#options .opt-btn').forEach(b=>{ b.disabled=true; if(b.textContent===q.ja)b.classList.add('correct'); else if(b.textContent===opt&&!ok)b.classList.add('wrong'); });
@@ -1886,8 +2095,8 @@ function handleSelect(opt){
   fb.classList.remove('hidden');
   const nb=document.getElementById('next-btn'); nb.textContent=current+1>=QUIZ_COUNT?'🏁 けっかを見る':'つぎへ →'; nb.classList.remove('hidden');
 }
-function nextQuestion(){ if(synth)synth.cancel(); if(current+1>=QUIZ_COUNT){ saveResult(answers,currentMode,QUIZ_COUNT); showResult(); return; } current++; answers=answers.slice(0,current); renderQuestion(); }
-function prevQuestion(){ if(current<=0) return; if(synth)synth.cancel(); current--; answers=answers.slice(0,current); renderQuestion(); }
+function nextQuestion(){ clearInterval(timerInterval); if(synth)synth.cancel(); if(current+1>=QUIZ_COUNT){ saveResult(answers,currentMode,QUIZ_COUNT,timerActive); showResult(); return; } current++; answers=answers.slice(0,current); renderQuestion(); }
+function prevQuestion(){ if(current<=0) return; clearInterval(timerInterval); if(synth)synth.cancel(); current--; answers=answers.slice(0,current); renderQuestion(); }
 function showResult(){
   showScreen('screen-result');
   const score=answers.filter(a=>a.correct).length; const pct=Math.round(score/QUIZ_COUNT*100);
@@ -1905,33 +2114,6 @@ function showResult(){
   const rwb=document.getElementById('retry-wrong-btn');
   if(rwb){ rwb.style.display=wrongCount>0?'block':'none'; rwb.textContent=`❌ まちがい${wrongCount}もんをやりなおす`; }
 
-  // タイマーモード：自己ベスト更新通知
-  const bestBanner = document.getElementById('timer-best-banner');
-  if(currentMode==='timer' && bestBanner){
-    const {isNew, prev} = updateTimerBest(score);
-    if(isNew && prev !== null){
-      // ベスト更新（初回以外）
-      bestBanner.innerHTML = `🎉 じこベスト更新！ <strong>${prev} → ${score}</strong>/${QUIZ_COUNT}`;
-      bestBanner.style.background = 'linear-gradient(135deg,#FFD700,#F59E0B)';
-      bestBanner.style.color = '#1A2E52';
-      bestBanner.classList.remove('hidden');
-      launchStamps(true);
-    } else if(isNew && prev === null){
-      // 初回記録
-      bestBanner.innerHTML = `⏱️ はじめてのきろく：<strong>${score}/${QUIZ_COUNT}</strong> をきろくしたよ！`;
-      bestBanner.style.background = 'linear-gradient(135deg,#60C8F5,#0EA5E9)';
-      bestBanner.style.color = '#fff';
-      bestBanner.classList.remove('hidden');
-    } else {
-      // ベスト更新ならず
-      bestBanner.innerHTML = `⏱️ じこベスト：<strong>${prev}/${QUIZ_COUNT}</strong>　今回：${score}/${QUIZ_COUNT}`;
-      bestBanner.style.background = '#F0F4FF';
-      bestBanner.style.color = '#5A7A9F';
-      bestBanner.classList.remove('hidden');
-    }
-  } else if(bestBanner){
-    bestBanner.classList.add('hidden');
-  }
 }
 
 // ===== フラッシュカード =====
@@ -1955,12 +2137,8 @@ function retryUnsure(){ if(!flashUnsure.length)return; flashWords=shuffle(flashU
 function renderFlash(){ if(flashIndex>=flashWords.length){showFlashResult();return;} const w=flashWords[flashIndex]; flashFlipped=false; document.getElementById('flash-progress').textContent=`${flashIndex+1} / ${flashWords.length}`; document.getElementById('flash-bar').style.width=((flashIndex+1)/flashWords.length*100)+'%'; document.getElementById('flash-sub').textContent='カードをタップして答えを見てね'; document.getElementById('flash-nav').classList.add('hidden'); const card=document.getElementById('flash-card'); card.classList.remove('flipped'); document.getElementById('flash-front').classList.remove('hidden'); document.getElementById('flash-back').classList.add('hidden'); if(flashDir==='en2ja'){ document.getElementById('flash-hint-front').textContent='👆 TAP TO LISTEN'; document.getElementById('flash-main').textContent=w.en; const sb=document.getElementById('flash-spell'); sb.innerHTML=''; w.en.split('').forEach(ch=>{const d=document.createElement('div');d.className='spell-letter';d.textContent=ch===' '?'·':ch;sb.appendChild(d);}); document.getElementById('flash-emoji-back').textContent=w.emoji||'📝'; document.getElementById('flash-ja').textContent=w.ja; if(autoSpeak)setTimeout(()=>speak(w.en),200); }else{ document.getElementById('flash-hint-front').textContent='日本語のいみ'; document.getElementById('flash-main').textContent=w.ja; document.getElementById('flash-emoji-back').textContent=w.emoji||'📝'; document.getElementById('flash-ja').textContent=w.en; document.getElementById('flash-spell').innerHTML=''; } }
 function flipCard(){ if(flashFlipped)return; flashFlipped=true; playFlip(); const card=document.getElementById('flash-card'); card.classList.add('flipped'); document.getElementById('flash-front').classList.add('hidden'); document.getElementById('flash-back').classList.remove('hidden'); document.getElementById('flash-nav').classList.remove('hidden'); document.getElementById('flash-sub').textContent='わかった？'; const w=flashWords[flashIndex]; if(flashDir==='ja2en')setTimeout(()=>speak(w.en),100); }
 function flashAnswer(know){ const w=flashWords[flashIndex]; if(know){flashKnow.push(w);launchStamps(true);playCorrect();}else{flashUnsure.push(w);playWrong();} flashIndex++; setTimeout(renderFlash,300); }
-function showFlashResult(){ showScreen('screen-flash-result'); updateStreak(); incrementFlashCount();
-  // 全部「わかった！」だった場合のカウント
+function showFlashResult(){ showScreen('screen-flash-result'); updateStreak();
   const total=flashKnow.length+flashUnsure.length;
-  if(flashUnsure.length===0 && total>0){
-    try{ const k='eiken5_flash_all_know'; localStorage.setItem(k, String((parseInt(localStorage.getItem(k)||'0')+1))); }catch(e){}
-  }
   checkBadges(); const pct=Math.round(flashKnow.length/total*100); const emoji=pct>=80?'🏆':pct>=60?'🌟':'💪'; const label=pct>=80?'すごい！よくわかってるね！':pct>=60?'いいかんじ！':'もう一度れんしゅうしよう'; document.getElementById('fr-emoji').textContent=emoji; document.getElementById('fr-label').textContent=label; document.getElementById('fr-know').textContent=flashKnow.length; document.getElementById('fr-unsure').textContent=flashUnsure.length; if(pct>=60)launchStamps(true); const ul=document.getElementById('fr-unsure-list'); if(flashUnsure.length>0){ ul.innerHTML='<p style="font-size:12px;font-weight:700;color:#1A2E52;margin-bottom:6px;">😓 もう一度みよう</p>'+flashUnsure.map(w=>`<span class="weak-word" onclick="speak('${w.en.replace(/'/g,"\'")}')">🔊 ${w.en}（${w.ja}）</span>`).join(''); }else{ ul.innerHTML='<p style="color:#4CAF82;font-size:13px;text-align:center;">🎉 ぜんぶわかった！すごい！</p>'; } }
 
 // ===== ミニ統計 =====
@@ -2004,8 +2182,10 @@ function renderCatStats(h){
 function renderModeStats(h){
   const modeMap={
     'all':'🌍 ぜんはんい','category':'📚 カテゴリ','spelling':'✏️ スペリング',
-    'timer':'⏱️ タイマー','listening':'👂 ミミだめし','sort':'🔀 ならべかえ',
-    'fill':'✏️ あなうめ','weak':'😓 にがて単語'
+    'timer':'⏱️ タイマー','listening':'👂 ミミだめし','hard':'🔥 ハード','sort':'🔀 ならべかえ',
+    'fill':'✏️ あなうめ','weak':'😓 にがて単語',
+    'phrase_key':'🔑 フレーズ穴うめ','phrase_select':'🌐 フレーズ選択','phrase_flash':'🃏 フレーズカード',
+    'verb_quiz':'🔤 どうし4択','verb_sort':'🔀 どうしなかまわけ','verb_flash':'🃏 どうしカード'
   };
   const ms={};
   h.forEach(r=>{
@@ -2034,7 +2214,9 @@ function renderModeStats(h){
 }
 function renderDiffStats(h){
   const easy={c:0,t:0,n:0}, normal={c:0,t:0,n:0};
+  const noDiffModes = new Set(['sort','fill','hard','phrase_key','phrase_select','phrase_flash','verb_quiz','verb_sort','verb_flash']);
   h.forEach(r=>{
+    if(noDiffModes.has(r.mode)) return; // 難易度分けがないモードは集計対象外
     const d = r.easy!==false ? easy : normal;
     d.c+=r.score; d.t+=r.total; d.n++;
   });
@@ -2055,7 +2237,7 @@ function renderScoreChart(h){
   const wrap=document.getElementById('score-chart-wrap'); if(!wrap) return;
   wrap.innerHTML='';
   const recent=h.slice(-20);
-  const modeColors={'timer':'#F97316','spelling':'#A78BFA','sort':'#F59E0B','fill':'#10B981','listening':'#0EA5E9'};
+  const modeColors={'timer':'#F97316','spelling':'#A78BFA','sort':'#F59E0B','fill':'#10B981','listening':'#0EA5E9','hard':'#374151','phrase_key':'#8B5CF6','phrase_select':'#F59E0B','phrase_flash':'#B06EF5','verb_quiz':'#0D9488','verb_sort':'#F59E0B','verb_flash':'#7C3AED'};
   recent.forEach(r=>{
     const p=r.score/r.total;
     const pct=Math.round(p*100);
@@ -2116,7 +2298,7 @@ function showStats(){
   const we=document.getElementById('weak-words');
   we.innerHTML=weak.length?weak.map(w=>`<span class="weak-word" onclick="speak('${w.en.replace(/'/g,"\\'")}')">🔊 ${w.en}（${w.ja}）<span style="color:#AABCCC;font-size:10px;"> ${Math.round(w.w/w.t*100)}%</span></span>`).join(''):'<p style="color:#4CAF82;font-size:12px;">苦手な単語はありません！🎉</p>';
   // プレイ履歴
-  const modeLabel=r=>r.mode==='weak'?'😓にがて':r.mode==='category'?'📚カテゴリ':r.mode==='sort'?'🔀ならべかえ':r.mode==='fill'?'✏️あなうめ':r.mode==='timer'?'⏱️タイマー':r.mode==='spelling'?'✏️スペリング':r.mode==='listening'?'👂ミミだめし':'🌍ぜんはんい';
+  const modeLabel=r=>r.mode==='weak'?'😓にがて':r.mode==='category'?'📚カテゴリ':r.mode==='sort'?'🔀ならべかえ':r.mode==='fill'?'✏️あなうめ':r.mode==='timer'?'⏱️タイマー':r.mode==='spelling'?'✏️スペリング':r.mode==='listening'?'👂ミミだめし':r.mode==='hard'?'🔥ハード':r.mode==='phrase_key'?'🔑フレーズ穴うめ':r.mode==='phrase_select'?'🌐フレーズ選択':r.mode==='phrase_flash'?'🃏フレーズカード':r.mode==='verb_quiz'?'🔤どうし4択':r.mode==='verb_sort'?'🔀どうしなかまわけ':r.mode==='verb_flash'?'🃏どうしカード':'🌍ぜんはんい';
   const diffLabel=r=>(r.easy!==false)?'<span style="color:#4CAF82;font-size:9px;">🟢</span>':'<span style="color:#F97316;font-size:9px;">🔴</span>';
   const hl=document.getElementById('history-list'); hl.innerHTML='';
   [...h].reverse().slice(0,20).forEach(r=>{
@@ -2376,98 +2558,36 @@ function skipSpelling(){
   nb.onclick=()=>{ if(synth)synth.cancel(); if(current+1>=QUIZ_COUNT){ saveResult(answers,currentMode,QUIZ_COUNT); spellingMode=false; showResult(); return; } current++; answers=answers.slice(0,current); renderSpellingQuestion(); };
 }
 
-// ===== 7. タイマーモード =====
-const TIMER_BEST_KEY = 'eiken5_timer_best';
-function loadTimerBests(){ try{ return JSON.parse(localStorage.getItem(TIMER_BEST_KEY)||'{}'); }catch(e){ return {}; } }
-function saveTimerBests(obj){ try{ localStorage.setItem(TIMER_BEST_KEY, JSON.stringify(obj)); }catch(e){} }
-function getTimerBestKey(){ return `${QUIZ_COUNT}_${easyMode?'easy':'normal'}`; }
-function getTimerBest(){
-  const bests = loadTimerBests();
-  return bests[getTimerBestKey()] ?? null;
-}
-function updateTimerBest(score){
-  const key = getTimerBestKey();
-  const bests = loadTimerBests();
-  const prev = bests[key] ?? null;
-  const isNew = prev === null || score > prev;
-  if(isNew){ bests[key] = score; saveTimerBests(bests); }
-  return { isNew, prev };
-}
-let timerMode=false, timerInterval=null, timerLeft=10;
+// ===== 7. ノーマルモード たんごクイズ用タイマー機能 =====
+// (ぜんはんい/カテゴリ/にがて復習の選択式クイズで、ノーマルむずかしさのときに動作)
+let timerInterval=null, timerLeft=10;
 const TIMER_SEC=10;
-function startTimerMode(){
-  timerMode=true; spellingMode=false;
-  currentMode='timer'; let pool=WORDS;
-  const picked=shuffle(pool).slice(0,QUIZ_COUNT);
-  questions=picked.map(q=>({...q,shuffled:shuffle(q.options||[])}));
-  current=0; answers=[]; currentStreak=0; bestStreak=0;
-  showScreen('screen-quiz');
-  // ベストスコア表示をカテゴリ欄に表示
-  const prev = getTimerBest();
-  document.getElementById('quiz-category').textContent = prev !== null ? `⏱️ ベスト：${prev}/${QUIZ_COUNT}` : '⏱️ タイマー';
-  renderTimerQuestion();
-}
-function renderTimerQuestion(){
-  const q=questions[current];
-  document.getElementById('quiz-category').textContent=q.category||'';
-  document.getElementById('quiz-progress').textContent=`${current+1} / ${QUIZ_COUNT}`;
-  document.getElementById('quiz-bar').style.width=((current+1)/QUIZ_COUNT*100)+'%';
-  document.getElementById('word-emoji').textContent=q.emoji||'⏱️';
-  document.getElementById('spell-hide-toggle-wrap').classList.add('hidden');
-  applyEmojiVisibility();
-  document.getElementById('word-text').textContent=q.en;
-  document.getElementById('word-label').textContent='⏱️ 10びょうでこたえよう！';
-  document.getElementById('spell-box').innerHTML='';
-  document.getElementById('feedback').className='feedback hidden';
-  const nb=document.getElementById('next-btn'); nb.classList.add('hidden');
-  const pb=document.getElementById('prev-btn'); if(pb) pb.style.display='none';
-  // 選択肢
-  const opts=document.getElementById('options'); opts.innerHTML='';
-  q.shuffled.forEach(opt=>{
-    const btn=document.createElement('button');
-    btn.className='opt-btn'; btn.textContent=opt;
-    btn.onclick=()=>handleTimerSelect(opt);
-    opts.appendChild(btn);
-  });
-  // タイマー開始
+function startQuestionTimer(onTimeUp){
   clearInterval(timerInterval);
   timerLeft=TIMER_SEC;
-  updateTimerDisplay();
+  updateQuizTimerBadge();
+  const cb = onTimeUp || handleQuizTimeUp;
   timerInterval=setInterval(()=>{
     timerLeft--;
-    updateTimerDisplay();
-    if(timerLeft<=0){ clearInterval(timerInterval); timeUp(); }
+    updateQuizTimerBadge();
+    if(timerLeft<=0){ clearInterval(timerInterval); cb(); }
   },1000);
 }
-function updateTimerDisplay(){
-  const el=document.getElementById('streak-bar'); if(!el) return;
+function updateQuizTimerBadge(){
+  const el=document.getElementById('quiz-timer-badge'); if(!el) return;
   const col=timerLeft>5?'#4CAF82':timerLeft>2?'#FFD93D':'#FF6B6B';
-  el.innerHTML=`<span style="color:${col};font-size:16px;">⏱️ ${timerLeft}びょう</span>`;
+  el.style.color=col;
+  el.textContent=`⏱️ ${timerLeft}びょう`;
 }
-function handleTimerSelect(opt){
+function stopQuestionTimer(){
   clearInterval(timerInterval);
-  document.querySelectorAll('#options .opt-btn').forEach(b=>{ b.disabled=true; const q=questions[current]; if(b.textContent===q.ja)b.classList.add('correct'); else if(b.textContent===opt&&opt!==q.ja)b.classList.add('wrong'); });
-  const q=questions[current]; const ok=opt===q.ja;
-  answers.push({...q,chosen:opt,correct:ok});
-  ok?playCorrect():playWrong(); launchStamps(ok);
-  if(ok){ currentStreak++; bestStreak=Math.max(bestStreak,currentStreak); }
-  else { currentStreak=0; }
-  const fb=document.getElementById('feedback');
-  const ok2=['🎉 せいかい！','✨ すごい！','🌟 パーフェクト！'];
-  const ng=['💪 ざんねん…','⏱️ じかんギリギリ！'];
-  fb.className='feedback '+(ok?'correct':'wrong');
-  fb.innerHTML=ok?ok2[Math.floor(Math.random()*ok2.length)]:`${ng[Math.floor(Math.random()*ng.length)]}<div style="font-size:13px;color:#5A7A9F;margin-top:3px;">こたえは「${q.ja}」だよ</div>`;
-  fb.classList.remove('hidden');
-  const nb=document.getElementById('next-btn');
-  nb.textContent=current+1>=QUIZ_COUNT?'🏁 けっかを見る':'つぎへ →';
-  nb.classList.remove('hidden');
-  nb.onclick=()=>{ if(synth)synth.cancel(); clearInterval(timerInterval); if(current+1>=QUIZ_COUNT){ saveResult(answers,currentMode,QUIZ_COUNT); timerMode=false; showResult(); return; } current++; answers=answers.slice(0,current); renderTimerQuestion(); };
+  const el=document.getElementById('quiz-timer-badge'); if(el) el.classList.add('hidden');
 }
-function timeUp(){
+function handleQuizTimeUp(){
   const q=questions[current];
   document.querySelectorAll('#options .opt-btn').forEach(b=>{ b.disabled=true; if(b.textContent===q.ja)b.classList.add('correct'); });
   answers.push({...q,chosen:'',correct:false});
-  currentStreak=0;
+  currentStreak=0; updateStreakBar();
   playWrong();
   const fb=document.getElementById('feedback');
   fb.className='feedback wrong';
@@ -2476,7 +2596,6 @@ function timeUp(){
   const nb=document.getElementById('next-btn');
   nb.textContent=current+1>=QUIZ_COUNT?'🏁 けっかを見る':'つぎへ →';
   nb.classList.remove('hidden');
-  nb.onclick=()=>{ if(synth)synth.cancel(); clearInterval(timerInterval); if(current+1>=QUIZ_COUNT){ saveResult(answers,currentMode,QUIZ_COUNT); timerMode=false; showResult(); return; } current++; answers=answers.slice(0,current); renderTimerQuestion(); };
 }
 
 // ===== 初期化 =====
@@ -2495,29 +2614,34 @@ function timeUp(){
 })();
 
 
-// ===== リスニングモード（耳だめし）=====
-let listeningMode = false;
-function startListeningMode(){
-  listeningMode = true; spellingMode = false; timerMode = false;
-  currentMode = 'listening';
+// ===== ハードモード（耳だめし方式）=====
+let hardMode = false;
+let hardModeBase = 'all'; // 'all' または 'category'（もういちど！での再現用）
+function startHardMode(mode){
+  hardModeBase = mode || 'all';
+  hardMode = true; spellingMode = false; timerActive = true; // ハードモードは常にタイマーあり
+  currentMode = 'hard';
   let pool = WORDS;
-  const picked = shuffle(pool).slice(0, QUIZ_COUNT);
+  if(hardModeBase === 'category') pool = WORDS.filter(w=>currentCats.includes(w.category));
+  if(pool.length < QUIZ_COUNT){ pool = [...pool, ...shuffle(WORDS)]; }
+  const seen = new Set(); const picked = [];
+  for(const w of shuffle(pool)){ if(!seen.has(w.en)){seen.add(w.en); picked.push(w);} if(picked.length>=QUIZ_COUNT) break; }
   questions = picked.map(q => ({...q, shuffled: shuffle(q.options || [])}));
   current = 0; answers = []; currentStreak = 0; bestStreak = 0;
   showScreen('screen-quiz');
-  renderListeningQuestion();
+  renderHardQuestion();
 }
 
-function renderListeningQuestion(){
+function renderHardQuestion(){
   const q = questions[current];
-  document.getElementById('quiz-category').textContent = '👂 みみだめし';
+  document.getElementById('quiz-category').textContent = '🔥 ハード';
   document.getElementById('quiz-progress').textContent = `${current+1} / ${QUIZ_COUNT}`;
   document.getElementById('quiz-bar').style.width = ((current+1)/QUIZ_COUNT*100) + '%';
   if(current === 0) updateStreakBar();
 
   // word-card：英語テキストを完全に隠してスピーカーアイコンだけ表示
   document.getElementById('word-emoji').textContent = '🔊';
-  document.getElementById('word-emoji').style.visibility = 'visible'; // リスニングは常に表示
+  document.getElementById('word-emoji').style.visibility = 'visible'; // ハードモードは常に表示
   document.getElementById('spell-hide-toggle-wrap').classList.add('hidden');
   document.getElementById('word-text').textContent = '';
   document.getElementById('word-label').textContent = 'おとをきいてこたえよう！';
@@ -2530,13 +2654,17 @@ function renderListeningQuestion(){
     const btn = document.createElement('button');
     btn.className = 'opt-btn';
     btn.textContent = opt;
-    btn.onclick = () => handleListeningSelect(opt);
+    btn.onclick = () => handleHardSelect(opt);
     opts.appendChild(btn);
   });
 
   document.getElementById('feedback').className = 'feedback hidden';
   const nb = document.getElementById('next-btn'); nb.classList.add('hidden');
   const pb = document.getElementById('prev-btn'); if(pb) pb.style.display = 'none';
+
+  // タイマー開始（ハードモードは常時タイマーつき）
+  document.getElementById('quiz-timer-badge').classList.remove('hidden');
+  startQuestionTimer(handleHardTimeUp);
 
   // 自動で音声を再生（少し遅延させてから）
   setTimeout(() => {
@@ -2547,7 +2675,8 @@ function renderListeningQuestion(){
   }, 400);
 }
 
-function handleListeningSelect(opt){
+function handleHardSelect(opt){
+  stopQuestionTimer();
   const q = questions[current];
   const ok = opt === q.ja;
   document.querySelectorAll('#options .opt-btn').forEach(b => {
@@ -2580,14 +2709,46 @@ function handleListeningSelect(opt){
   nb.onclick = () => {
     if(synth) synth.cancel();
     if(current+1 >= QUIZ_COUNT){
-      saveResult(answers, currentMode, QUIZ_COUNT);
-      listeningMode = false;
+      saveResult(answers, currentMode, QUIZ_COUNT, true);
+      hardMode = false;
       showResult();
       return;
     }
     current++;
     answers = answers.slice(0, current);
-    renderListeningQuestion();
+    renderHardQuestion();
+  };
+}
+
+function handleHardTimeUp(){
+  const q = questions[current];
+  document.querySelectorAll('#options .opt-btn').forEach(b => {
+    b.disabled = true;
+    if(b.textContent === q.ja) b.classList.add('correct');
+  });
+  document.getElementById('word-text').textContent = q.en;
+  document.getElementById('word-label').textContent = '🔊 タップしてもう一度きく';
+  answers.push({...q, chosen: '', correct: false});
+  currentStreak = 0; updateStreakBar();
+  playWrong();
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback wrong';
+  fb.innerHTML = `⏰ じかんきれ！<div style="font-size:13px;color:#5A7A9F;margin-top:3px;">こたえは「${q.ja}」（${q.en}）だよ</div>`;
+  fb.classList.remove('hidden');
+  const nb = document.getElementById('next-btn');
+  nb.textContent = current+1 >= QUIZ_COUNT ? '🏁 けっかを見る' : 'つぎへ →';
+  nb.classList.remove('hidden');
+  nb.onclick = () => {
+    if(synth) synth.cancel();
+    if(current+1 >= QUIZ_COUNT){
+      saveResult(answers, currentMode, QUIZ_COUNT, true);
+      hardMode = false;
+      showResult();
+      return;
+    }
+    current++;
+    answers = answers.slice(0, current);
+    renderHardQuestion();
   };
 }
 
@@ -3043,6 +3204,7 @@ function showPhraseKeyResult(){
                {min:50,label:'もう少し！',emoji:'💪'},{min:0,label:'れんしゅうしよう',emoji:'📚'}];
   const rank=ranks.find(r=>pct>=r.min);
   if(pct>=70) launchStamps(true);
+  saveResult(phraseKeyAnswers.map(a=>({en:a.full,ja:a.ja,category:a.category,correct:a.correct})), 'phrase_key', total);
   document.getElementById('pkey-result-emoji').textContent=rank.emoji;
   document.getElementById('pkey-result-label').textContent=rank.label;
   document.getElementById('pkey-result-score').innerHTML=`${score}<span style="font-size:22px;color:#8AABCC;">/${total}</span>`;
@@ -3057,27 +3219,71 @@ function showPhraseKeyResult(){
     </div>`).join('');
 }
 
-// ===== C. フレーズ日→英選択クイズ =====
+// ===== C. フレーズ選択クイズ（日→英 / 英→日）=====
 let phraseSelQs=[], phraseSelIdx=0, phraseSelAnswers=[];
+const PSEL_DIR_KEY = 'eiken5_psel_dir';
+function loadPselDir(){ try{ return localStorage.getItem(PSEL_DIR_KEY)||'ja2en'; }catch(e){ return 'ja2en'; } }
+function savePselDir(d){ try{ localStorage.setItem(PSEL_DIR_KEY, d); }catch(e){} }
+let pselDir = loadPselDir(); // 'ja2en'（日本語→英語）or 'en2ja'（英語→日本語）
+try{ updatePselModeUI(); }catch(e){}
+function togglePselDir(){
+  pselDir = pselDir==='ja2en' ? 'en2ja' : 'ja2en';
+  savePselDir(pselDir);
+  updatePselModeUI();
+}
+function updatePselModeUI(){
+  const isJa2en = pselDir==='ja2en';
+  const dirLabel = document.getElementById('psel-dir-label');
+  if(dirLabel) dirLabel.textContent = isJa2en ? '日本語 → 英語' : '英語 → 日本語';
+  const title = document.getElementById('psel-mode-title');
+  if(title) title.textContent = isJa2en ? 'フレーズ日→英' : 'フレーズ英→日';
+  const desc = document.getElementById('psel-mode-desc');
+  if(desc) desc.textContent = isJa2en ? '日本語からえいごフレーズをえらぼう！' : 'えいごフレーズから日本語をえらぼう！';
+  const tag = document.getElementById('psel-mode-tag');
+  if(tag) tag.textContent = isJa2en ? '🌐 フレーズ日→英' : '🌐 フレーズ英→日';
+}
 
 function startPhraseSelectQuiz(){
   // フレーズを重複なくシャッフル（4択の選択肢用）
   const pool = shuffle([...PHRASE_QUESTIONS]);
   phraseSelQs = pool.slice(0, Math.min(QUIZ_COUNT, pool.length));
   phraseSelIdx = 0; phraseSelAnswers = [];
+  updatePselModeUI();
   showScreen('screen-phrase-select');
   renderPhraseSelQ();
 }
 
 function renderPhraseSelQ(){
   const q = phraseSelQs[phraseSelIdx];
+  const isJa2en = pselDir==='ja2en';
   document.getElementById('psel-progress').textContent = `${phraseSelIdx+1} / ${phraseSelQs.length}`;
   document.getElementById('psel-bar').style.width = ((phraseSelIdx+1)/phraseSelQs.length*100)+'%';
-  document.getElementById('psel-ja').textContent = q.ja;
 
-  // 選択肢：正解 + 他3問からランダムに取ったfullフレーズ
-  const wrong = shuffle(phraseSelQs.filter(x=>x.full!==q.full)).slice(0,3).map(x=>x.full);
-  const choices = shuffle([q.full, ...wrong]);
+  const promptLabel = document.getElementById('psel-prompt-label');
+  const instruction = document.getElementById('psel-instruction');
+  if(isJa2en){
+    promptLabel.textContent = '🇯🇵 にほんご';
+    instruction.textContent = '👇 えいごでなんていう？';
+    document.getElementById('psel-ja').textContent = q.ja;
+  } else {
+    promptLabel.textContent = '🇬🇧 えいご';
+    instruction.textContent = '👇 にほんごでなんていう？';
+    document.getElementById('psel-ja').textContent = q.full;
+  }
+
+  // 選択肢：正解 + 登録されている全フレーズ（PHRASE_QUESTIONS）からランダムに取った選択肢
+  const correctAnswer = isJa2en ? q.full : q.ja;
+  const wrongPool = isJa2en
+    ? PHRASE_QUESTIONS.filter(x=>x.full!==q.full)
+    : PHRASE_QUESTIONS.filter(x=>x.ja!==q.ja);
+  const seenChoices = new Set([correctAnswer]);
+  const wrong = [];
+  for(const x of shuffle(wrongPool)){
+    const val = isJa2en ? x.full : x.ja;
+    if(!seenChoices.has(val)){ seenChoices.add(val); wrong.push(val); }
+    if(wrong.length>=3) break;
+  }
+  const choices = shuffle([correctAnswer, ...wrong]);
 
   const el = document.getElementById('psel-options');
   el.innerHTML = choices.map(c =>
@@ -3094,11 +3300,13 @@ function renderPhraseSelQ(){
 function selectPhraseSelect(choice, btn){
   if(document.getElementById('psel-next-btn').style.display!=='none') return;
   const q = phraseSelQs[phraseSelIdx];
-  const correct = choice === q.full;
+  const isJa2en = pselDir==='ja2en';
+  const correctAnswer = isJa2en ? q.full : q.ja;
+  const correct = choice === correctAnswer;
 
   document.querySelectorAll('#psel-options button').forEach(b => {
     b.disabled = true;
-    if(b.textContent.trim()===q.full){
+    if(b.textContent.trim()===correctAnswer){
       b.style.background='#D1FAE5'; b.style.borderColor='#10B981'; b.style.color='#065F46';
     } else if(b===btn && !correct){
       b.style.background='#FEE2E2'; b.style.borderColor='#EF4444'; b.style.color='#991B1B';
@@ -3107,7 +3315,7 @@ function selectPhraseSelect(choice, btn){
 
   correct ? playCorrect() : playWrong();
   launchStamps(correct);
-  phraseSelAnswers.push({...q, chosen: choice, correct});
+  phraseSelAnswers.push({...q, chosen: choice, correct, dir: pselDir});
 
   const fb = document.getElementById('psel-feedback');
   fb.style.display='block';
@@ -3116,7 +3324,7 @@ function selectPhraseSelect(choice, btn){
     fb.innerHTML='🎉 せいかい！すばらしい！';
   } else {
     fb.style.cssText='display:block;background:#FEE2E2;border:2px solid #EF4444;color:#991B1B;border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:15px;text-align:center;';
-    fb.innerHTML=`❌ こたえは「<strong>${q.full}</strong>」だよ`;
+    fb.innerHTML=`❌ こたえは「<strong>${correctAnswer}</strong>」だよ`;
   }
 
   const nb = document.getElementById('psel-next-btn');
@@ -3139,18 +3347,24 @@ function showPhraseSelResult(){
                {min:50,label:'もう少し！',emoji:'💪'},{min:0,label:'れんしゅうしよう',emoji:'📚'}];
   const rank=ranks.find(r=>pct>=r.min);
   if(pct>=70) launchStamps(true);
+  saveResult(phraseSelAnswers.map(a=>({en:a.full,ja:a.ja,category:a.category,correct:a.correct})), 'phrase_select', total);
   document.getElementById('psel-result-emoji').textContent=rank.emoji;
   document.getElementById('psel-result-label').textContent=rank.label;
   document.getElementById('psel-result-score').innerHTML=`${score}<span style="font-size:22px;color:#8AABCC;">/${total}</span>`;
   document.getElementById('psel-result-pct').textContent=`せいかいりつ ${pct}%`;
-  document.getElementById('psel-answer-rows').innerHTML=phraseSelAnswers.map(a=>`
+  document.getElementById('psel-answer-rows').innerHTML=phraseSelAnswers.map(a=>{
+    const isJa2en = a.dir!=='en2ja';
+    const promptText = isJa2en ? a.ja : a.full;
+    const answerText = isJa2en ? a.full : a.ja;
+    return `
     <div style="padding:7px 0;border-bottom:1px solid #E8F0FA;">
-      <div style="font-size:11px;color:#5A7A9F;margin-bottom:2px;">${a.ja}</div>
+      <div style="font-size:11px;color:#5A7A9F;margin-bottom:2px;">${promptText}</div>
       <div style="font-size:13px;font-weight:700;color:${a.correct?'#10B981':'#EF4444'};">
-        ${a.correct?'⭕':'❌'} ${a.full}
+        ${a.correct?'⭕':'❌'} ${answerText}
       </div>
       ${!a.correct?`<div style="font-size:12px;color:#5A7A9F;">あなた：「${a.chosen}」</div>`:''}
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ===== やめる（共通）=====
@@ -3292,6 +3506,15 @@ function handleFlashKnow(know){
     } else {
       renderFlashPhrase();
     }
+  } else if(flashCurrentMode === 'verb'){
+    const v = flashVerbWords[flashVerbIdx];
+    if(know) flashVerbKnow.push(v); else flashVerbUnsure.push(v);
+    flashVerbIdx++;
+    if(flashVerbIdx >= flashVerbWords.length){
+      showFlashVerbResult();
+    } else {
+      renderFlashVerb();
+    }
   } else {
     // 既存の単語モード処理（markKnow/markUnsureを呼ぶ）
     if(know) markKnow(); else markUnsure();
@@ -3312,6 +3535,10 @@ function showFlashPhraseResult(){
   document.getElementById('fr-know').textContent = know;
   document.getElementById('fr-unsure').textContent = unsure;
   if(pct>=70) launchStamps(true);
+  saveResult([
+    ...flashPhraseKnow.map(q=>({en:q.full,ja:q.ja,category:q.category,correct:true})),
+    ...flashPhraseUnsure.map(q=>({en:q.full,ja:q.ja,category:q.category,correct:false}))
+  ], 'phrase_flash', total);
 
   // まだかなリスト
   const ul = document.getElementById('fr-unsure-list');
@@ -3331,6 +3558,321 @@ function showFlashPhraseResult(){
   if(retryBtn) retryBtn.style.display = flashPhraseUnsure.length>0 ? 'block':'none';
 }
 
+function retryPhraseUnsure(){
+  if(!flashPhraseUnsure.length) return;
+  flashPhraseWords = shuffle(flashPhraseUnsure);
+  flashPhraseIdx = 0; flashPhraseKnow = []; flashPhraseUnsure = []; flashPhraseFlipped = false;
+  showScreen('screen-flash-play');
+  document.getElementById('flash-front-word-mode').classList.add('hidden');
+  document.getElementById('flash-front-phrase-mode').classList.remove('hidden');
+  document.getElementById('flash-back-word-mode').classList.add('hidden');
+  document.getElementById('flash-back-phrase-mode').classList.remove('hidden');
+  renderFlashPhrase();
+}
+
+// ===== D. どうしのかつようモード（規則・不規則動詞）=====
+const TENSE_LABELS = {past:'かこけい (past)', pp:'かこぶんし (past participle)', ing:'げんざいぶんし (-ing)'};
+
+function showVerbHub(){
+  const el = document.getElementById('verb-count');
+  if(el) el.textContent = VERBS.length;
+  showScreen('screen-verb-hub');
+}
+
+function quitVerbToTop(){
+  if(synth) synth.cancel();
+  if(confirm('🏠 トップページにもどりますか？\nとちゅうのきろくはきえます。')){
+    VERB_QUESTIONS=[]; vqIdx=0; vqAnswers=[];
+    VERB_SORT_QS=[]; vsIdx=0; vsAnswers=[];
+    showTitle();
+  }
+}
+
+// ----- D-1. 4択かつようクイズ -----
+let vqIdx=0, VERB_QUESTIONS=[], vqAnswers=[];
+
+function startVerbQuiz(){
+  const fields = ['past','pp','ing'];
+  const picked = shuffle([...VERBS]).slice(0, Math.min(QUIZ_COUNT, VERBS.length));
+  VERB_QUESTIONS = picked.map(v=>{
+    const field = fields[Math.floor(Math.random()*fields.length)];
+    const correct = v[field];
+    const wrongPool = shuffle(VERBS.filter(x=>x.base!==v.base && x[field]!==correct));
+    const seen = new Set([correct]); const wrong=[];
+    for(const x of wrongPool){ if(!seen.has(x[field])){ seen.add(x[field]); wrong.push(x[field]); } if(wrong.length>=3) break; }
+    return { q:v, field, correct, choices: shuffle([correct, ...wrong]) };
+  });
+  vqIdx=0; vqAnswers=[];
+  showScreen('screen-verb-quiz');
+  renderVerbQuizQuestion();
+}
+
+function renderVerbQuizQuestion(){
+  const item = VERB_QUESTIONS[vqIdx];
+  document.getElementById('vq-progress').textContent = `${vqIdx+1} / ${VERB_QUESTIONS.length}`;
+  document.getElementById('vq-bar').style.width = ((vqIdx+1)/VERB_QUESTIONS.length*100)+'%';
+  document.getElementById('vq-type-badge').textContent = item.q.type==='regular' ? '🟢 きそくどうし' : '🔴 ふきそくどうし';
+  document.getElementById('vq-base').textContent = item.q.base;
+  document.getElementById('vq-ja').textContent = item.q.ja;
+  document.getElementById('vq-question').textContent = `👇 ${TENSE_LABELS[item.field]}は？`;
+  const el = document.getElementById('vq-options'); el.innerHTML='';
+  item.choices.forEach(c=>{
+    const b=document.createElement('button');
+    b.textContent=c;
+    b.style.cssText='background:#fff;color:#1A2E52;border:2px solid #5EEAD4;border-radius:14px;padding:12px 14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,0.07);';
+    b.onclick=()=>selectVerbQuizAnswer(c);
+    el.appendChild(b);
+  });
+  document.getElementById('vq-feedback').style.display='none';
+  document.getElementById('vq-next-btn').style.display='none';
+  if(autoSpeak) setTimeout(()=>speak(item.q.base),300);
+}
+
+function selectVerbQuizAnswer(choice){
+  if(document.getElementById('vq-next-btn').style.display!=='none') return;
+  const item = VERB_QUESTIONS[vqIdx];
+  const ok = choice===item.correct;
+  document.querySelectorAll('#vq-options button').forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===item.correct){ b.style.background='#D1FAE5'; b.style.borderColor='#10B981'; b.style.color='#065F46'; }
+    else if(b.textContent===choice && !ok){ b.style.background='#FEE2E2'; b.style.borderColor='#EF4444'; b.style.color='#991B1B'; }
+  });
+  ok?playCorrect():playWrong(); launchStamps(ok);
+  vqAnswers.push({q:item.q, field:item.field, answerText:item.correct, chosen:choice, correct:ok});
+  const fb=document.getElementById('vq-feedback');
+  fb.style.display='block';
+  if(ok){
+    fb.style.cssText='display:block;background:#D1FAE5;border:2px solid #10B981;color:#065F46;border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:15px;text-align:center;';
+    fb.innerHTML='🎉 せいかい！すばらしい！';
+  } else {
+    fb.style.cssText='display:block;background:#FEE2E2;border:2px solid #EF4444;color:#991B1B;border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:15px;text-align:center;';
+    fb.innerHTML=`❌ こたえは「<strong>${item.correct}</strong>」だよ`;
+  }
+  const nb=document.getElementById('vq-next-btn'); nb.style.display='block';
+  nb.textContent = vqIdx+1>=VERB_QUESTIONS.length ? '🏁 けっかを見る' : 'つぎへ →';
+}
+
+function nextVerbQuizQuestion(){
+  if(synth) synth.cancel();
+  vqIdx++;
+  if(vqIdx>=VERB_QUESTIONS.length){ showVerbQuizResult(); }
+  else { renderVerbQuizQuestion(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function showVerbQuizResult(){
+  showScreen('screen-verb-quiz-result');
+  const score=vqAnswers.filter(a=>a.correct).length;
+  const total=vqAnswers.length;
+  const pct=Math.round(score/total*100);
+  const ranks=[{min:90,label:'かんぺき！',emoji:'🏆'},{min:70,label:'よくできました！',emoji:'🌟'},{min:50,label:'もう少し！',emoji:'💪'},{min:0,label:'れんしゅうしよう',emoji:'📚'}];
+  const rank=ranks.find(r=>pct>=r.min);
+  if(pct>=70) launchStamps(true);
+  saveResult(vqAnswers.map(a=>({en:a.q.base,ja:a.q.ja,category:'どうしかつよう',correct:a.correct})), 'verb_quiz', total);
+  document.getElementById('vq-result-emoji').textContent=rank.emoji;
+  document.getElementById('vq-result-label').textContent=rank.label;
+  document.getElementById('vq-result-score').innerHTML=`${score}<span style="font-size:22px;color:#8AABCC;">/${total}</span>`;
+  document.getElementById('vq-result-pct').textContent=`せいかいりつ ${pct}%`;
+  document.getElementById('vq-answer-rows').innerHTML=vqAnswers.map(a=>`
+    <div style="padding:7px 0;border-bottom:1px solid #E8F0FA;">
+      <div style="font-size:11px;color:#5A7A9F;margin-bottom:2px;">${a.q.base}（${a.q.ja}）の${TENSE_LABELS[a.field]}</div>
+      <div style="font-size:13px;font-weight:700;color:${a.correct?'#10B981':'#EF4444'};">
+        ${a.correct?'⭕':'❌'} ${a.answerText}
+      </div>
+      ${!a.correct?`<div style="font-size:12px;color:#5A7A9F;">あなた：「${a.chosen}」</div>`:''}
+    </div>`).join('');
+}
+
+// ----- D-2. なかまわけゲーム（規則・不規則） -----
+let vsIdx=0, VERB_SORT_QS=[], vsAnswers=[];
+
+function startVerbSort(){
+  VERB_SORT_QS = shuffle([...VERBS]).slice(0, Math.min(QUIZ_COUNT, VERBS.length));
+  vsIdx=0; vsAnswers=[];
+  showScreen('screen-verb-sort');
+  renderVerbSortQuestion();
+}
+
+function renderVerbSortQuestion(){
+  const v = VERB_SORT_QS[vsIdx];
+  document.getElementById('vs-progress').textContent = `${vsIdx+1} / ${VERB_SORT_QS.length}`;
+  document.getElementById('vs-bar').style.width = ((vsIdx+1)/VERB_SORT_QS.length*100)+'%';
+  document.getElementById('vs-base').textContent = v.base;
+  document.getElementById('vs-ja').textContent = v.ja;
+  const rb=document.getElementById('vs-btn-regular'), ib=document.getElementById('vs-btn-irregular');
+  rb.disabled=false; ib.disabled=false; rb.style.opacity='1'; ib.style.opacity='1';
+  document.getElementById('vs-feedback').style.display='none';
+  document.getElementById('vs-next-btn').style.display='none';
+  if(autoSpeak) setTimeout(()=>speak(v.base),300);
+}
+
+function answerVerbSort(choice){
+  if(document.getElementById('vs-next-btn').style.display!=='none') return;
+  const v = VERB_SORT_QS[vsIdx];
+  const ok = choice===v.type;
+  document.getElementById('vs-btn-regular').disabled=true;
+  document.getElementById('vs-btn-irregular').disabled=true;
+  const correctBtn = document.getElementById(v.type==='regular'?'vs-btn-regular':'vs-btn-irregular');
+  const wrongBtn = document.getElementById(v.type==='regular'?'vs-btn-irregular':'vs-btn-regular');
+  correctBtn.style.opacity='1'; wrongBtn.style.opacity='0.35';
+  const nb=document.getElementById('vs-next-btn'); nb.style.display='block';
+  ok?playCorrect():playWrong(); launchStamps(ok);
+  vsAnswers.push({...v, chosen:choice, correct:ok});
+  const fb=document.getElementById('vs-feedback');
+  fb.style.display='block';
+  const verbForms = v.type==='irregular'
+    ? `<div style="font-size:12px;font-weight:700;margin-top:8px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+        <span onclick="event.stopPropagation();speak('${v.past.replace(/'/g,"\\'")}')" style="cursor:pointer;background:rgba(255,255,255,0.6);border-radius:10px;padding:4px 8px;">🔊 ${v.past}<br><span style="font-size:10px;font-weight:400;">かこけい</span></span>
+        <span onclick="event.stopPropagation();speak('${v.pp.replace(/'/g,"\\'")}')" style="cursor:pointer;background:rgba(255,255,255,0.6);border-radius:10px;padding:4px 8px;">🔊 ${v.pp}<br><span style="font-size:10px;font-weight:400;">かこぶんし</span></span>
+        <span onclick="event.stopPropagation();speak('${v.ing.replace(/'/g,"\\'")}')" style="cursor:pointer;background:rgba(255,255,255,0.6);border-radius:10px;padding:4px 8px;">🔊 ${v.ing}<br><span style="font-size:10px;font-weight:400;">げんざいぶんし</span></span>
+      </div>`
+    : '';
+  if(ok){
+    fb.style.cssText='display:block;background:#D1FAE5;border:2px solid #10B981;color:#065F46;border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:15px;text-align:center;';
+    fb.innerHTML='🎉 せいかい！' + verbForms;
+  } else {
+    fb.style.cssText='display:block;background:#FEE2E2;border:2px solid #EF4444;color:#991B1B;border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:15px;text-align:center;';
+    fb.innerHTML = `❌ 「${v.base}」は${v.type==='regular'?'🟢きそくどうし':'🔴ふきそくどうし'}だよ` + verbForms;
+  }
+  nb.textContent = vsIdx+1>=VERB_SORT_QS.length ? '🏁 けっかを見る' : 'つぎへ →';
+}
+
+function nextVerbSortQuestion(){
+  if(synth) synth.cancel();
+  vsIdx++;
+  if(vsIdx>=VERB_SORT_QS.length){ showVerbSortResult(); }
+  else { renderVerbSortQuestion(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function showVerbSortResult(){
+  showScreen('screen-verb-sort-result');
+  const score=vsAnswers.filter(a=>a.correct).length;
+  const total=vsAnswers.length;
+  const pct=Math.round(score/total*100);
+  const ranks=[{min:90,label:'かんぺき！',emoji:'🏆'},{min:70,label:'よくできました！',emoji:'🌟'},{min:50,label:'もう少し！',emoji:'💪'},{min:0,label:'れんしゅうしよう',emoji:'📚'}];
+  const rank=ranks.find(r=>pct>=r.min);
+  if(pct>=70) launchStamps(true);
+  saveResult(vsAnswers.map(a=>({en:a.base,ja:a.ja,category:'どうしかつよう',correct:a.correct})), 'verb_sort', total);
+  document.getElementById('vs-result-emoji').textContent=rank.emoji;
+  document.getElementById('vs-result-label').textContent=rank.label;
+  document.getElementById('vs-result-score').innerHTML=`${score}<span style="font-size:22px;color:#8AABCC;">/${total}</span>`;
+  document.getElementById('vs-result-pct').textContent=`せいかいりつ ${pct}%`;
+  document.getElementById('vs-answer-rows').innerHTML=vsAnswers.map(a=>`
+    <div style="padding:7px 0;border-bottom:1px solid #E8F0FA;">
+      <div style="font-size:11px;color:#5A7A9F;margin-bottom:2px;">${a.base}（${a.ja}）</div>
+      <div style="font-size:13px;font-weight:700;color:${a.correct?'#10B981':'#EF4444'};">
+        ${a.correct?'⭕':'❌'} ${a.type==='regular'?'🟢きそくどうし':'🔴ふきそくどうし'}
+      </div>
+      ${a.type==='irregular'?`<div style="font-size:11px;color:#5A7A9F;display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;">
+        <span onclick="speak('${a.past.replace(/'/g,"\\'")}')" style="cursor:pointer;">🔊 ${a.past}</span>
+        <span onclick="speak('${a.pp.replace(/'/g,"\\'")}')" style="cursor:pointer;">🔊 ${a.pp}</span>
+        <span onclick="speak('${a.ing.replace(/'/g,"\\'")}')" style="cursor:pointer;">🔊 ${a.ing}</span>
+      </div>`:''}
+    </div>`).join('');
+}
+
+// ----- D-3. かつようカード（フラッシュカード拡張） -----
+let flashVerbWords=[], flashVerbIdx=0, flashVerbKnow=[], flashVerbUnsure=[], flashVerbFlipped=false;
+
+function startVerbFlash(){
+  flashCurrentMode = 'verb';
+  flashVerbWords = shuffle([...VERBS]);
+  flashVerbIdx=0; flashVerbKnow=[]; flashVerbUnsure=[]; flashVerbFlipped=false;
+  showScreen('screen-flash-play');
+  document.getElementById('flash-front-word-mode').classList.add('hidden');
+  document.getElementById('flash-front-phrase-mode').classList.add('hidden');
+  document.getElementById('flash-front-verb-mode').classList.remove('hidden');
+  document.getElementById('flash-back-word-mode').classList.add('hidden');
+  document.getElementById('flash-back-phrase-mode').classList.add('hidden');
+  document.getElementById('flash-back-verb-mode').classList.remove('hidden');
+  document.getElementById('flash-mode-tag').textContent = '🔤 どうしかつよう';
+  renderFlashVerb();
+}
+
+function renderFlashVerb(){
+  const v = flashVerbWords[flashVerbIdx];
+  const total = flashVerbWords.length;
+  document.getElementById('flash-progress').textContent = `${flashVerbIdx+1} / ${total}`;
+  document.getElementById('flash-bar').style.width = ((flashVerbIdx+1)/total*100)+'%';
+  document.getElementById('flash-front-verb-badge').textContent = v.type==='regular' ? '🟢 きそくどうし' : '🔴 ふきそくどうし';
+  document.getElementById('flash-front-verb-base').textContent = v.base;
+  document.getElementById('flash-front-verb-ja').textContent = v.ja;
+  document.getElementById('flash-back-verb-base').textContent = `${v.base}（${v.ja}）`;
+  document.getElementById('flash-back-verb-table').innerHTML = `
+    <div style="display:flex;justify-content:space-between;background:#F0FDFA;border-radius:10px;padding:8px 12px;"><span style="color:#0F766E;font-weight:700;font-size:12px;">げんざいけい</span><span style="font-weight:900;color:#1A2E52;">${v.base}</span></div>
+    <div style="display:flex;justify-content:space-between;background:#FEF3C7;border-radius:10px;padding:8px 12px;"><span style="color:#92400E;font-weight:700;font-size:12px;">かこけい</span><span style="font-weight:900;color:#1A2E52;">${v.past}</span></div>
+    <div style="display:flex;justify-content:space-between;background:#FEE2E2;border-radius:10px;padding:8px 12px;"><span style="color:#991B1B;font-weight:700;font-size:12px;">かこぶんし</span><span style="font-weight:900;color:#1A2E52;">${v.pp}</span></div>
+    <div style="display:flex;justify-content:space-between;background:#EDE9FE;border-radius:10px;padding:8px 12px;"><span style="color:#5B21B6;font-weight:700;font-size:12px;">げんざいぶんし</span><span style="font-weight:900;color:#1A2E52;">${v.ing}</span></div>`;
+  flashVerbFlipped=false;
+  document.getElementById('flash-card').classList.remove('flipped');
+  document.getElementById('flash-front').classList.remove('hidden');
+  document.getElementById('flash-back').classList.add('hidden');
+  document.getElementById('flash-nav').classList.add('hidden');
+  document.getElementById('flash-flip-hint').style.display='block';
+  if(autoSpeak) setTimeout(()=>speak(v.base),200);
+}
+
+function flipFlashVerb(){
+  if(flashVerbFlipped) return;
+  flashVerbFlipped=true;
+  playFlip();
+  document.getElementById('flash-card').classList.add('flipped');
+  document.getElementById('flash-front').classList.add('hidden');
+  document.getElementById('flash-back').classList.remove('hidden');
+  document.getElementById('flash-nav').classList.remove('hidden');
+  document.getElementById('flash-flip-hint').style.display='none';
+}
+
+function showFlashVerbResult(){
+  showScreen('screen-flash-result');
+  const know=flashVerbKnow.length, unsure=flashVerbUnsure.length, total=know+unsure;
+  const pct=Math.round(know/total*100);
+  const ranks=[{min:90,emoji:'🏆',label:'かんぺき！'},{min:70,emoji:'🌟',label:'よくできました！'},{min:50,emoji:'💪',label:'もう少し！'},{min:0,emoji:'📚',label:'れんしゅうしよう'}];
+  const rank=ranks.find(r=>pct>=r.min);
+  document.getElementById('fr-emoji').textContent=rank.emoji;
+  document.getElementById('fr-label').textContent=rank.label;
+  document.getElementById('fr-know').textContent=know;
+  document.getElementById('fr-unsure').textContent=unsure;
+  if(pct>=70) launchStamps(true);
+  saveResult([
+    ...flashVerbKnow.map(v=>({en:v.base,ja:v.ja,category:'どうしかつよう',correct:true})),
+    ...flashVerbUnsure.map(v=>({en:v.base,ja:v.ja,category:'どうしかつよう',correct:false}))
+  ], 'verb_flash', total);
+  const ul=document.getElementById('fr-unsure-list');
+  if(flashVerbUnsure.length>0){
+    ul.innerHTML = `<div style="background:#FFF8F0;border-radius:12px;padding:10px;margin-bottom:10px;">
+      <p style="font-size:12px;font-weight:700;color:#E05050;margin-bottom:6px;">😅 まだかな…どうし</p>
+      ${flashVerbUnsure.map(v=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid #FFE0C0;">
+        <span style="color:#5A7A9F;">${v.base}（${v.ja}）</span> → <strong>${v.past} / ${v.pp} / ${v.ing}</strong>
+      </div>`).join('')}
+    </div>`;
+  } else { ul.innerHTML=''; }
+  const retryBtn = document.getElementById('flash-retry-unsure');
+  if(retryBtn) retryBtn.style.display = flashVerbUnsure.length>0 ? 'block':'none';
+}
+
+function retryVerbUnsure(){
+  if(!flashVerbUnsure.length) return;
+  flashVerbWords = shuffle(flashVerbUnsure);
+  flashVerbIdx=0; flashVerbKnow=[]; flashVerbUnsure=[]; flashVerbFlipped=false;
+  showScreen('screen-flash-play');
+  renderFlashVerb();
+}
+
+// ----- フラッシュカード共通ディスパッチャの拡張 -----
+function retryFlashUnsureAny(){
+  if(flashCurrentMode==='phrase') retryPhraseUnsure();
+  else if(flashCurrentMode==='verb') retryVerbUnsure();
+  else retryUnsure();
+}
+function retryFlashFromStart(){
+  if(flashCurrentMode==='phrase') startFlashPhrase();
+  else if(flashCurrentMode==='verb') startVerbFlash();
+  else startFlash();
+}
+function backFromFlashPlay(){
+  if(flashCurrentMode==='verb') showVerbHub();
+  else showFlashTitle();
+}
 </script>
 </body>
 </html>
