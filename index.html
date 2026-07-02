@@ -123,11 +123,13 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
 .rarity-common  { background:linear-gradient(135deg,#FFF7E0,#FFEFC0)!important; border-color:#CD7F32!important; }
 .rarity-rare    { background:linear-gradient(135deg,#EEF4FF,#D0E4FF)!important; border-color:#7CB9E8!important; }
 .rarity-epic    { background:linear-gradient(135deg,#FFF0F8,#FFD6F0)!important; border-color:#D966B0!important; }
+.rarity-title   { background:linear-gradient(135deg,#FFF9E6,#FCE8A8)!important; border-color:#B8860B!important; box-shadow:0 0 0 2px #F5C542 inset!important; }
 .rarity-locked  { background:#F0F2F5!important; border-color:#E0E4EA!important; }
 .rarity-tag { display:inline-block; font-size:8px; font-weight:900; border-radius:6px; padding:1px 5px; margin-bottom:3px; }
 .rarity-tag-common { background:#CD7F32; color:#fff; }
 .rarity-tag-rare   { background:#7CB9E8; color:#fff; }
 .rarity-tag-epic   { background:linear-gradient(90deg,#D966B0,#9B59B6); color:#fff; }
+.rarity-tag-title  { background:linear-gradient(90deg,#F5C542,#B8860B); color:#fff; }
 
 /* ジャジャーンフルスクリーンアニメーション */
 @keyframes jajan-bg   { 0%{opacity:0} 10%{opacity:1} 80%{opacity:1} 100%{opacity:0} }
@@ -401,9 +403,16 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
   </div>
   <p style="font-size:12px;color:#5A7A9F;margin-bottom:12px;">きそくどうし・ふきそくどうしの げんざいけい・かこけい・かこぶんし・げんざいぶんし（-ing）をまなぼう！　<span id="verb-count" style="color:#0D9488;font-weight:700;"></span>語収録</p>
 
+  <div style="background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1.5px solid #F59E0B;border-radius:16px;padding:14px;margin-bottom:14px;text-align:center;">
+    <p style="font-size:11px;color:#B45309;font-weight:700;margin-bottom:4px;">👑 げんざいの称号</p>
+    <p style="font-size:22px;font-weight:900;color:#1A2E52;" id="verb-title-name"></p>
+    <div class="progress-bar-bg" style="margin:8px 0 4px;"><div class="progress-bar" id="verb-title-bar" style="background:linear-gradient(90deg,#F59E0B,#B45309);"></div></div>
+    <p style="font-size:11px;color:#92400E;font-weight:700;" id="verb-title-next"></p>
+  </div>
+
   <button class="mode-card" style="background:linear-gradient(135deg,#0D9488,#0F766E);" onclick="startVerbQuiz()">
     <span class="mode-icon">❓</span>
-    <div class="mode-info"><h3 style="color:#fff;">4択かつようクイズ</h3><p style="color:#CCFBF1;">かこけい・かこぶんし・げんざいぶんしをあてよう！</p></div>
+    <div class="mode-info"><h3 style="color:#fff;">かつようチャレンジ</h3><p style="color:#CCFBF1;">かこけい・かこぶんし・げんざいぶんしをあてよう！</p></div>
   </button>
   <button class="mode-card" style="background:linear-gradient(135deg,#F59E0B,#B45309);" onclick="startVerbSort()">
     <span class="mode-icon">🔀</span>
@@ -921,10 +930,10 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
   <button onclick="showTitle()" style="width:100%;background:#F0F4FF;color:#1A2E52;border:1.5px solid #BFC8E0;border-radius:22px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;">🏠 トップページにもどる</button>
 </div>
 
-<!-- 4択かつようクイズ画面 -->
+<!-- かつようチャレンジ画面 -->
 <div id="screen-verb-quiz" style="display:none;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <span style="background:linear-gradient(135deg,#0D9488,#0F766E);color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;">🔤 かつようクイズ</span>
+    <span style="background:linear-gradient(135deg,#0D9488,#0F766E);color:#fff;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:700;">🔤 かつようチャレンジ</span>
     <div style="display:flex;align-items:center;gap:10px;">
       <span style="font-size:13px;color:#5A7A9F;font-weight:700;" id="vq-progress"></span>
       <button onclick="quitVerbToTop()" style="background:#FFF0F0;color:#E05050;border:1.5px solid #F0B0B0;border-radius:16px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🏠 やめる</button>
@@ -934,7 +943,7 @@ body{font-family:'BIZ UDPGothic','Hiragino Maru Gothic Pro',sans-serif;min-heigh
 
   <div style="background:linear-gradient(135deg,#CCFBF1,#99F6E4);border-radius:16px;padding:14px;margin-bottom:12px;text-align:center;border:1.5px solid #0D9488;">
     <p style="font-size:11px;font-weight:700;color:#0F766E;margin-bottom:4px;" id="vq-type-badge"></p>
-    <p style="font-size:26px;font-weight:900;color:#1A2E52;cursor:pointer;" id="vq-base" onclick="speak(VERB_QUESTIONS[vqIdx].q.base)">👆 きいてみよう</p>
+    <p style="font-size:26px;font-weight:900;color:#1A2E52;cursor:pointer;" id="vq-base" onclick="speakVQPrompt()">👆 きいてみよう</p>
     <p style="font-size:13px;color:#0F766E;font-weight:700;" id="vq-ja"></p>
   </div>
   <p style="font-size:14px;font-weight:900;color:#1A2E52;margin-bottom:8px;text-align:center;" id="vq-question"></p>
@@ -1439,7 +1448,7 @@ const PHRASE_QUESTIONS=[{"phrase":"go ( )","ja":"つりにいく","keyword":"fis
 {"phrase":"play with ( )","ja":"じぶんのいぬとあそぶ","keyword":"my dog","keyword_ja":"じぶんのいぬ","options":["my dog","my cat","my friend","my sister"],"full":"play with my dog","category":"動物"},
 {"phrase":"throw ( )","ja":"ボールをなげる","keyword":"a ball","keyword_ja":"ボール","options":["a ball","a kite","a flag","a stone"],"full":"throw a ball","category":"動物"},
 {"phrase":"wag ( )","ja":"しっぽをふる","keyword":"a tail","keyword_ja":"しっぽ","options":["a tail","its ears","its head","a flag"],"full":"wag a tail","category":"動物"}];
-const VERBS=[{"base":"play","ja":"あそぶ","type":"regular","past":"played","pp":"played","ing":"playing"},{"base":"walk","ja":"あるく","type":"regular","past":"walked","pp":"walked","ing":"walking"},{"base":"watch","ja":"みる","type":"regular","past":"watched","pp":"watched","ing":"watching"},{"base":"want","ja":"ほしい","type":"regular","past":"wanted","pp":"wanted","ing":"wanting"},{"base":"need","ja":"ひつようとする","type":"regular","past":"needed","pp":"needed","ing":"needing"},{"base":"help","ja":"たすける","type":"regular","past":"helped","pp":"helped","ing":"helping"},{"base":"wash","ja":"あらう","type":"regular","past":"washed","pp":"washed","ing":"washing"},{"base":"cook","ja":"りょうりする","type":"regular","past":"cooked","pp":"cooked","ing":"cooking"},{"base":"clean","ja":"そうじする","type":"regular","past":"cleaned","pp":"cleaned","ing":"cleaning"},{"base":"listen","ja":"きく","type":"regular","past":"listened","pp":"listened","ing":"listening"},{"base":"talk","ja":"はなす","type":"regular","past":"talked","pp":"talked","ing":"talking"},{"base":"call","ja":"でんわする・よぶ","type":"regular","past":"called","pp":"called","ing":"calling"},{"base":"visit","ja":"たずねる","type":"regular","past":"visited","pp":"visited","ing":"visiting"},{"base":"study","ja":"べんきょうする","type":"regular","past":"studied","pp":"studied","ing":"studying"},{"base":"stay","ja":"とどまる","type":"regular","past":"stayed","pp":"stayed","ing":"staying"},{"base":"arrive","ja":"とうちゃくする","type":"regular","past":"arrived","pp":"arrived","ing":"arriving"},{"base":"dance","ja":"おどる","type":"regular","past":"danced","pp":"danced","ing":"dancing"},{"base":"jump","ja":"とぶ","type":"regular","past":"jumped","pp":"jumped","ing":"jumping"},{"base":"climb","ja":"のぼる","type":"regular","past":"climbed","pp":"climbed","ing":"climbing"},{"base":"paint","ja":"えをかく・ぬる","type":"regular","past":"painted","pp":"painted","ing":"painting"},{"base":"brush","ja":"みがく・ブラシをかける","type":"regular","past":"brushed","pp":"brushed","ing":"brushing"},{"base":"kick","ja":"ける","type":"regular","past":"kicked","pp":"kicked","ing":"kicking"},{"base":"pull","ja":"ひく","type":"regular","past":"pulled","pp":"pulled","ing":"pulling"},{"base":"push","ja":"おす","type":"regular","past":"pushed","pp":"pushed","ing":"pushing"},{"base":"open","ja":"あける","type":"regular","past":"opened","pp":"opened","ing":"opening"},{"base":"close","ja":"しめる","type":"regular","past":"closed","pp":"closed","ing":"closing"},{"base":"ask","ja":"たずねる・きく","type":"regular","past":"asked","pp":"asked","ing":"asking"},{"base":"answer","ja":"こたえる","type":"regular","past":"answered","pp":"answered","ing":"answering"},{"base":"learn","ja":"まなぶ","type":"regular","past":"learned","pp":"learned","ing":"learning"},{"base":"work","ja":"はたらく","type":"regular","past":"worked","pp":"worked","ing":"working"},{"base":"live","ja":"すむ","type":"regular","past":"lived","pp":"lived","ing":"living"},{"base":"love","ja":"あいする","type":"regular","past":"loved","pp":"loved","ing":"loving"},{"base":"like","ja":"すき","type":"regular","past":"liked","pp":"liked","ing":"liking"},{"base":"enjoy","ja":"たのしむ","type":"regular","past":"enjoyed","pp":"enjoyed","ing":"enjoying"},{"base":"practice","ja":"れんしゅうする","type":"regular","past":"practiced","pp":"practiced","ing":"practicing"},{"base":"finish","ja":"おわる","type":"regular","past":"finished","pp":"finished","ing":"finishing"},{"base":"start","ja":"はじめる","type":"regular","past":"started","pp":"started","ing":"starting"},{"base":"stop","ja":"とめる・とまる","type":"regular","past":"stopped","pp":"stopped","ing":"stopping"},{"base":"plan","ja":"けいかくする","type":"regular","past":"planned","pp":"planned","ing":"planning"},{"base":"carry","ja":"はこぶ","type":"regular","past":"carried","pp":"carried","ing":"carrying"},{"base":"cry","ja":"なく","type":"regular","past":"cried","pp":"cried","ing":"crying"},{"base":"try","ja":"こころみる","type":"regular","past":"tried","pp":"tried","ing":"trying"},{"base":"worry","ja":"しんぱいする","type":"regular","past":"worried","pp":"worried","ing":"worrying"},{"base":"smile","ja":"ほほえむ","type":"regular","past":"smiled","pp":"smiled","ing":"smiling"},{"base":"laugh","ja":"わらう","type":"regular","past":"laughed","pp":"laughed","ing":"laughing"},{"base":"go","ja":"いく","type":"irregular","past":"went","pp":"gone","ing":"going"},{"base":"come","ja":"くる","type":"irregular","past":"came","pp":"come","ing":"coming"},{"base":"eat","ja":"たべる","type":"irregular","past":"ate","pp":"eaten","ing":"eating"},{"base":"drink","ja":"のむ","type":"irregular","past":"drank","pp":"drunk","ing":"drinking"},{"base":"see","ja":"みる","type":"irregular","past":"saw","pp":"seen","ing":"seeing"},{"base":"do","ja":"する","type":"irregular","past":"did","pp":"done","ing":"doing"},{"base":"make","ja":"つくる","type":"irregular","past":"made","pp":"made","ing":"making"},{"base":"take","ja":"とる","type":"irregular","past":"took","pp":"taken","ing":"taking"},{"base":"give","ja":"あげる","type":"irregular","past":"gave","pp":"given","ing":"giving"},{"base":"get","ja":"える・てにいれる","type":"irregular","past":"got","pp":"gotten","ing":"getting"},{"base":"have","ja":"もつ","type":"irregular","past":"had","pp":"had","ing":"having"},{"base":"know","ja":"しっている","type":"irregular","past":"knew","pp":"known","ing":"knowing"},{"base":"think","ja":"おもう","type":"irregular","past":"thought","pp":"thought","ing":"thinking"},{"base":"buy","ja":"かう","type":"irregular","past":"bought","pp":"bought","ing":"buying"},{"base":"bring","ja":"もってくる","type":"irregular","past":"brought","pp":"brought","ing":"bringing"},{"base":"teach","ja":"おしえる","type":"irregular","past":"taught","pp":"taught","ing":"teaching"},{"base":"catch","ja":"つかまえる","type":"irregular","past":"caught","pp":"caught","ing":"catching"},{"base":"find","ja":"みつける","type":"irregular","past":"found","pp":"found","ing":"finding"},{"base":"feel","ja":"かんじる","type":"irregular","past":"felt","pp":"felt","ing":"feeling"},{"base":"keep","ja":"たもつ","type":"irregular","past":"kept","pp":"kept","ing":"keeping"},{"base":"sleep","ja":"ねる","type":"irregular","past":"slept","pp":"slept","ing":"sleeping"},{"base":"leave","ja":"でかける・のこす","type":"irregular","past":"left","pp":"left","ing":"leaving"},{"base":"meet","ja":"あう","type":"irregular","past":"met","pp":"met","ing":"meeting"},{"base":"read","ja":"よむ","type":"irregular","past":"read","pp":"read","ing":"reading"},{"base":"say","ja":"いう","type":"irregular","past":"said","pp":"said","ing":"saying"},{"base":"sit","ja":"すわる","type":"irregular","past":"sat","pp":"sat","ing":"sitting"},{"base":"stand","ja":"たつ","type":"irregular","past":"stood","pp":"stood","ing":"standing"},{"base":"run","ja":"はしる","type":"irregular","past":"ran","pp":"run","ing":"running"},{"base":"swim","ja":"およぐ","type":"irregular","past":"swam","pp":"swum","ing":"swimming"},{"base":"sing","ja":"うたう","type":"irregular","past":"sang","pp":"sung","ing":"singing"},{"base":"drive","ja":"うんてんする","type":"irregular","past":"drove","pp":"driven","ing":"driving"},{"base":"ride","ja":"のる","type":"irregular","past":"rode","pp":"ridden","ing":"riding"},{"base":"write","ja":"かく","type":"irregular","past":"wrote","pp":"written","ing":"writing"},{"base":"speak","ja":"はなす","type":"irregular","past":"spoke","pp":"spoken","ing":"speaking"},{"base":"break","ja":"こわす","type":"irregular","past":"broke","pp":"broken","ing":"breaking"},{"base":"choose","ja":"えらぶ","type":"irregular","past":"chose","pp":"chosen","ing":"choosing"},{"base":"wear","ja":"きる","type":"irregular","past":"wore","pp":"worn","ing":"wearing"},{"base":"fly","ja":"とぶ","type":"irregular","past":"flew","pp":"flown","ing":"flying"},{"base":"grow","ja":"そだつ・そだてる","type":"irregular","past":"grew","pp":"grown","ing":"growing"},{"base":"throw","ja":"なげる","type":"irregular","past":"threw","pp":"thrown","ing":"throwing"},{"base":"draw","ja":"えをかく","type":"irregular","past":"drew","pp":"drawn","ing":"drawing"},{"base":"fall","ja":"おちる","type":"irregular","past":"fell","pp":"fallen","ing":"falling"},{"base":"tell","ja":"つたえる","type":"irregular","past":"told","pp":"told","ing":"telling"},{"base":"sell","ja":"うる","type":"irregular","past":"sold","pp":"sold","ing":"selling"},{"base":"send","ja":"おくる","type":"irregular","past":"sent","pp":"sent","ing":"sending"},{"base":"spend","ja":"つかう・すごす","type":"irregular","past":"spent","pp":"spent","ing":"spending"},{"base":"build","ja":"たてる","type":"irregular","past":"built","pp":"built","ing":"building"},{"base":"hold","ja":"もつ","type":"irregular","past":"held","pp":"held","ing":"holding"},{"base":"win","ja":"かつ","type":"irregular","past":"won","pp":"won","ing":"winning"},{"base":"begin","ja":"はじまる","type":"irregular","past":"began","pp":"begun","ing":"beginning"},{"base":"become","ja":"なる","type":"irregular","past":"became","pp":"become","ing":"becoming"},{"base":"forget","ja":"わすれる","type":"irregular","past":"forgot","pp":"forgotten","ing":"forgetting"},{"base":"hit","ja":"うつ・あたる","type":"irregular","past":"hit","pp":"hit","ing":"hitting"},{"base":"cut","ja":"きる","type":"irregular","past":"cut","pp":"cut","ing":"cutting"},{"base":"put","ja":"おく","type":"irregular","past":"put","pp":"put","ing":"putting"},{"base":"let","ja":"させる","type":"irregular","past":"let","pp":"let","ing":"letting"},{"base":"lose","ja":"なくす・まける","type":"irregular","past":"lost","pp":"lost","ing":"losing"},{"base":"pay","ja":"はらう","type":"irregular","past":"paid","pp":"paid","ing":"paying"},{"base":"hear","ja":"きこえる","type":"irregular","past":"heard","pp":"heard","ing":"hearing"},{"base":"understand","ja":"りかいする","type":"irregular","past":"understood","pp":"understood","ing":"understanding"},{"base":"wake","ja":"めがさめる","type":"irregular","past":"woke","pp":"woken","ing":"waking"},{"base":"shut","ja":"しめる","type":"irregular","past":"shut","pp":"shut","ing":"shutting"},{"base":"rise","ja":"のぼる","type":"irregular","past":"rose","pp":"risen","ing":"rising"},{"base":"show","ja":"みせる","type":"irregular","past":"showed","pp":"shown","ing":"showing"},{"base":"ring","ja":"なる","type":"irregular","past":"rang","pp":"rung","ing":"ringing"},{"base":"fight","ja":"たたかう","type":"irregular","past":"fought","pp":"fought","ing":"fighting"},{"base":"lead","ja":"みちびく","type":"irregular","past":"led","pp":"led","ing":"leading"}];
+const VERBS=[{"base": "play", "ja": "あそぶ", "type": "regular", "past": "played", "pp": "played", "ing": "playing", "past_ja": "あそんだ", "pp_ja": "あそばれた", "ing_ja": "あそんでいる"}, {"base": "walk", "ja": "あるく", "type": "regular", "past": "walked", "pp": "walked", "ing": "walking", "past_ja": "あるいた", "pp_ja": "あるかれた", "ing_ja": "あるいている"}, {"base": "watch", "ja": "みる", "type": "regular", "past": "watched", "pp": "watched", "ing": "watching", "past_ja": "みた", "pp_ja": "みられた", "ing_ja": "みている"}, {"base": "want", "ja": "ほしい", "type": "regular", "past": "wanted", "pp": "wanted", "ing": "wanting", "past_ja": "ほしかった", "pp_ja": "ほしがられた", "ing_ja": "ほしがっている"}, {"base": "need", "ja": "ひつようとする", "type": "regular", "past": "needed", "pp": "needed", "ing": "needing", "past_ja": "ひつようとした", "pp_ja": "ひつようとされた", "ing_ja": "ひつようとしている"}, {"base": "help", "ja": "たすける", "type": "regular", "past": "helped", "pp": "helped", "ing": "helping", "past_ja": "たすけた", "pp_ja": "たすけられた", "ing_ja": "たすけている"}, {"base": "wash", "ja": "あらう", "type": "regular", "past": "washed", "pp": "washed", "ing": "washing", "past_ja": "あらった", "pp_ja": "あらわれた", "ing_ja": "あらっている"}, {"base": "cook", "ja": "りょうりする", "type": "regular", "past": "cooked", "pp": "cooked", "ing": "cooking", "past_ja": "りょうりした", "pp_ja": "りょうりされた", "ing_ja": "りょうりしている"}, {"base": "clean", "ja": "そうじする", "type": "regular", "past": "cleaned", "pp": "cleaned", "ing": "cleaning", "past_ja": "そうじした", "pp_ja": "そうじされた", "ing_ja": "そうじしている"}, {"base": "listen", "ja": "きく", "type": "regular", "past": "listened", "pp": "listened", "ing": "listening", "past_ja": "きいた", "pp_ja": "きかれた", "ing_ja": "きいている"}, {"base": "talk", "ja": "はなす", "type": "regular", "past": "talked", "pp": "talked", "ing": "talking", "past_ja": "はなした", "pp_ja": "はなされた", "ing_ja": "はなしている"}, {"base": "call", "ja": "でんわする・よぶ", "type": "regular", "past": "called", "pp": "called", "ing": "calling", "past_ja": "でんわした", "pp_ja": "でんわされた", "ing_ja": "でんわしている"}, {"base": "visit", "ja": "たずねる", "type": "regular", "past": "visited", "pp": "visited", "ing": "visiting", "past_ja": "たずねた", "pp_ja": "たずねられた", "ing_ja": "たずねている"}, {"base": "study", "ja": "べんきょうする", "type": "regular", "past": "studied", "pp": "studied", "ing": "studying", "past_ja": "べんきょうした", "pp_ja": "べんきょうされた", "ing_ja": "べんきょうしている"}, {"base": "stay", "ja": "とどまる", "type": "regular", "past": "stayed", "pp": "stayed", "ing": "staying", "past_ja": "とどまった", "pp_ja": "とどまられた", "ing_ja": "とどまっている"}, {"base": "arrive", "ja": "とうちゃくする", "type": "regular", "past": "arrived", "pp": "arrived", "ing": "arriving", "past_ja": "とうちゃくした", "pp_ja": "とうちゃくされた", "ing_ja": "とうちゃくしている"}, {"base": "dance", "ja": "おどる", "type": "regular", "past": "danced", "pp": "danced", "ing": "dancing", "past_ja": "おどった", "pp_ja": "おどられた", "ing_ja": "おどっている"}, {"base": "jump", "ja": "とぶ", "type": "regular", "past": "jumped", "pp": "jumped", "ing": "jumping", "past_ja": "とんだ", "pp_ja": "とばれた", "ing_ja": "とんでいる"}, {"base": "climb", "ja": "のぼる", "type": "regular", "past": "climbed", "pp": "climbed", "ing": "climbing", "past_ja": "のぼった", "pp_ja": "のぼられた", "ing_ja": "のぼっている"}, {"base": "paint", "ja": "えをかく・ぬる", "type": "regular", "past": "painted", "pp": "painted", "ing": "painting", "past_ja": "えをかいた", "pp_ja": "えがかかれた", "ing_ja": "えをかいている"}, {"base": "brush", "ja": "みがく・ブラシをかける", "type": "regular", "past": "brushed", "pp": "brushed", "ing": "brushing", "past_ja": "みがいた", "pp_ja": "みがかれた", "ing_ja": "みがいている"}, {"base": "kick", "ja": "ける", "type": "regular", "past": "kicked", "pp": "kicked", "ing": "kicking", "past_ja": "けった", "pp_ja": "けられた", "ing_ja": "けっている"}, {"base": "pull", "ja": "ひく", "type": "regular", "past": "pulled", "pp": "pulled", "ing": "pulling", "past_ja": "ひいた", "pp_ja": "ひかれた", "ing_ja": "ひいている"}, {"base": "push", "ja": "おす", "type": "regular", "past": "pushed", "pp": "pushed", "ing": "pushing", "past_ja": "おした", "pp_ja": "おされた", "ing_ja": "おしている"}, {"base": "open", "ja": "あける", "type": "regular", "past": "opened", "pp": "opened", "ing": "opening", "past_ja": "あけた", "pp_ja": "あけられた", "ing_ja": "あけている"}, {"base": "close", "ja": "しめる", "type": "regular", "past": "closed", "pp": "closed", "ing": "closing", "past_ja": "しめた", "pp_ja": "しめられた", "ing_ja": "しめている"}, {"base": "ask", "ja": "たずねる・きく", "type": "regular", "past": "asked", "pp": "asked", "ing": "asking", "past_ja": "たずねた", "pp_ja": "たずねられた", "ing_ja": "たずねている"}, {"base": "answer", "ja": "こたえる", "type": "regular", "past": "answered", "pp": "answered", "ing": "answering", "past_ja": "こたえた", "pp_ja": "こたえられた", "ing_ja": "こたえている"}, {"base": "learn", "ja": "まなぶ", "type": "regular", "past": "learned", "pp": "learned", "ing": "learning", "past_ja": "まなんだ", "pp_ja": "まなばれた", "ing_ja": "まなんでいる"}, {"base": "work", "ja": "はたらく", "type": "regular", "past": "worked", "pp": "worked", "ing": "working", "past_ja": "はたらいた", "pp_ja": "はたらかれた", "ing_ja": "はたらいている"}, {"base": "live", "ja": "すむ", "type": "regular", "past": "lived", "pp": "lived", "ing": "living", "past_ja": "すんだ", "pp_ja": "すまれた", "ing_ja": "すんでいる"}, {"base": "love", "ja": "あいする", "type": "regular", "past": "loved", "pp": "loved", "ing": "loving", "past_ja": "あいした", "pp_ja": "あいされた", "ing_ja": "あいしている"}, {"base": "like", "ja": "すき", "type": "regular", "past": "liked", "pp": "liked", "ing": "liking", "past_ja": "すきだった", "pp_ja": "このまれた", "ing_ja": "すきになっている"}, {"base": "enjoy", "ja": "たのしむ", "type": "regular", "past": "enjoyed", "pp": "enjoyed", "ing": "enjoying", "past_ja": "たのしんだ", "pp_ja": "たのしまれた", "ing_ja": "たのしんでいる"}, {"base": "practice", "ja": "れんしゅうする", "type": "regular", "past": "practiced", "pp": "practiced", "ing": "practicing", "past_ja": "れんしゅうした", "pp_ja": "れんしゅうされた", "ing_ja": "れんしゅうしている"}, {"base": "finish", "ja": "おわる", "type": "regular", "past": "finished", "pp": "finished", "ing": "finishing", "past_ja": "おわった", "pp_ja": "おわられた", "ing_ja": "おわっている"}, {"base": "start", "ja": "はじめる", "type": "regular", "past": "started", "pp": "started", "ing": "starting", "past_ja": "はじめた", "pp_ja": "はじめられた", "ing_ja": "はじめている"}, {"base": "stop", "ja": "とめる・とまる", "type": "regular", "past": "stopped", "pp": "stopped", "ing": "stopping", "past_ja": "とめた", "pp_ja": "とめられた", "ing_ja": "とめている"}, {"base": "plan", "ja": "けいかくする", "type": "regular", "past": "planned", "pp": "planned", "ing": "planning", "past_ja": "けいかくした", "pp_ja": "けいかくされた", "ing_ja": "けいかくしている"}, {"base": "carry", "ja": "はこぶ", "type": "regular", "past": "carried", "pp": "carried", "ing": "carrying", "past_ja": "はこんだ", "pp_ja": "はこばれた", "ing_ja": "はこんでいる"}, {"base": "cry", "ja": "なく", "type": "regular", "past": "cried", "pp": "cried", "ing": "crying", "past_ja": "ないた", "pp_ja": "なかれた", "ing_ja": "ないている"}, {"base": "try", "ja": "こころみる", "type": "regular", "past": "tried", "pp": "tried", "ing": "trying", "past_ja": "こころみた", "pp_ja": "こころみられた", "ing_ja": "こころみている"}, {"base": "worry", "ja": "しんぱいする", "type": "regular", "past": "worried", "pp": "worried", "ing": "worrying", "past_ja": "しんぱいした", "pp_ja": "しんぱいされた", "ing_ja": "しんぱいしている"}, {"base": "smile", "ja": "ほほえむ", "type": "regular", "past": "smiled", "pp": "smiled", "ing": "smiling", "past_ja": "ほほえんだ", "pp_ja": "ほほえまれた", "ing_ja": "ほほえんでいる"}, {"base": "laugh", "ja": "わらう", "type": "regular", "past": "laughed", "pp": "laughed", "ing": "laughing", "past_ja": "わらった", "pp_ja": "わらわれた", "ing_ja": "わらっている"}, {"base": "go", "ja": "いく", "type": "irregular", "past": "went", "pp": "gone", "ing": "going", "past_ja": "いった", "pp_ja": "いかれた", "ing_ja": "いっている"}, {"base": "come", "ja": "くる", "type": "irregular", "past": "came", "pp": "come", "ing": "coming", "past_ja": "きた", "pp_ja": "こられた", "ing_ja": "きている"}, {"base": "eat", "ja": "たべる", "type": "irregular", "past": "ate", "pp": "eaten", "ing": "eating", "past_ja": "たべた", "pp_ja": "たべられた", "ing_ja": "たべている"}, {"base": "drink", "ja": "のむ", "type": "irregular", "past": "drank", "pp": "drunk", "ing": "drinking", "past_ja": "のんだ", "pp_ja": "のまれた", "ing_ja": "のんでいる"}, {"base": "see", "ja": "みる", "type": "irregular", "past": "saw", "pp": "seen", "ing": "seeing", "past_ja": "みた", "pp_ja": "みられた", "ing_ja": "みている"}, {"base": "do", "ja": "する", "type": "irregular", "past": "did", "pp": "done", "ing": "doing", "past_ja": "した", "pp_ja": "された", "ing_ja": "している"}, {"base": "make", "ja": "つくる", "type": "irregular", "past": "made", "pp": "made", "ing": "making", "past_ja": "つくった", "pp_ja": "つくられた", "ing_ja": "つくっている"}, {"base": "take", "ja": "とる", "type": "irregular", "past": "took", "pp": "taken", "ing": "taking", "past_ja": "とった", "pp_ja": "とられた", "ing_ja": "とっている"}, {"base": "give", "ja": "あげる", "type": "irregular", "past": "gave", "pp": "given", "ing": "giving", "past_ja": "あげた", "pp_ja": "あげられた", "ing_ja": "あげている"}, {"base": "get", "ja": "える・てにいれる", "type": "irregular", "past": "got", "pp": "gotten", "ing": "getting", "past_ja": "てにいれた", "pp_ja": "てにいれられた", "ing_ja": "てにいれている"}, {"base": "have", "ja": "もつ", "type": "irregular", "past": "had", "pp": "had", "ing": "having", "past_ja": "もった", "pp_ja": "もたれた", "ing_ja": "もっている"}, {"base": "know", "ja": "しっている", "type": "irregular", "past": "knew", "pp": "known", "ing": "knowing", "past_ja": "しっていた", "pp_ja": "しられた", "ing_ja": "しっている"}, {"base": "think", "ja": "おもう", "type": "irregular", "past": "thought", "pp": "thought", "ing": "thinking", "past_ja": "おもった", "pp_ja": "おもわれた", "ing_ja": "おもっている"}, {"base": "buy", "ja": "かう", "type": "irregular", "past": "bought", "pp": "bought", "ing": "buying", "past_ja": "かった", "pp_ja": "かわれた", "ing_ja": "かっている"}, {"base": "bring", "ja": "もってくる", "type": "irregular", "past": "brought", "pp": "brought", "ing": "bringing", "past_ja": "もってきた", "pp_ja": "もってこられた", "ing_ja": "もってきている"}, {"base": "teach", "ja": "おしえる", "type": "irregular", "past": "taught", "pp": "taught", "ing": "teaching", "past_ja": "おしえた", "pp_ja": "おしえられた", "ing_ja": "おしえている"}, {"base": "catch", "ja": "つかまえる", "type": "irregular", "past": "caught", "pp": "caught", "ing": "catching", "past_ja": "つかまえた", "pp_ja": "つかまえられた", "ing_ja": "つかまえている"}, {"base": "find", "ja": "みつける", "type": "irregular", "past": "found", "pp": "found", "ing": "finding", "past_ja": "みつけた", "pp_ja": "みつけられた", "ing_ja": "みつけている"}, {"base": "feel", "ja": "かんじる", "type": "irregular", "past": "felt", "pp": "felt", "ing": "feeling", "past_ja": "かんじた", "pp_ja": "かんじられた", "ing_ja": "かんじている"}, {"base": "keep", "ja": "たもつ", "type": "irregular", "past": "kept", "pp": "kept", "ing": "keeping", "past_ja": "たもった", "pp_ja": "たもたれた", "ing_ja": "たもっている"}, {"base": "sleep", "ja": "ねる", "type": "irregular", "past": "slept", "pp": "slept", "ing": "sleeping", "past_ja": "ねた", "pp_ja": "ねられた", "ing_ja": "ねている"}, {"base": "leave", "ja": "でかける・のこす", "type": "irregular", "past": "left", "pp": "left", "ing": "leaving", "past_ja": "でかけた", "pp_ja": "でかけられた", "ing_ja": "でかけている"}, {"base": "meet", "ja": "あう", "type": "irregular", "past": "met", "pp": "met", "ing": "meeting", "past_ja": "あった", "pp_ja": "あわれた", "ing_ja": "あっている"}, {"base": "read", "ja": "よむ", "type": "irregular", "past": "read", "pp": "read", "ing": "reading", "past_ja": "よんだ", "pp_ja": "よまれた", "ing_ja": "よんでいる"}, {"base": "say", "ja": "いう", "type": "irregular", "past": "said", "pp": "said", "ing": "saying", "past_ja": "いった", "pp_ja": "いわれた", "ing_ja": "いっている"}, {"base": "sit", "ja": "すわる", "type": "irregular", "past": "sat", "pp": "sat", "ing": "sitting", "past_ja": "すわった", "pp_ja": "すわられた", "ing_ja": "すわっている"}, {"base": "stand", "ja": "たつ", "type": "irregular", "past": "stood", "pp": "stood", "ing": "standing", "past_ja": "たった", "pp_ja": "たたれた", "ing_ja": "たっている"}, {"base": "run", "ja": "はしる", "type": "irregular", "past": "ran", "pp": "run", "ing": "running", "past_ja": "はしった", "pp_ja": "はしられた", "ing_ja": "はしっている"}, {"base": "swim", "ja": "およぐ", "type": "irregular", "past": "swam", "pp": "swum", "ing": "swimming", "past_ja": "およいだ", "pp_ja": "およがれた", "ing_ja": "およいでいる"}, {"base": "sing", "ja": "うたう", "type": "irregular", "past": "sang", "pp": "sung", "ing": "singing", "past_ja": "うたった", "pp_ja": "うたわれた", "ing_ja": "うたっている"}, {"base": "drive", "ja": "うんてんする", "type": "irregular", "past": "drove", "pp": "driven", "ing": "driving", "past_ja": "うんてんした", "pp_ja": "うんてんされた", "ing_ja": "うんてんしている"}, {"base": "ride", "ja": "のる", "type": "irregular", "past": "rode", "pp": "ridden", "ing": "riding", "past_ja": "のった", "pp_ja": "のられた", "ing_ja": "のっている"}, {"base": "write", "ja": "かく", "type": "irregular", "past": "wrote", "pp": "written", "ing": "writing", "past_ja": "かいた", "pp_ja": "かかれた", "ing_ja": "かいている"}, {"base": "speak", "ja": "はなす", "type": "irregular", "past": "spoke", "pp": "spoken", "ing": "speaking", "past_ja": "はなした", "pp_ja": "はなされた", "ing_ja": "はなしている"}, {"base": "break", "ja": "こわす", "type": "irregular", "past": "broke", "pp": "broken", "ing": "breaking", "past_ja": "こわした", "pp_ja": "こわされた", "ing_ja": "こわしている"}, {"base": "choose", "ja": "えらぶ", "type": "irregular", "past": "chose", "pp": "chosen", "ing": "choosing", "past_ja": "えらんだ", "pp_ja": "えらばれた", "ing_ja": "えらんでいる"}, {"base": "wear", "ja": "きる", "type": "irregular", "past": "wore", "pp": "worn", "ing": "wearing", "past_ja": "きた", "pp_ja": "きられた", "ing_ja": "きている"}, {"base": "fly", "ja": "とぶ", "type": "irregular", "past": "flew", "pp": "flown", "ing": "flying", "past_ja": "とんだ", "pp_ja": "とばれた", "ing_ja": "とんでいる"}, {"base": "grow", "ja": "そだつ・そだてる", "type": "irregular", "past": "grew", "pp": "grown", "ing": "growing", "past_ja": "そだった", "pp_ja": "そだてられた", "ing_ja": "そだっている"}, {"base": "throw", "ja": "なげる", "type": "irregular", "past": "threw", "pp": "thrown", "ing": "throwing", "past_ja": "なげた", "pp_ja": "なげられた", "ing_ja": "なげている"}, {"base": "draw", "ja": "えをかく", "type": "irregular", "past": "drew", "pp": "drawn", "ing": "drawing", "past_ja": "えをかいた", "pp_ja": "えがかかれた", "ing_ja": "えをかいている"}, {"base": "fall", "ja": "おちる", "type": "irregular", "past": "fell", "pp": "fallen", "ing": "falling", "past_ja": "おちた", "pp_ja": "おちられた", "ing_ja": "おちている"}, {"base": "tell", "ja": "つたえる", "type": "irregular", "past": "told", "pp": "told", "ing": "telling", "past_ja": "つたえた", "pp_ja": "つたえられた", "ing_ja": "つたえている"}, {"base": "sell", "ja": "うる", "type": "irregular", "past": "sold", "pp": "sold", "ing": "selling", "past_ja": "うった", "pp_ja": "うられた", "ing_ja": "うっている"}, {"base": "send", "ja": "おくる", "type": "irregular", "past": "sent", "pp": "sent", "ing": "sending", "past_ja": "おくった", "pp_ja": "おくられた", "ing_ja": "おくっている"}, {"base": "spend", "ja": "つかう・すごす", "type": "irregular", "past": "spent", "pp": "spent", "ing": "spending", "past_ja": "つかった", "pp_ja": "つかわれた", "ing_ja": "つかっている"}, {"base": "build", "ja": "たてる", "type": "irregular", "past": "built", "pp": "built", "ing": "building", "past_ja": "たてた", "pp_ja": "たてられた", "ing_ja": "たてている"}, {"base": "hold", "ja": "もつ", "type": "irregular", "past": "held", "pp": "held", "ing": "holding", "past_ja": "もった", "pp_ja": "もたれた", "ing_ja": "もっている"}, {"base": "win", "ja": "かつ", "type": "irregular", "past": "won", "pp": "won", "ing": "winning", "past_ja": "かった", "pp_ja": "かたれた", "ing_ja": "かっている"}, {"base": "begin", "ja": "はじまる", "type": "irregular", "past": "began", "pp": "begun", "ing": "beginning", "past_ja": "はじまった", "pp_ja": "はじめられた", "ing_ja": "はじまっている"}, {"base": "become", "ja": "なる", "type": "irregular", "past": "became", "pp": "become", "ing": "becoming", "past_ja": "なった", "pp_ja": "なられた", "ing_ja": "なっている"}, {"base": "forget", "ja": "わすれる", "type": "irregular", "past": "forgot", "pp": "forgotten", "ing": "forgetting", "past_ja": "わすれた", "pp_ja": "わすれられた", "ing_ja": "わすれている"}, {"base": "hit", "ja": "うつ・あたる", "type": "irregular", "past": "hit", "pp": "hit", "ing": "hitting", "past_ja": "うった", "pp_ja": "うたれた", "ing_ja": "うっている"}, {"base": "cut", "ja": "きる", "type": "irregular", "past": "cut", "pp": "cut", "ing": "cutting", "past_ja": "きった", "pp_ja": "きられた", "ing_ja": "きっている"}, {"base": "put", "ja": "おく", "type": "irregular", "past": "put", "pp": "put", "ing": "putting", "past_ja": "おいた", "pp_ja": "おかれた", "ing_ja": "おいている"}, {"base": "let", "ja": "させる", "type": "irregular", "past": "let", "pp": "let", "ing": "letting", "past_ja": "させた", "pp_ja": "させられた", "ing_ja": "させている"}, {"base": "lose", "ja": "なくす・まける", "type": "irregular", "past": "lost", "pp": "lost", "ing": "losing", "past_ja": "なくした", "pp_ja": "なくされた", "ing_ja": "なくしている"}, {"base": "pay", "ja": "はらう", "type": "irregular", "past": "paid", "pp": "paid", "ing": "paying", "past_ja": "はらった", "pp_ja": "はらわれた", "ing_ja": "はらっている"}, {"base": "hear", "ja": "きこえる", "type": "irregular", "past": "heard", "pp": "heard", "ing": "hearing", "past_ja": "きこえた", "pp_ja": "きこえられた", "ing_ja": "きこえている"}, {"base": "understand", "ja": "りかいする", "type": "irregular", "past": "understood", "pp": "understood", "ing": "understanding", "past_ja": "りかいした", "pp_ja": "りかいされた", "ing_ja": "りかいしている"}, {"base": "wake", "ja": "めがさめる", "type": "irregular", "past": "woke", "pp": "woken", "ing": "waking", "past_ja": "めがさめた", "pp_ja": "めがさめられた", "ing_ja": "めがさめている"}, {"base": "shut", "ja": "しめる", "type": "irregular", "past": "shut", "pp": "shut", "ing": "shutting", "past_ja": "しめた", "pp_ja": "しめられた", "ing_ja": "しめている"}, {"base": "rise", "ja": "のぼる", "type": "irregular", "past": "rose", "pp": "risen", "ing": "rising", "past_ja": "のぼった", "pp_ja": "のぼられた", "ing_ja": "のぼっている"}, {"base": "show", "ja": "みせる", "type": "irregular", "past": "showed", "pp": "shown", "ing": "showing", "past_ja": "みせた", "pp_ja": "みせられた", "ing_ja": "みせている"}, {"base": "ring", "ja": "なる", "type": "irregular", "past": "rang", "pp": "rung", "ing": "ringing", "past_ja": "なった", "pp_ja": "なられた", "ing_ja": "なっている"}, {"base": "fight", "ja": "たたかう", "type": "irregular", "past": "fought", "pp": "fought", "ing": "fighting", "past_ja": "たたかった", "pp_ja": "たたかわれた", "ing_ja": "たたかっている"}, {"base": "lead", "ja": "みちびく", "type": "irregular", "past": "led", "pp": "led", "ing": "leading", "past_ja": "みちびいた", "pp_ja": "みちびかれた", "ing_ja": "みちびいている"}];
 const SORT_QUESTIONS = [{"ja":"わたしはまいにちがっこうへいきます。","words":["I","go","to","school","every","day."],"answer":"I go to school every day."},{"ja":"かれはサッカーがすきです。","words":["He","likes","soccer","very","much."],"answer":"He likes soccer very much."},{"ja":"わたしのおかあさんは料理が上手です。","words":["My","mother","is","a","good","cook."],"answer":"My mother is a good cook."},{"ja":"きょうはとてもあついです。","words":["It","is","very","hot","today."],"answer":"It is very hot today."},{"ja":"わたしはねこを2ひきかっています。","words":["I","have","two","cats."],"answer":"I have two cats."},{"ja":"かのじょはえいごをじょうずにはなします。","words":["She","speaks","English","well."],"answer":"She speaks English well."},{"ja":"わたしたちはこうえんでサッカーをします。","words":["We","play","soccer","in","the","park."],"answer":"We play soccer in the park."},{"ja":"このほんはとてもおもしろいです。","words":["This","book","is","very","interesting."],"answer":"This book is very interesting."},{"ja":"かれらはまいあさはやくおきます。","words":["They","get","up","early","every","morning."],"answer":"They get up early every morning."},{"ja":"わたしのいぬはとてもかわいいです。","words":["My","dog","is","very","cute."],"answer":"My dog is very cute."},{"ja":"わたしはピアノをひくことがすきです。","words":["I","like","playing","the","piano."],"answer":"I like playing the piano."},{"ja":"きょうはくもっています。","words":["It","is","cloudy","today."],"answer":"It is cloudy today."},{"ja":"わたしのちちはいしゃです。","words":["My","father","is","a","doctor."],"answer":"My father is a doctor."},{"ja":"かのじょはまいにちほんをよみます。","words":["She","reads","a","book","every","day."],"answer":"She reads a book every day."},{"ja":"わたしたちはバスでがっこうへいきます。","words":["We","go","to","school","by","bus."],"answer":"We go to school by bus."},{"ja":"かれはとても速くはしります。","words":["He","runs","very","fast."],"answer":"He runs very fast."},{"ja":"わたしのへやはとてもちいさいです。","words":["My","room","is","very","small."],"answer":"My room is very small."},{"ja":"きょうはにちようびです。","words":["Today","is","Sunday."],"answer":"Today is Sunday."},{"ja":"わたしはりんごがだいすきです。","words":["I","like","apples","very","much."],"answer":"I like apples very much."},{"ja":"かれのおとうさんはせんせいです。","words":["His","father","is","a","teacher."],"answer":"His father is a teacher."},{"ja":"わたしはまいにちえいごをべんきょうします。","words":["I","study","English","every","day."],"answer":"I study English every day."},{"ja":"かのじょはとてもやさしいひとです。","words":["She","is","a","very","kind","person."],"answer":"She is a very kind person."},{"ja":"わたしたちはうみでおよぎます。","words":["We","swim","in","the","sea."],"answer":"We swim in the sea."},{"ja":"このりょうりはとてもおいしいです。","words":["This","food","is","very","delicious."],"answer":"This food is very delicious."},{"ja":"かれはまいにちテレビをみます。","words":["He","watches","TV","every","day."],"answer":"He watches TV every day."},{"ja":"わたしのともだちはおおさかにすんでいます。","words":["My","friend","lives","in","Osaka."],"answer":"My friend lives in Osaka."},{"ja":"かのじょはあかいドレスをきています。","words":["She","is","wearing","a","red","dress."],"answer":"She is wearing a red dress."},{"ja":"わたしたちはいっしょにべんきょうします。","words":["We","study","together."],"answer":"We study together."},{"ja":"あのやまはとてもたかいです。","words":["That","mountain","is","very","high."],"answer":"That mountain is very high."},{"ja":"かれはサッカーせんしゅになりたいです。","words":["He","wants","to","be","a","soccer","player."],"answer":"He wants to be a soccer player."},{"ja":"わたしのたんじょうびは5がつ5かです。","words":["My","birthday","is","on","May","5th."],"answer":"My birthday is on May 5th."},{"ja":"これはにほんでいちばんたかいやまです。","words":["This","is","the","highest","mountain","in","Japan."],"answer":"This is the highest mountain in Japan."},{"ja":"わたしのあにはわたしよりせがたかいです。","words":["My","brother","is","taller","than","me."],"answer":"My brother is taller than me."},{"ja":"これはぜんぶのなかでいちばんかんたんなもんだいです。","words":["This","is","the","easiest","question","of","all."],"answer":"This is the easiest question of all."},{"ja":"わたしはあたまがいたいです。","words":["I","have","a","headache."],"answer":"I have a headache."},{"ja":"かのじょはおなかがいたいです。","words":["She","has","a","stomachache."],"answer":"She has a stomachache."},{"ja":"わたしはねつがあります。","words":["I","have","a","fever."],"answer":"I have a fever."},{"ja":"かれはひどいせきをしています。","words":["He","has","a","bad","cough."],"answer":"He has a bad cough."},{"ja":"わたしはじゅういになりたいです。","words":["I","want","to","be","a","vet."],"answer":"I want to be a vet."},{"ja":"かのじょはパイロットになりたいです。","words":["She","wants","to","be","a","pilot."],"answer":"She wants to be a pilot."},{"ja":"わたしのゆめはかんごしになることです。","words":["My","dream","is","to","be","a","nurse."],"answer":"My dream is to be a nurse."},{"ja":"かれはのうかではたらいています。","words":["He","works","as","a","farmer."],"answer":"He works as a farmer."},{"ja":"かのじょはカナダしゅっしんです。","words":["She","is","from","Canada."],"answer":"She is from Canada."},{"ja":"かのじょはカナダじんです。","words":["She","is","Canadian."],"answer":"She is Canadian."},{"ja":"かれはフランスごをはなします。","words":["He","speaks","French."],"answer":"He speaks French."},{"ja":"わたしのともだちはオーストラリアじんです。","words":["My","friend","is","Australian."],"answer":"My friend is Australian."},{"ja":"わたしは2じかんまえにしゅくだいをおえました。","words":["I","finished","my","homework","two","hours","ago."],"answer":"I finished my homework two hours ago."},{"ja":"わたしたちはおまつりでたのしいじかんをすごしました。","words":["We","had","a","great","time","at","the","festival."],"answer":"We had a great time at the festival."},{"ja":"かのじょはさくねんアメリカへひこうきでいきました。","words":["She","flew","to","America","last","year."],"answer":"She flew to America last year."},{"ja":"わたしはけさかぎをなくしました。","words":["I","lost","my","keys","this","morning."],"answer":"I lost my keys this morning."}];
 const STORAGE_KEY = 'eiken5_history';
 let autoSpeak=true, currentMode='all', currentCats=[];
@@ -1581,14 +1590,20 @@ const BADGES = [
   {id:'phrase_perfect_3',rarity:'epic',  group:'phrase', emoji:'💯💯', title:'フレーズ3回パーフェクト', desc:'フレーズもんだいで全問せいかいを3回',        check:c=>c.phrasePerfect>=3, prog:c=>[c.phrasePerfect,3]},
   {id:'phrase_correct_100',rarity:'rare',group:'phrase', emoji:'🎯',   title:'フレーズ100問正解',      desc:'フレーズもんだいで累計100問せいかい',        check:c=>c.phraseCorrect>=100,prog:c=>[c.phraseCorrect,100]},
   {id:'phrase_correct_300',rarity:'epic',group:'phrase', emoji:'🏆',   title:'フレーズ300問正解',      desc:'フレーズもんだいで累計300問せいかい',        check:c=>c.phraseCorrect>=300,prog:c=>[c.phraseCorrect,300]},
-  // どうしのかつよう（4択クイズ・なかまわけ・かつようカード）
+  // どうしのかつよう（かつようチャレンジ・なかまわけ・かつようカード）
   {id:'verb_first',    rarity:'common', group:'verb', emoji:'🔤',   title:'どうしちょうせん',       desc:'どうしのかつようもんだいをはじめてかんりょう', check:c=>c.verbPlays>=1},
   {id:'verb_10',       rarity:'common', group:'verb', emoji:'🔤📘', title:'どうし10回',            desc:'どうしのかつようもんだいを10回かんりょう',     check:c=>c.verbPlays>=10, prog:c=>[c.verbPlays,10]},
   {id:'verb_30',       rarity:'rare',   group:'verb', emoji:'🔤📗', title:'どうし30回',            desc:'どうしのかつようもんだいを30回かんりょう',     check:c=>c.verbPlays>=30, prog:c=>[c.verbPlays,30]},
   {id:'verb_perfect',  rarity:'rare',   group:'verb', emoji:'💯',   title:'どうしパーフェクト',      desc:'どうしのかつようもんだいで全問せいかい！',     check:c=>c.verbPerfect>=1},
   {id:'verb_perfect_3',rarity:'epic',   group:'verb', emoji:'💯💯', title:'どうし3回パーフェクト',   desc:'どうしのかつようもんだいで全問せいかいを3回',  check:c=>c.verbPerfect>=3, prog:c=>[c.verbPerfect,3]},
   {id:'verb_correct_50',rarity:'rare',  group:'verb', emoji:'🎯',   title:'どうし50問正解',         desc:'どうしのかつようもんだいで累計50問せいかい',   check:c=>c.verbCorrect>=50, prog:c=>[c.verbCorrect,50]},
-  {id:'verb_all_modes',rarity:'epic',   group:'verb', emoji:'🎪',   title:'どうしマスター',         desc:'4択・なかまわけ・かつようカードを全部プレイ',  check:c=>c.verbModesPlayed>=3, prog:c=>[c.verbModesPlayed,3]},
+  {id:'verb_all_modes',rarity:'epic',   group:'verb', emoji:'🎪',   title:'どうしマスター',         desc:'かつようチャレンジ・なかまわけ・かつようカードを全部プレイ',  check:c=>c.verbModesPlayed>=3, prog:c=>[c.verbModesPlayed,3]},
+  // どうしの称号バッジ（るいけいせいかいすうで段階アップ）
+  {id:'verb_title_kenshi',    rarity:'common', group:'verb', emoji:'⚔️', title:'称号「どうしのけんし」',   desc:'るいけい15問せいかいで称号「どうしのけんし」を獲得',      check:c=>c.verbCorrect>=15,  prog:c=>[c.verbCorrect,15]},
+  {id:'verb_title_tsuwamono', rarity:'rare',   group:'verb', emoji:'🔥', title:'称号「どうしのつわもの」', desc:'るいけい100問せいかいで称号「どうしのつわもの」を獲得',    check:c=>c.verbCorrect>=100, prog:c=>[c.verbCorrect,100]},
+  {id:'verb_title_tatsujin',  rarity:'rare',   group:'verb', emoji:'🎯', title:'称号「どうしのたつじん」', desc:'るいけい300問せいかいで称号「どうしのたつじん」を獲得',    check:c=>c.verbCorrect>=300, prog:c=>[c.verbCorrect,300]},
+  {id:'verb_title_ousama',    rarity:'epic',   group:'verb', emoji:'👑', title:'称号「どうしのおうさま」', desc:'るいけい500問せいかいで称号「どうしのおうさま」を獲得',    check:c=>c.verbCorrect>=500, prog:c=>[c.verbCorrect,500]},
+  {id:'verb_title_kamisama',  rarity:'title',  group:'verb', emoji:'✨', title:'称号「どうしのかみさま」', desc:'るいけい1000問せいかいで称号「どうしのかみさま」を獲得！さいこういの、とくべつなバッジ！', check:c=>c.verbCorrect>=1000, prog:c=>[c.verbCorrect,1000]},
 ];
 
 function buildBadgeContext(){
@@ -1729,17 +1744,18 @@ const RARITY = {
   common: { label:'🥉 コモン',  bg:'#8B5E3C', gradient:'linear-gradient(135deg,#8B5E3C,#5C3D1E)' },
   rare:   { label:'🥈 レア',    bg:'#4A7BB5', gradient:'linear-gradient(135deg,#4A7BB5,#1A4A8A)' },
   epic:   { label:'🥇 エピック', bg:'#9B3B9B', gradient:'linear-gradient(135deg,#C0398B,#6B2F9B)' },
+  title:  { label:'👑 しょうごう', bg:'#B8860B', gradient:'linear-gradient(135deg,#F5C542,#B8860B)' },
 };
 
 // ジャジャーン演出
 let _jajanQueue = [];
 let _jajanWillComplete = false;
-function showJajan(badge, onClose){
+function showJajan(badge, onClose, tagText){
   const r = RARITY[badge.rarity||'common'];
   const ov = document.getElementById('jajan-overlay');
   if(!ov) { onClose && onClose(); return; }
   ov.style.background = r.gradient;
-  document.getElementById('jajan-rarity-tag').textContent = r.label + ' バッジ かくとく！';
+  document.getElementById('jajan-rarity-tag').textContent = tagText || (r.label + ' バッジ かくとく！');
   // badge-wrap内のemoji
   document.getElementById('jajan-badge-wrap').textContent = badge.emoji;
   document.getElementById('jajan-title').textContent = badge.title;
@@ -1920,6 +1936,7 @@ function saveResult(ans, mode, total, timerUsed){
   saveHistory(h);
   updateStreak();
   checkBadges();
+  if(mode==='verb_quiz' || mode==='verb_sort') checkVerbTitleUp();
 }
 
 // 音声
@@ -1940,6 +1957,7 @@ window.addEventListener('load',()=>{
   document.getElementById('mode-word-count').textContent=WORDS.length;
   document.getElementById('phrase-count').textContent=PHRASE_QUESTIONS.length;
   updateMiniStats(); showTitle();
+  initVerbTitleTierIfNeeded();
   if(synth){ synth.getVoices(); synth.onvoiceschanged=()=>synth.getVoices(); }
 });
 function speak(text,cb){ if(!synth){if(cb)cb();return;} synth.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.85; const v=synth.getVoices(); const vo=v.find(x=>x.lang.startsWith('en')&&x.localService)||v.find(x=>x.lang.startsWith('en')); if(vo)u.voice=vo; u.onstart=()=>setSpeaking(true); u.onend=()=>{setSpeaking(false);if(cb)cb();}; u.onerror=()=>{setSpeaking(false);if(cb)cb();}; synth.speak(u); }
@@ -2185,7 +2203,7 @@ function renderModeStats(h){
     'timer':'⏱️ タイマー','listening':'👂 ミミだめし','hard':'🔥 ハード','sort':'🔀 ならべかえ',
     'fill':'✏️ あなうめ','weak':'😓 にがて単語',
     'phrase_key':'🔑 フレーズ穴うめ','phrase_select':'🌐 フレーズ選択','phrase_flash':'🃏 フレーズカード',
-    'verb_quiz':'🔤 どうし4択','verb_sort':'🔀 どうしなかまわけ','verb_flash':'🃏 どうしカード'
+    'verb_quiz':'🔤 かつようチャレンジ','verb_sort':'🔀 どうしなかまわけ','verb_flash':'🃏 どうしカード'
   };
   const ms={};
   h.forEach(r=>{
@@ -2298,7 +2316,7 @@ function showStats(){
   const we=document.getElementById('weak-words');
   we.innerHTML=weak.length?weak.map(w=>`<span class="weak-word" onclick="speak('${w.en.replace(/'/g,"\\'")}')">🔊 ${w.en}（${w.ja}）<span style="color:#AABCCC;font-size:10px;"> ${Math.round(w.w/w.t*100)}%</span></span>`).join(''):'<p style="color:#4CAF82;font-size:12px;">苦手な単語はありません！🎉</p>';
   // プレイ履歴
-  const modeLabel=r=>r.mode==='weak'?'😓にがて':r.mode==='category'?'📚カテゴリ':r.mode==='sort'?'🔀ならべかえ':r.mode==='fill'?'✏️あなうめ':r.mode==='timer'?'⏱️タイマー':r.mode==='spelling'?'✏️スペリング':r.mode==='listening'?'👂ミミだめし':r.mode==='hard'?'🔥ハード':r.mode==='phrase_key'?'🔑フレーズ穴うめ':r.mode==='phrase_select'?'🌐フレーズ選択':r.mode==='phrase_flash'?'🃏フレーズカード':r.mode==='verb_quiz'?'🔤どうし4択':r.mode==='verb_sort'?'🔀どうしなかまわけ':r.mode==='verb_flash'?'🃏どうしカード':'🌍ぜんはんい';
+  const modeLabel=r=>r.mode==='weak'?'😓にがて':r.mode==='category'?'📚カテゴリ':r.mode==='sort'?'🔀ならべかえ':r.mode==='fill'?'✏️あなうめ':r.mode==='timer'?'⏱️タイマー':r.mode==='spelling'?'✏️スペリング':r.mode==='listening'?'👂ミミだめし':r.mode==='hard'?'🔥ハード':r.mode==='phrase_key'?'🔑フレーズ穴うめ':r.mode==='phrase_select'?'🌐フレーズ選択':r.mode==='phrase_flash'?'🃏フレーズカード':r.mode==='verb_quiz'?'🔤かつようチャレンジ':r.mode==='verb_sort'?'🔀どうしなかまわけ':r.mode==='verb_flash'?'🃏どうしカード':'🌍ぜんはんい';
   const diffLabel=r=>(r.easy!==false)?'<span style="color:#4CAF82;font-size:9px;">🟢</span>':'<span style="color:#F97316;font-size:9px;">🔴</span>';
   const hl=document.getElementById('history-list'); hl.innerHTML='';
   [...h].reverse().slice(0,20).forEach(r=>{
@@ -3571,11 +3589,74 @@ function retryPhraseUnsure(){
 }
 
 // ===== D. どうしのかつようモード（規則・不規則動詞）=====
-const TENSE_LABELS = {past:'かこけい (past)', pp:'かこぶんし (past participle)', ing:'げんざいぶんし (-ing)'};
+const TENSE_LABELS = {base:'げんざいけい (base)', past:'かこけい (past)', pp:'かこぶんし (past participle)', ing:'げんざいぶんし (-ing)'};
+
+// どうしの称号（けんし系）：verbCorrect（るいけいせいかいすう）に応じて段階アップ。おう（さいこうい）は1000問正解
+const VERB_TITLES = [
+  {min:0,    name:'どうしのみならい', emoji:'🌱'},
+  {min:15,   name:'どうしのけんし',   emoji:'⚔️'},
+  {min:100,  name:'どうしのつわもの', emoji:'🔥'},
+  {min:300,  name:'どうしのたつじん', emoji:'🎯'},
+  {min:500,  name:'どうしのおうさま', emoji:'👑'},
+  {min:1000, name:'どうしのかみさま', emoji:'✨'},
+];
+function getVerbTitleInfo(correct){
+  let idx=0;
+  for(let i=0;i<VERB_TITLES.length;i++){ if(correct>=VERB_TITLES[i].min) idx=i; }
+  const cur = VERB_TITLES[idx];
+  const next = VERB_TITLES[idx+1] || null;
+  return { idx, name:cur.name, emoji:cur.emoji, min:cur.min, nextMin: next?next.min:null, nextName: next?next.name:null, isMax: !next };
+}
+const VERB_TITLE_TIER_KEY = 'eiken5_verb_title_tier';
+function loadVerbTitleTier(){ try{ const v=localStorage.getItem(VERB_TITLE_TIER_KEY); return v===null?null:parseInt(v,10); }catch(e){ return null; } }
+function saveVerbTitleTier(idx){ try{ localStorage.setItem(VERB_TITLE_TIER_KEY, String(idx)); }catch(e){} }
+function initVerbTitleTierIfNeeded(){
+  if(loadVerbTitleTier()===null){
+    const ctx = buildBadgeContext();
+    saveVerbTitleTier(getVerbTitleInfo(ctx.verbCorrect).idx);
+  }
+}
+function checkVerbTitleUp(){
+  const ctx = buildBadgeContext();
+  checkVerbTitleUpForTotal(ctx.verbCorrect);
+}
+function checkVerbTitleUpForTotal(total){
+  const info = getVerbTitleInfo(total);
+  const lastIdx = loadVerbTitleTier() ?? 0;
+  if(info.idx > lastIdx){
+    saveVerbTitleTier(info.idx);
+    setTimeout(()=>{
+      showJajan({rarity:'title', emoji:info.emoji, title:`しょうごうアップ！「${info.name}」`, desc:'どうしのかつようで けいけんをつんだね！これからもがんばろう！'}, null, '👑 しょうごうアップ！');
+    }, 400);
+    return true;
+  }
+  return false;
+}
+// クイズ・なかまわけの「せつぞく中」に達成した瞬間にも称号アップを検知できるよう、開始時のるいけいをおぼえておく
+let verbCorrectAtSessionStart = 0;
+function renderVerbTitlePanel(){
+  const ctx = buildBadgeContext();
+  const info = getVerbTitleInfo(ctx.verbCorrect);
+  const nameEl = document.getElementById('verb-title-name');
+  const barEl = document.getElementById('verb-title-bar');
+  const nextEl = document.getElementById('verb-title-next');
+  if(!nameEl || !barEl || !nextEl) return;
+  nameEl.textContent = `${info.emoji} ${info.name}`;
+  if(info.isMax){
+    barEl.style.width = '100%';
+    nextEl.textContent = `さいこうい称号にとうたつ！　るいけい${ctx.verbCorrect}問せいかい`;
+  } else {
+    const span = info.nextMin - info.min;
+    const prog = ctx.verbCorrect - info.min;
+    barEl.style.width = Math.min(100, Math.round(prog/span*100)) + '%';
+    nextEl.textContent = `つぎの称号「${info.nextName}」まで あと${info.nextMin - ctx.verbCorrect}問正解`;
+  }
+}
 
 function showVerbHub(){
   const el = document.getElementById('verb-count');
   if(el) el.textContent = VERBS.length;
+  renderVerbTitlePanel();
   showScreen('screen-verb-hub');
 }
 
@@ -3588,33 +3669,45 @@ function quitVerbToTop(){
   }
 }
 
-// ----- D-1. 4択かつようクイズ -----
+// ----- D-1. かつようチャレンジ -----
 let vqIdx=0, VERB_QUESTIONS=[], vqAnswers=[];
 
 function startVerbQuiz(){
-  const fields = ['past','pp','ing'];
+  const fields = ['base','past','pp','ing'];
+  verbCorrectAtSessionStart = buildBadgeContext().verbCorrect;
   const picked = shuffle([...VERBS]).slice(0, Math.min(QUIZ_COUNT, VERBS.length));
   VERB_QUESTIONS = picked.map(v=>{
     const field = fields[Math.floor(Math.random()*fields.length)];
-    const correct = v[field];
-    const wrongPool = shuffle(VERBS.filter(x=>x.base!==v.base && x[field]!==correct));
-    const seen = new Set([correct]); const wrong=[];
-    for(const x of wrongPool){ if(!seen.has(x[field])){ seen.add(x[field]); wrong.push(x[field]); } if(wrong.length>=3) break; }
-    return { q:v, field, correct, choices: shuffle([correct, ...wrong]) };
+    const direction = Math.random()<0.5 ? 'en2ja' : 'ja2en';
+    const enForms = {base:v.base, past:v.past, pp:v.pp, ing:v.ing};
+    const jaForms = {base:v.ja, past:v.past_ja, pp:v.pp_ja, ing:v.ing_ja};
+    const correct = direction==='en2ja' ? jaForms[field] : enForms[field];
+    const pool = direction==='en2ja' ? Object.values(jaForms) : Object.values(enForms);
+    const choices = shuffle([...new Set(pool)]);
+    return { q:v, field, direction, enForms, jaForms, correct, choices };
   });
   vqIdx=0; vqAnswers=[];
   showScreen('screen-verb-quiz');
   renderVerbQuizQuestion();
 }
 
+function speakVQPrompt(){
+  const item = VERB_QUESTIONS[vqIdx];
+  speak(item.enForms[item.field]);
+}
+
 function renderVerbQuizQuestion(){
   const item = VERB_QUESTIONS[vqIdx];
   document.getElementById('vq-progress').textContent = `${vqIdx+1} / ${VERB_QUESTIONS.length}`;
   document.getElementById('vq-bar').style.width = ((vqIdx+1)/VERB_QUESTIONS.length*100)+'%';
-  document.getElementById('vq-type-badge').textContent = item.q.type==='regular' ? '🟢 きそくどうし' : '🔴 ふきそくどうし';
-  document.getElementById('vq-base').textContent = item.q.base;
-  document.getElementById('vq-ja').textContent = item.q.ja;
-  document.getElementById('vq-question').textContent = `👇 ${TENSE_LABELS[item.field]}は？`;
+  const typeLabel = item.q.type==='regular' ? '🟢 きそくどうし' : '🔴 ふきそくどうし';
+  const dirLabel = item.direction==='en2ja' ? '🇬🇧→🇯🇵 えいご→にほんご' : '🇯🇵→🇬🇧 にほんご→えいご';
+  document.getElementById('vq-type-badge').textContent = `${typeLabel}　｜　${dirLabel}`;
+  document.getElementById('vq-base').textContent = item.direction==='en2ja' ? item.enForms[item.field] : item.jaForms[item.field];
+  document.getElementById('vq-ja').textContent = `もとの単語：${item.q.base}（${item.q.ja}）`;
+  document.getElementById('vq-question').textContent = item.direction==='en2ja'
+    ? `👇 ${TENSE_LABELS[item.field]}の いみは？`
+    : `👇 ${TENSE_LABELS[item.field]}を えいごで言うと？`;
   const el = document.getElementById('vq-options'); el.innerHTML='';
   item.choices.forEach(c=>{
     const b=document.createElement('button');
@@ -3625,7 +3718,7 @@ function renderVerbQuizQuestion(){
   });
   document.getElementById('vq-feedback').style.display='none';
   document.getElementById('vq-next-btn').style.display='none';
-  if(autoSpeak) setTimeout(()=>speak(item.q.base),300);
+  if(autoSpeak) setTimeout(()=>speak(item.enForms[item.field]),300);
 }
 
 function selectVerbQuizAnswer(choice){
@@ -3638,7 +3731,11 @@ function selectVerbQuizAnswer(choice){
     else if(b.textContent===choice && !ok){ b.style.background='#FEE2E2'; b.style.borderColor='#EF4444'; b.style.color='#991B1B'; }
   });
   ok?playCorrect():playWrong(); launchStamps(ok);
-  vqAnswers.push({q:item.q, field:item.field, answerText:item.correct, chosen:choice, correct:ok});
+  vqAnswers.push({q:item.q, field:item.field, direction:item.direction, answerText:item.correct, chosen:choice, correct:ok});
+  if(ok){
+    const sessionCorrect = vqAnswers.filter(a=>a.correct).length;
+    checkVerbTitleUpForTotal(verbCorrectAtSessionStart + sessionCorrect);
+  }
   const fb=document.getElementById('vq-feedback');
   fb.style.display='block';
   if(ok){
@@ -3674,7 +3771,7 @@ function showVerbQuizResult(){
   document.getElementById('vq-result-pct').textContent=`せいかいりつ ${pct}%`;
   document.getElementById('vq-answer-rows').innerHTML=vqAnswers.map(a=>`
     <div style="padding:7px 0;border-bottom:1px solid #E8F0FA;">
-      <div style="font-size:11px;color:#5A7A9F;margin-bottom:2px;">${a.q.base}（${a.q.ja}）の${TENSE_LABELS[a.field]}</div>
+      <div style="font-size:11px;color:#5A7A9F;margin-bottom:2px;">${a.direction==='en2ja'?'🇬🇧→🇯🇵':'🇯🇵→🇬🇧'} ${a.q.base}（${a.q.ja}）の${TENSE_LABELS[a.field]}</div>
       <div style="font-size:13px;font-weight:700;color:${a.correct?'#10B981':'#EF4444'};">
         ${a.correct?'⭕':'❌'} ${a.answerText}
       </div>
@@ -3686,6 +3783,7 @@ function showVerbQuizResult(){
 let vsIdx=0, VERB_SORT_QS=[], vsAnswers=[];
 
 function startVerbSort(){
+  verbCorrectAtSessionStart = buildBadgeContext().verbCorrect;
   VERB_SORT_QS = shuffle([...VERBS]).slice(0, Math.min(QUIZ_COUNT, VERBS.length));
   vsIdx=0; vsAnswers=[];
   showScreen('screen-verb-sort');
@@ -3717,6 +3815,10 @@ function answerVerbSort(choice){
   const nb=document.getElementById('vs-next-btn'); nb.style.display='block';
   ok?playCorrect():playWrong(); launchStamps(ok);
   vsAnswers.push({...v, chosen:choice, correct:ok});
+  if(ok){
+    const sessionCorrect = vsAnswers.filter(a=>a.correct).length;
+    checkVerbTitleUpForTotal(verbCorrectAtSessionStart + sessionCorrect);
+  }
   const fb=document.getElementById('vs-feedback');
   fb.style.display='block';
   const verbForms = v.type==='irregular'
@@ -3798,10 +3900,10 @@ function renderFlashVerb(){
   document.getElementById('flash-front-verb-ja').textContent = v.ja;
   document.getElementById('flash-back-verb-base').textContent = `${v.base}（${v.ja}）`;
   document.getElementById('flash-back-verb-table').innerHTML = `
-    <div style="display:flex;justify-content:space-between;background:#F0FDFA;border-radius:10px;padding:8px 12px;"><span style="color:#0F766E;font-weight:700;font-size:12px;">げんざいけい</span><span style="font-weight:900;color:#1A2E52;">${v.base}</span></div>
-    <div style="display:flex;justify-content:space-between;background:#FEF3C7;border-radius:10px;padding:8px 12px;"><span style="color:#92400E;font-weight:700;font-size:12px;">かこけい</span><span style="font-weight:900;color:#1A2E52;">${v.past}</span></div>
-    <div style="display:flex;justify-content:space-between;background:#FEE2E2;border-radius:10px;padding:8px 12px;"><span style="color:#991B1B;font-weight:700;font-size:12px;">かこぶんし</span><span style="font-weight:900;color:#1A2E52;">${v.pp}</span></div>
-    <div style="display:flex;justify-content:space-between;background:#EDE9FE;border-radius:10px;padding:8px 12px;"><span style="color:#5B21B6;font-weight:700;font-size:12px;">げんざいぶんし</span><span style="font-weight:900;color:#1A2E52;">${v.ing}</span></div>`;
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#F0FDFA;border-radius:10px;padding:8px 12px;"><span style="color:#0F766E;font-weight:700;font-size:12px;">げんざいけい</span><span style="text-align:right;"><span style="font-weight:900;color:#1A2E52;">${v.base}</span><br><span style="font-weight:700;color:#0F766E;font-size:12px;">${v.ja}</span></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#FEF3C7;border-radius:10px;padding:8px 12px;"><span style="color:#92400E;font-weight:700;font-size:12px;">かこけい</span><span style="text-align:right;"><span style="font-weight:900;color:#1A2E52;">${v.past}</span><br><span style="font-weight:700;color:#92400E;font-size:12px;">${v.past_ja}</span></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#FEE2E2;border-radius:10px;padding:8px 12px;"><span style="color:#991B1B;font-weight:700;font-size:12px;">かこぶんし</span><span style="text-align:right;"><span style="font-weight:900;color:#1A2E52;">${v.pp}</span><br><span style="font-weight:700;color:#991B1B;font-size:12px;">${v.pp_ja}</span></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#EDE9FE;border-radius:10px;padding:8px 12px;"><span style="color:#5B21B6;font-weight:700;font-size:12px;">げんざいぶんし</span><span style="text-align:right;"><span style="font-weight:900;color:#1A2E52;">${v.ing}</span><br><span style="font-weight:700;color:#5B21B6;font-size:12px;">${v.ing_ja}</span></span></div>`;
   flashVerbFlipped=false;
   document.getElementById('flash-card').classList.remove('flipped');
   document.getElementById('flash-front').classList.remove('hidden');
